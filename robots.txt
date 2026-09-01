@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dobropalm.tech/sitemap.xml
