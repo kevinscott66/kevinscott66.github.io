@@ -343,10 +343,10 @@ footer a:hover{color:var(--txt)}
 
       <article class="glass proj rv">
         <div class="proj-top"><span class="ix">02</span><span class="badge on"><i aria-hidden="true"></i>Open source</span></div>
-        <h3>AirChat &mdash; infrastructure-free messenger</h3>
+        <h3>AirChat &mdash; messenger on an untrusted server</h3>
         <p class="role">Mobile &middot; Networking &middot; Cryptography</p>
-        <p>No account, no phone number, no central message server. Identity is a BIP39 seed phrase; delivery rides whatever path exists &mdash; IPFS pubsub, WebRTC, LAN discovery, or long-range radio mesh. History stays encrypted on-device. Built for places where the internet is filtered, congested, or simply absent.</p>
-        <div class="chips"><span class="chip">React Native</span><span class="chip">Expo 55</span><span class="chip">libp2p</span><span class="chip">WebRTC</span><span class="chip">IPFS</span><span class="chip">LoRa mesh</span></div>
+        <p>No phone number, no sign-up: the account is a BIP39 seed phrase, and nobody can issue, freeze or recover it. It syncs through a server that holds only ciphertext &mdash; every record encrypted on the device, the server left with ids and revisions it cannot read &mdash; so a second phone or a reinstall restores itself. Delivery rides whatever path exists: WebRTC, IPFS pubsub, LAN discovery, or long-range radio mesh when the internet is filtered, congested, or simply absent.</p>
+        <div class="chips"><span class="chip">React Native</span><span class="chip">Expo 55</span><span class="chip">E2E sync</span><span class="chip">libp2p</span><span class="chip">WebRTC</span><span class="chip">LoRa mesh</span></div>
         <a class="plink" href="https://github.com/kevinscott66/airchat">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
       </article>
 
