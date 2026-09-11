@@ -197,6 +197,9 @@ h2{font-size:clamp(1.85rem,1.35rem + 2.4vw,3.15rem);line-height:1.08;letter-spac
 .plink svg{width:14px;height:14px;transition:transform .3s var(--ease)}
 .plink:hover{color:var(--cyan)}
 .plink:hover svg{transform:translate(3px,-3px)}
+.plinks{display:flex;flex-wrap:wrap;align-items:center;gap:.2rem 1.4rem}
+.plinks .plink + .plink{color:var(--muted);font-weight:450}
+.plinks .plink + .plink:hover{color:var(--cyan)}
 
 /* ---------- bento capabilities ---------- */
 .bento{display:grid;gap:clamp(.8rem,1.6vw,1.15rem);grid-template-columns:1fr}
@@ -307,8 +310,8 @@ footer a:hover{color:var(--txt)}
     </div>
     <div class="stats">
       <div class="stat"><b data-count="12">12</b><span>Role-scoped agents</span></div>
-      <div class="stat"><b data-count="43" data-suffix="k">43k</b><span>Lines of TypeScript</span></div>
-      <div class="stat"><b data-count="420">420</b><span>Test files</span></div>
+      <div class="stat"><b data-count="344" data-suffix="k">344k</b><span>Lines of TypeScript</span></div>
+      <div class="stat"><b data-count="1049">1049</b><span>Test files</span></div>
       <div class="stat"><b data-count="6">6</b><span>Mesh transports</span></div>
     </div>
   </div>
@@ -337,8 +340,8 @@ footer a:hover{color:var(--txt)}
         <h3>Multi-agent operations platform</h3>
         <p class="role">Architecture &middot; Backend &middot; Agent orchestration</p>
         <p>Twelve role-scoped AI agents &mdash; orchestrator, product, backend, frontend, QA, marketing &mdash; running a real software team inside a Telegram workspace. Tiered autonomy with human approval gates, audited tool execution, a persistent task queue, and a permission model that fails closed rather than open. Operators drive the whole thing through a six-view dashboard.</p>
-        <div class="chips"><span class="chip">Bun</span><span class="chip">TypeScript</span><span class="chip">Claude Agent SDK</span><span class="chip">SQLite WAL</span><span class="chip">Preact</span><span class="chip">~43k LOC</span><span class="chip">420 tests</span></div>
-        <a class="plink" href="https://github.com/kevinscott66/ai-agents">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <div class="chips"><span class="chip">Bun</span><span class="chip">TypeScript</span><span class="chip">Claude Agent SDK</span><span class="chip">SQLite WAL</span><span class="chip">Preact</span><span class="chip">~118k LOC</span><span class="chip">449 test files</span></div>
+        <a class="plink" href="https://github.com/kevinscott66/ai-agents" rel="noopener">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
       </article>
 
       <article class="glass proj rv">
@@ -347,7 +350,7 @@ footer a:hover{color:var(--txt)}
         <p class="role">Mobile &middot; Networking &middot; Cryptography</p>
         <p>No phone number, no sign-up: the account is a BIP39 seed phrase, and nobody can issue, freeze or recover it. It syncs through a server that holds only ciphertext &mdash; every record encrypted on the device, the server left with ids and revisions it cannot read &mdash; so a second phone or a reinstall restores itself. Delivery rides whatever path exists: WebRTC, IPFS pubsub, LAN discovery, or long-range radio mesh when the internet is filtered, congested, or simply absent.</p>
         <div class="chips"><span class="chip">React Native</span><span class="chip">Expo 55</span><span class="chip">E2E sync</span><span class="chip">libp2p</span><span class="chip">WebRTC</span><span class="chip">LoRa mesh</span></div>
-        <a class="plink" href="https://github.com/kevinscott66/airchat">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <div class="plinks"><a class="plink" href="https://air.dobropalm.tech" rel="noopener">Open live app<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="plink" href="https://github.com/kevinscott66/airchat" rel="noopener">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
       </article>
 
       <article class="glass proj rv">
@@ -356,7 +359,7 @@ footer a:hover{color:var(--txt)}
         <p class="role">Product &middot; Full stack &middot; Release engineering</p>
         <p>Offline-first by necessity: crews work shifts far from reliable connectivity, so everything is usable with no signal and reconciles when a link returns. A frozen stable channel and a beta run side by side with isolated service-worker caches, so no release can break the field. Row-level security keeps each crew&rsquo;s data its own.</p>
         <div class="chips"><span class="chip">PWA</span><span class="chip">Supabase RLS</span><span class="chip">Edge Functions</span><span class="chip">Capacitor</span><span class="chip">Tauri</span></div>
-        <a class="plink" href="https://vahta.razvedchick.ru" rel="noopener">Open live app<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <div class="plinks"><a class="plink" href="https://vahta.razvedchick.ru" rel="noopener">Open live app<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="plink" href="https://github.com/kevinscott66/bazahoz" rel="noopener">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
       </article>
 
       <article class="glass proj rv">
@@ -365,7 +368,7 @@ footer a:hover{color:var(--txt)}
         <p class="role">Backend &middot; Legacy migration</p>
         <p>Invite tracking, member economy, moderation, statistics, an admin panel and an AI assistant for a large private community. Started life as a single-file polling script; migrated to a webhook-driven modular service using the strangler pattern &mdash; each subsystem replaced behind a stable interface, community online throughout.</p>
         <div class="chips"><span class="chip">Python</span><span class="chip">aiogram 3</span><span class="chip">SQLite</span><span class="chip">Docker</span><span class="chip">Zero downtime</span></div>
-        <a class="plink" href="https://github.com/kevinscott66/kom17">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <div class="plinks"><a class="plink" href="https://t.me/kom17bot" rel="noopener">Open the bot<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="plink" href="https://github.com/kevinscott66/kom17" rel="noopener">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
       </article>
 
     </div>
@@ -403,7 +406,7 @@ footer a:hover{color:var(--txt)}
       <div class="glass cap rv">
         <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10.5 18.5h3"/></svg></div>
         <h3>Cross-platform apps</h3>
-        <p>One codebase reaching web, Android and desktop &mdash; React Native, PWAs with service-worker channels, Capacitor and Tauri shells.</p>
+        <p>One codebase reaching web, iOS, Android and desktop &mdash; React Native, PWAs with service-worker channels, Capacitor and Tauri shells.</p>
       </div>
 
       <div class="glass cap rv">
