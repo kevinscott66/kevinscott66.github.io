@@ -312,7 +312,7 @@ footer a:hover{color:var(--txt)}
       <div class="stat"><b data-count="12">12</b><span>Role-scoped agents</span></div>
       <div class="stat" title="345,200 lines across tracked TypeScript and TSX files in AI Agents and AirChat; counted 15 September 2026"><b data-count="345" data-suffix="k">345k</b><span>Lines of TypeScript</span></div>
       <div class="stat" title="1,049 tracked TypeScript test/spec files across AI Agents and AirChat; counted 15 September 2026"><b data-count="1049">1049</b><span>Test files</span></div>
-      <div class="stat" title="AirChat: internet, WebRTC, IPFS, LAN, long-range, bypass and whitelist"><b data-count="7">7</b><span>Transport types</span></div>
+      <div class="stat" title="AirChat: internet, WebRTC, IPFS, LAN, bypass and whitelist"><b data-count="6">6</b><span>Transport types</span></div>
     </div>
   </div>
 </section>
@@ -348,8 +348,8 @@ footer a:hover{color:var(--txt)}
         <div class="proj-top"><span class="ix">02</span><span class="badge on"><i aria-hidden="true"></i>Open source</span></div>
         <h3>AirChat &mdash; messenger on an untrusted server</h3>
         <p class="role">Mobile &middot; Networking &middot; Cryptography</p>
-        <p>No phone number, no sign-up: the account is a BIP39 seed phrase, and nobody can issue, freeze or recover it. It syncs through a server that holds only ciphertext &mdash; every record encrypted on the device, with only ids and revisions visible to the server &mdash; so a second phone or a reinstall restores itself. Internet and WebRTC serve everyday use; native offline transports provide fallback when connectivity disappears. The browser version supports internet and WebRTC, while LAN and radio transports belong to native clients. Sync and calls resume when connectivity returns.</p>
-        <div class="chips"><span class="chip">React Native</span><span class="chip">Expo 55</span><span class="chip">E2E sync</span><span class="chip">libp2p</span><span class="chip">WebRTC</span><span class="chip">LoRa mesh</span></div>
+        <p>No phone number, no sign-up: the account is a BIP39 seed phrase, and nobody can issue, freeze or recover it. Chats and history sync end-to-end encrypted, so a second phone or a reinstall restores itself; the server still sees metadata &mdash; ids, revisions, timing and IP addresses &mdash; and posts you publish by link are public and unencrypted until you revoke them. Internet and WebRTC serve everyday use and work in the browser; the native apps add LAN for when the internet disappears. In the browser, keys are protected less strongly than in the native apps. Sync and calls resume when connectivity returns.</p>
+        <div class="chips"><span class="chip">React Native</span><span class="chip">Expo 55</span><span class="chip">E2E sync</span><span class="chip">libp2p</span><span class="chip">WebRTC</span><span class="chip">LAN</span></div>
         <div class="plinks"><a class="plink" href="https://air.dobropalm.tech" rel="noopener">Open live app<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="plink" href="https://github.com/kevinscott66/airchat" rel="noopener">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
       </article>
 
