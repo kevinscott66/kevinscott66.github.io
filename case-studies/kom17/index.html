@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KOM17 — Replace a bot’s foundations without losing its behavior · dobropalm</title>
+<meta name="description" content="A Telegram community platform with invites, moderation, an in-chat economy, payments and AI features. The central engineering work was replacing a monolith one subsystem at a time.">
+<meta name="theme-color" content="#090d16">
+<link rel="canonical" href="https://dobropalm.tech/case-studies/kom17/">
+<link rel="alternate" hreflang="en" href="https://dobropalm.tech/case-studies/kom17/">
+<link rel="alternate" hreflang="ru" href="https://dobropalm.tech/ru/case-studies/kom17/">
+<link rel="alternate" hreflang="x-default" href="https://dobropalm.tech/case-studies/kom17/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="KOM17 — Replace a bot’s foundations without losing its behavior · dobropalm">
+<meta property="og:description" content="A Telegram community platform with invites, moderation, an in-chat economy, payments and AI features. The central engineering work was replacing a monolith one subsystem at a time.">
+<meta property="og:url" content="https://dobropalm.tech/case-studies/kom17/">
+<meta property="og:image" content="https://dobropalm.tech/assets/og-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="KOM17 — Replace a bot’s foundations without losing its behavior">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+<div class="wrap">
+<a class="brand" href="/">
+<b>◈</b> dobropalm</a>
+<nav class="navlinks" aria-label="Main navigation">
+<a href="/#work">Projects</a>
+<a class="desktop" href="/#demos">Demos</a>
+<a class="desktop" href="/#about">About</a>
+<a href="/#contact">Contact</a>
+<a class="language" lang="ru" hreflang="ru" href="/ru/case-studies/kom17/">RU</a>
+</nav>
+</div>
+</header>
+<main id="main">
+<div class="wrap">
+<header class="case-hero">
+<p class="crumb">
+<a href="/#work">← All projects</a>
+</p>
+<div class="badges">
+<span class="badge">Operating product · public snapshot</span>
+<span class="badge neutral">KOM17</span>
+</div>
+<h1>Replace a bot’s foundations without losing its behavior</h1>
+<p class="lead">A Telegram community platform with invites, moderation, an in-chat economy, payments and AI features. The central engineering work was replacing a monolith one subsystem at a time.</p>
+<div class="actions">
+<a class="button primary" href="https://github.com/kevinscott66/kom17">Source code</a>
+<a class="button" href="/#demos">View demos</a>
+</div>
+<div class="case-meta">
+<div>
+<span class="label">My role</span>
+<p>Platform logic, architecture and migration direction</p>
+</div>
+<div>
+<span class="label">Milestone / date</span>
+<p>Cutover completed 26 May 2026</p>
+</div>
+<div>
+<span class="label">Development approach</span>
+<p>I own logic and architecture. Code is developed with AI tools.</p>
+</div>
+</div>
+</header>
+<div class="case-layout">
+<aside class="case-nav" aria-label="Case contents">
+<a href="#problem">Problem & my contribution</a>
+<a href="#outcome">Outcome</a>
+<a href="#engineering">Engineering highlights</a>
+<a href="#architecture">Architecture</a>
+<a href="#tradeoffs">Trade-offs & lessons</a>
+<a href="#operations">Operations & data</a>
+<a href="#evidence">Evidence & source</a>
+</aside>
+<article class="case-body">
+<section id="problem">
+<h2>Problem & my contribution</h2>
+<p>A running community already has rules, accumulated data and familiar workflows. A full rewrite with one big switch makes every missing detail a user problem.</p>
+<div class="callout">
+<p>
+<strong>My contribution.</strong> I created KOM17 as my own product: the first version was a monolith, then I split it into modules. I own the community and economy logic, both architecture stages and the migration requirements: which workflows must survive, where module responsibilities sit and when the old execution path can be removed.</p>
+</div>
+<p>New handlers were introduced behind a compatible entry point. During migration, unclaimed updates fell back to the legacy bot. Parity tests pinned existing behavior, including its less obvious rules. Once the required paths were covered, the bridge was removed.</p>
+</section>
+<section id="outcome">
+<h2>Outcome</h2>
+<p class="lead">On 26 May 2026, the cutover completed to a single FastAPI → aiogram 3 path. The bridge is no longer a runtime fallback. A regression test guards against restoring the old entry point; the monolith remains evidence for parity tests.</p>
+<figure>
+<img src="/assets/media/kom17-architecture.svg" width="1280" height="800" alt="The actual post-migration request path, shown as an architecture illustration rather than a screenshot of private community chats." loading="lazy">
+<figcaption>The actual post-migration request path, shown as an architecture illustration rather than a screenshot of private community chats.</figcaption>
+</figure>
+</section>
+<section id="engineering">
+<h2>Engineering highlights</h2>
+<div class="tile">
+<h3>Migrate behavior, not just code</h3>
+<p>Economy and moderation rules are pinned before replacement. A cleaner implementation can otherwise silently change the product.</p>
+</div>
+<div class="tile">
+<h3>Finish the transition</h3>
+<p>A bridge is useful while rollback depends on it. After cutover, a regression test guards its removal so temporary architecture does not become permanent.</p>
+</div>
+<div class="tile">
+<h3>Migrations follow data ownership</h3>
+<p>Five SQLite databases have separate Alembic lineages. A wrapper explicitly selects each database.</p>
+</div>
+</section>
+<section id="architecture">
+<h2>Architecture</h2>
+<figure class="flow">
+<div class="flow-row">
+<div class="node">
+<strong>Telegram webhook</strong>
+</div>
+</div>
+<div class="connector">↓ update</div>
+<div class="flow-row">
+<div class="node">
+<strong>FastAPI · request validation</strong>
+</div>
+</div>
+<div class="connector">↓ dispatch</div>
+<div class="flow-row">
+<div class="node emphasis">
+<strong>aiogram 3 → services / DI</strong>
+</div>
+</div>
+<div class="connector">↓ SQLAlchemy · separate migrations</div>
+<div class="flow-row">
+<div class="node">
+<strong>users</strong>
+</div>
+<div class="node">
+<strong>economy</strong>
+</div>
+<div class="node">
+<strong>activity</strong>
+</div>
+<div class="node">
+<strong>moderation</strong>
+</div>
+<div class="node">
+<strong>message_stats</strong>
+</div>
+</div>
+</figure>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Layer</th>
+<th scope="col">Technology &amp; purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>Telegram; public web pages and administration</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Python, aiogram 3, FastAPI, dishka</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>SQLAlchemy 2 async, five SQLite databases, Alembic</td>
+</tr>
+<tr>
+<td>Infrastructure / AI</td>
+<td>Docker / systemd; metrics, Sentry; text and speech providers</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tradeoffs">
+<h2>Trade-offs & lessons</h2>
+<p>Incremental replacement needs more compatibility code and tests than starting over. In return, changes can be checked in smaller steps. Separate databases establish data ownership but complicate migrations and cross-database consistency.</p>
+<h3>What the implementation taught</h3>
+<p>The code documents an operational lesson: probing the database from liveness could turn a transient SQLite lock into a process restart. /healthz now checks liveness; /readyz checks database readiness. A temporarily unavailable dependency does not always mean the process should be killed.</p>
+<h3>What I would improve now</h3>
+<p>I would define the contracts between economy, activity and moderation earlier, and include redelivery and restart-recovery scenarios in the mandatory verification set from the start.</p>
+</section>
+<section id="operations">
+<h2>Operations & data</h2>
+<p>The webhook checks Telegram’s secret header before dispatch. /healthz, /readyz and /metrics provide separate signals for process health, database readiness and application behavior. Payment integrations have their own validation and replay accounting.</p>
+<h3>Data & migrations</h3>
+<p>users, economy, activity, moderation and message_stats have independent schema versions. scripts.alembic_run selects the migration lineage. A plain Alembic command without selecting the database does not replace migrating all five stores.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Database</th>
+<th scope="col">Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>users</td>
+<td>Users and profiles</td>
+</tr>
+<tr>
+<td>economy</td>
+<td>Balances and economy operations</td>
+</tr>
+<tr>
+<td>activity</td>
+<td>Community activity</td>
+</tr>
+<tr>
+<td>moderation</td>
+<td>Moderation actions</td>
+</tr>
+<tr>
+<td>message_stats</td>
+<td>Message statistics</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Limits</h3>
+<p>The public repository is a snapshot, not the complete development history. Local operation requires a separate bot and configuration. End-to-end exactly-once is not claimed for every handler; redelivery safety belongs to the individual operation.</p>
+</section>
+<section id="evidence">
+<h2>Evidence & source</h2>
+<div class="callout">
+<p>
+<strong>Verified 24 Sep 2026:</strong> 3 completed-cutover regression checks. These are targeted checks of the described decisions, not a full application audit.</p>
+</div>
+<p class="fact-note">Claims above are tied to public code and documentation. Evidence links point to the reviewed revision; CI status may change.</p>
+<ul class="sources">
+<li>
+<a href="https://github.com/kevinscott66/kom17/blob/ec10c4b60d43281116c6ce58b4571d0f8863237b/CUTOVER.md">Completed cutover record</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/kom17/blob/ec10c4b60d43281116c6ce58b4571d0f8863237b/tests/regression/test_legacy_process_is_gone.py">Guard against legacy entry points</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/kom17/blob/ec10c4b60d43281116c6ce58b4571d0f8863237b/src/telegram_invite_bot/webhook/server.py">Health and delivery semantics</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/kom17/blob/ec10c4b60d43281116c6ce58b4571d0f8863237b/scripts/alembic_run.py">Migration wrapper</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/kom17/blob/ec10c4b60d43281116c6ce58b4571d0f8863237b/README.md">Public snapshot and scope</a>
+</li>
+</ul>
+<p>
+<a href="https://github.com/kevinscott66/kom17/actions/workflows/ci.yml">CI / checks</a> · <a href="https://github.com/kevinscott66/kom17/blob/main/LICENSE">MIT licence</a> · <a href="https://github.com/kevinscott66/kom17#quick-start">Quick start</a>
+</p>
+</section>
+</article>
+</div>
+</div>
+</main>
+<section class="contact" id="contact">
+<div class="wrap">
+<div>
+<p class="eyebrow">Have a problem or an idea?</p>
+<h2>Let’s talk.</h2>
+<p>A project, a partnership or a strong team — I’m open to a conversation.</p>
+</div>
+<div class="actions">
+<a class="button primary" href="https://t.me/dobropalm">Telegram</a>
+<a class="button" href="mailto:hello@dobropalm.tech">Email</a>
+</div>
+</div>
+</section>
+<footer>
+<div class="wrap">
+<p>© 2026 dobropalm · Alexander Pavlovich</p>
+<p>
+<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Reviewed 24 Sep 2026</p>
+</div>
+</footer>
+</body>
+</html>

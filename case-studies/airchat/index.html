@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AirChat — Conversations whose keys stay with you · dobropalm</title>
+<meta name="description" content="A messenger without phone numbers or sign-up. Your seed phrase is your account: one identity unlocks encrypted history on another device.">
+<meta name="theme-color" content="#090d16">
+<link rel="canonical" href="https://dobropalm.tech/case-studies/airchat/">
+<link rel="alternate" hreflang="en" href="https://dobropalm.tech/case-studies/airchat/">
+<link rel="alternate" hreflang="ru" href="https://dobropalm.tech/ru/case-studies/airchat/">
+<link rel="alternate" hreflang="x-default" href="https://dobropalm.tech/case-studies/airchat/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AirChat — Conversations whose keys stay with you · dobropalm">
+<meta property="og:description" content="A messenger without phone numbers or sign-up. Your seed phrase is your account: one identity unlocks encrypted history on another device.">
+<meta property="og:url" content="https://dobropalm.tech/case-studies/airchat/">
+<meta property="og:image" content="https://dobropalm.tech/assets/og-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AirChat — Conversations whose keys stay with you">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+<div class="wrap">
+<a class="brand" href="/">
+<b>◈</b> dobropalm</a>
+<nav class="navlinks" aria-label="Main navigation">
+<a href="/#work">Projects</a>
+<a class="desktop" href="/#demos">Demos</a>
+<a class="desktop" href="/#about">About</a>
+<a href="/#contact">Contact</a>
+<a class="language" lang="ru" hreflang="ru" href="/ru/case-studies/airchat/">RU</a>
+</nav>
+</div>
+</header>
+<main id="main">
+<div class="wrap">
+<header class="case-hero">
+<p class="crumb">
+<a href="/#work">← All projects</a>
+</p>
+<div class="badges">
+<span class="badge">Active development · web available</span>
+<span class="badge neutral">AirChat</span>
+</div>
+<h1>Conversations whose keys stay with you</h1>
+<p class="lead">A messenger without phone numbers or sign-up. Your seed phrase is your account: one identity unlocks encrypted history on another device.</p>
+<div class="actions">
+<a class="button primary" href="https://github.com/kevinscott66/airchat">Source code</a>
+<a class="button" href="/#demos">View demos</a>
+</div>
+<div class="case-meta">
+<div>
+<span class="label">My role</span>
+<p>Product logic, account model and architecture</p>
+</div>
+<div>
+<span class="label">Milestone / date</span>
+<p>Current snapshot: September 2026</p>
+</div>
+<div>
+<span class="label">Development approach</span>
+<p>I own logic and architecture. Code is developed with AI tools.</p>
+</div>
+</div>
+</header>
+<div class="case-layout">
+<aside class="case-nav" aria-label="Case contents">
+<a href="#problem">Problem & my contribution</a>
+<a href="#outcome">Outcome</a>
+<a href="#engineering">Engineering highlights</a>
+<a href="#architecture">Architecture</a>
+<a href="#tradeoffs">Trade-offs & lessons</a>
+<a href="#operations">Operations & data</a>
+<a href="#evidence">Evidence & source</a>
+</aside>
+<article class="case-body">
+<section id="problem">
+<h2>Problem & my contribution</h2>
+<p>Changing phones often means depending on a phone number, an account operator or a separate backup. The goal is a portable identity and synchronized history without giving the server the keys to the content.</p>
+<div class="callout">
+<p>
+<strong>My contribution.</strong> I define account and recovery behavior, user journeys, client/server trust boundaries and the synchronization design. I own the product logic that explains what is protected, what remains visible and what losing the key means.</p>
+</div>
+<p>Identity is derived from a seed phrase. Clients encrypt records before upload; the server holds encrypted entities with revisions and cursors. The local database is a UI projection. WebRTC signaling stays separate from history storage.</p>
+</section>
+<section id="outcome">
+<h2>Outcome</h2>
+<p class="lead">A browser client is available. The source implements portable identity, encrypted account sync, revisions, tombstone deletion and profile boundaries. Native builds add LAN messaging. The visual below shows the actual entry screen, not an end-to-end cryptographic audit.</p>
+<figure>
+<img src="/assets/media/airchat.webp" width="1280" height="800" alt="Actual public web client in a clean browser session. No account was created; no private conversations or seed phrases are present." loading="lazy">
+<figcaption>Actual public web client in a clean browser session. No account was created; no private conversations or seed phrases are present.</figcaption>
+</figure>
+</section>
+<section id="engineering">
+<h2>Engineering highlights</h2>
+<div class="tile">
+<h3>Retry delivery, not the mutation</h3>
+<p>Idempotent mutations and cursors let a client recover after a connection loss. Signed requests and nonces address the separate problem of replay.</p>
+</div>
+<div class="tile">
+<h3>Deletion is synchronized state</h3>
+<p>A tombstone preserves the deletion. Otherwise another client can reload an old record and bring a deleted message back.</p>
+</div>
+<div class="tile">
+<h3>History and connectivity are separate</h3>
+<p>Signaling establishes peer connections; it does not become a second message database.</p>
+</div>
+</section>
+<section id="architecture">
+<h2>Architecture</h2>
+<figure class="flow">
+<div class="flow-row">
+<div class="node">
+<strong>Device A · key</strong>
+</div>
+<div class="node">
+<strong>Device B · key</strong>
+</div>
+</div>
+<div class="connector">↓ one seed identity</div>
+<div class="flow-row">
+<div class="node">
+<strong>Client-side encryption</strong>
+</div>
+</div>
+<div class="connector">↓ signed requests</div>
+<div class="flow-row">
+<div class="node emphasis">
+<strong>Sync API · ciphertext + cursor</strong>
+</div>
+</div>
+<div class="connector">↓ pull → decrypt → apply</div>
+<div class="flow-row">
+<div class="node">
+<strong>Local projection</strong>
+</div>
+<div class="node">
+<strong>Separate WebRTC signaling</strong>
+</div>
+</div>
+</figure>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Layer</th>
+<th scope="col">Technology &amp; purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>React Native, Expo 55, TypeScript; web and native clients</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Node.js, cloud-vault / sync, separate WebRTC signaling</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>Client SQLite; encrypted entities, revisions and server cursors</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>BIP39, did:key, @noble; client-side keys and encryption</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tradeoffs">
+<h2>Trade-offs & lessons</h2>
+<p>Seed-based recovery removes dependence on a phone number, but the operator cannot reset a lost phrase. Encrypted records protect content, not all connection and synchronization metadata.</p>
+<h3>What the implementation taught</h3>
+<p>A core sync failure mode is a locally successful deletion that does not survive a later pull. Deletion is therefore record state, and the cursor advances after application. This is an architectural risk, not a fabricated incident story.</p>
+<h3>What I would improve now</h3>
+<p>I would prioritize reproducible two-device scenarios: concurrent edits, deletion while offline, recovery and device revocation. Evidence from those runs is more useful than a broad “secure messenger” claim.</p>
+</section>
+<section id="operations">
+<h2>Operations & data</h2>
+<p>Sync, signaling and notifications are separate services. Source includes log scrubbing and Sentry integration. Native clients require platform builds and dependencies; web has its own capability limits.</p>
+<h3>Data & migrations</h3>
+<p>A mutation carries an identifier, revision, owner and tombstone. sync_entity_heads tracks local record versions; sync_state stores the cursor and sync state. Schema ownership follows service boundaries rather than one shared database for every client.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Entity</th>
+<th scope="col">Stored state</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mutation</td>
+<td>idempotency key, revision, owner, tombstone</td>
+</tr>
+<tr>
+<td>sync_entity_heads</td>
+<td>Local synchronized record version</td>
+</tr>
+<tr>
+<td>sync_state</td>
+<td>epoch, pull cursor, timestamps</td>
+</tr>
+<tr>
+<td>Media</td>
+<td>Encrypted bytes + reference; client holds the key</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Limits</h3>
+<p>Servers see metadata. Public-link posts are unencrypted. Browser key storage is weaker than native secure storage. Sync and calls require connectivity. No independent cryptographic audit is claimed here.</p>
+</section>
+<section id="evidence">
+<h2>Evidence & source</h2>
+<div class="callout">
+<p>
+<strong>Verified 24 Sep 2026:</strong> 71 sync/vault checks; local /health responds. These are targeted checks of the described decisions, not a full application audit.</p>
+</div>
+<p class="fact-note">Claims above are tied to public code and documentation. Evidence links point to the reviewed revision; CI status may change.</p>
+<ul class="sources">
+<li>
+<a href="https://github.com/kevinscott66/airchat/blob/c6b682234fda292296a5325f8a3481d87f14e4b4/docs/sync-architecture.md">Sync architecture</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/airchat/blob/c6b682234fda292296a5325f8a3481d87f14e4b4/server/cloud-vault/index.js">Cloud-vault service</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/airchat/blob/c6b682234fda292296a5325f8a3481d87f14e4b4/src/core">Client sync implementation</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/airchat/blob/c6b682234fda292296a5325f8a3481d87f14e4b4/SECURITY.md">Threat model</a>
+</li>
+</ul>
+<p>
+<a href="https://github.com/kevinscott66/airchat/actions/workflows/ci.yml">CI / checks</a> · <a href="https://github.com/kevinscott66/airchat/blob/main/LICENSE">MIT licence</a> · <a href="https://github.com/kevinscott66/airchat#quick-start">Quick start</a>
+</p>
+</section>
+</article>
+</div>
+</div>
+</main>
+<section class="contact" id="contact">
+<div class="wrap">
+<div>
+<p class="eyebrow">Have a problem or an idea?</p>
+<h2>Let’s talk.</h2>
+<p>A project, a partnership or a strong team — I’m open to a conversation.</p>
+</div>
+<div class="actions">
+<a class="button primary" href="https://t.me/dobropalm">Telegram</a>
+<a class="button" href="mailto:hello@dobropalm.tech">Email</a>
+</div>
+</div>
+</section>
+<footer>
+<div class="wrap">
+<p>© 2026 dobropalm · Alexander Pavlovich</p>
+<p>
+<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Reviewed 24 Sep 2026</p>
+</div>
+</footer>
+</body>
+</html>

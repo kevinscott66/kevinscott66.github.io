@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AirChat — Переписка, ключ от которой остаётся у вас · dobropalm</title>
+<meta name="description" content="Мессенджер без номера телефона и регистрации. Ваша seed-фраза — ваш аккаунт: одна идентичность открывает зашифрованную историю на другом устройстве.">
+<meta name="theme-color" content="#090d16">
+<link rel="canonical" href="https://dobropalm.tech/ru/case-studies/airchat/">
+<link rel="alternate" hreflang="ru" href="https://dobropalm.tech/ru/case-studies/airchat/">
+<link rel="alternate" hreflang="en" href="https://dobropalm.tech/case-studies/airchat/">
+<link rel="alternate" hreflang="x-default" href="https://dobropalm.tech/case-studies/airchat/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AirChat — Переписка, ключ от которой остаётся у вас · dobropalm">
+<meta property="og:description" content="Мессенджер без номера телефона и регистрации. Ваша seed-фраза — ваш аккаунт: одна идентичность открывает зашифрованную историю на другом устройстве.">
+<meta property="og:url" content="https://dobropalm.tech/ru/case-studies/airchat/">
+<meta property="og:image" content="https://dobropalm.tech/assets/og-ru.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AirChat — Переписка, ключ от которой остаётся у вас">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">К содержимому</a>
+<header class="nav">
+<div class="wrap">
+<a class="brand" href="/ru/">
+<b>◈</b> dobropalm</a>
+<nav class="navlinks" aria-label="Основная навигация">
+<a href="/ru/#work">Проекты</a>
+<a class="desktop" href="/ru/#demos">Демо</a>
+<a class="desktop" href="/ru/#about">Обо мне</a>
+<a href="/ru/#contact">Контакт</a>
+<a class="language" lang="en" hreflang="en" href="/case-studies/airchat/">EN</a>
+</nav>
+</div>
+</header>
+<main id="main">
+<div class="wrap">
+<header class="case-hero">
+<p class="crumb">
+<a href="/ru/#work">← Все проекты</a>
+</p>
+<div class="badges">
+<span class="badge">Активная разработка · web доступен</span>
+<span class="badge neutral">AirChat</span>
+</div>
+<h1>Переписка, ключ от которой остаётся у вас</h1>
+<p class="lead">Мессенджер без номера телефона и регистрации. Ваша seed-фраза — ваш аккаунт: одна идентичность открывает зашифрованную историю на другом устройстве.</p>
+<div class="actions">
+<a class="button primary" href="https://github.com/kevinscott66/airchat">Исходники</a>
+<a class="button" href="/ru/#demos">Смотреть демо</a>
+</div>
+<div class="case-meta">
+<div>
+<span class="label">Моя роль</span>
+<p>Логика продукта, модель аккаунта и архитектура</p>
+</div>
+<div>
+<span class="label">Этап / дата</span>
+<p>Текущее состояние: сентябрь 2026</p>
+</div>
+<div>
+<span class="label">Формат разработки</span>
+<p>Логика и архитектура — мои решения. Код создаётся с AI-инструментами.</p>
+</div>
+</div>
+</header>
+<div class="case-layout">
+<aside class="case-nav" aria-label="Содержание кейса">
+<a href="#problem">Задача и мой вклад</a>
+<a href="#outcome">Что получилось</a>
+<a href="#engineering">Инженерные решения</a>
+<a href="#architecture">Архитектура</a>
+<a href="#tradeoffs">Компромиссы и выводы</a>
+<a href="#operations">Эксплуатация и данные</a>
+<a href="#evidence">Проверяемые источники</a>
+</aside>
+<article class="case-body">
+<section id="problem">
+<h2>Задача и мой вклад</h2>
+<p>Смена телефона часто означает зависимость от номера, оператора аккаунта или отдельного резервного архива. Задача — дать человеку переносимый аккаунт и синхронизацию, не передавая серверу ключи от содержимого.</p>
+<div class="callout">
+<p>
+<strong>Мой вклад.</strong> Я определяю поведение аккаунта и восстановления, пользовательские сценарии, границы доверия между клиентом и сервером и конструкцию синхронизации. Отвечаю за то, чтобы техническая модель оставалась понятной человеку: что защищено, что видно серверу и что происходит при потере ключа.</p>
+</div>
+<p>Идентичность выводится из seed-фразы. Клиент шифрует записи до отправки, а сервер хранит зашифрованные сущности с ревизиями и курсорами. Локальная база служит проекцией для интерфейса. WebRTC-сигналинг отделён от хранения истории.</p>
+</section>
+<section id="outcome">
+<h2>Что получилось</h2>
+<p class="lead">Доступен браузерный клиент. В исходниках реализованы переносимая идентичность, зашифрованная синхронизация аккаунта, ревизии, удаление через tombstone и проверка принадлежности профилю. Нативные сборки дополняют web локальным LAN-обменом. Демо ниже показывает реальный экран входа, а не испытание всей криптографической модели.</p>
+<figure>
+<img src="/assets/media/airchat.webp" width="1280" height="800" alt="Реальный экран публичного web-клиента в чистой сессии. Аккаунт не создавался; личные сообщения и seed-фразы отсутствуют." loading="lazy">
+<figcaption>Реальный экран публичного web-клиента в чистой сессии. Аккаунт не создавался; личные сообщения и seed-фразы отсутствуют.</figcaption>
+</figure>
+</section>
+<section id="engineering">
+<h2>Инженерные решения</h2>
+<div class="tile">
+<h3>Повтор запроса без повтора изменения</h3>
+<p>Идемпотентные мутации и курсоры позволяют повторно доставить данные после обрыва связи. Подписанный запрос и его nonce решают отдельную задачу — защиту от повторного воспроизведения.</p>
+</div>
+<div class="tile">
+<h3>Удаление тоже синхронизируется</h3>
+<p>Tombstone сохраняет факт удаления. Иначе другой клиент может загрузить старую запись и вернуть уже удалённое сообщение.</p>
+</div>
+<div class="tile">
+<h3>История и соединение — разные сервисы</h3>
+<p>Сигналинг помогает установить связь между устройствами. Он не становится второй базой сообщений.</p>
+</div>
+</section>
+<section id="architecture">
+<h2>Архитектура</h2>
+<figure class="flow">
+<div class="flow-row">
+<div class="node">
+<strong>Устройство A · ключ</strong>
+</div>
+<div class="node">
+<strong>Устройство B · ключ</strong>
+</div>
+</div>
+<div class="connector">↓ одна seed-идентичность</div>
+<div class="flow-row">
+<div class="node">
+<strong>Шифрование на клиенте</strong>
+</div>
+</div>
+<div class="connector">↓ подписанные запросы</div>
+<div class="flow-row">
+<div class="node emphasis">
+<strong>Sync API · ciphertext + cursor</strong>
+</div>
+</div>
+<div class="connector">↓ pull → расшифровать → применить</div>
+<div class="flow-row">
+<div class="node">
+<strong>Локальная проекция</strong>
+</div>
+<div class="node">
+<strong>Отдельный WebRTC-сигналинг</strong>
+</div>
+</div>
+</figure>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Слой</th>
+<th scope="col">Технологии и назначение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>React Native, Expo 55, TypeScript; web и нативные клиенты</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Node.js, cloud-vault / sync, отдельный WebRTC-сигналинг</td>
+</tr>
+<tr>
+<td>Данные</td>
+<td>SQLite на клиенте; зашифрованные сущности, ревизии и курсоры на сервере</td>
+</tr>
+<tr>
+<td>Безопасность</td>
+<td>BIP39, did:key, @noble; ключи и шифрование на клиенте</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tradeoffs">
+<h2>Компромиссы и выводы</h2>
+<p>Восстановление через seed-фразу убирает зависимость от номера телефона, но потерю фразы нельзя исправить сбросом пароля у оператора. Зашифрованные данные скрывают содержимое, но не все метаданные соединения и синхронизации.</p>
+<h3>Что показала практика</h3>
+<p>Ключевой риск синхронизации — локально успешное удаление, которое не переживает повторную загрузку истории. Поэтому удаление моделируется как состояние записи, а курсор двигается после применения изменений. Это описанный риск архитектуры, а не выдуманная история об инциденте.</p>
+<h3>Что бы я улучшил сейчас</h3>
+<p>Сейчас я бы прежде всего расширил воспроизводимые проверки на двух устройствах: конкурирующие изменения, удаление во время офлайна, восстановление и отзыв устройства. Результаты таких прогонов полезнее общего обещания «безопасного мессенджера».</p>
+</section>
+<section id="operations">
+<h2>Эксплуатация и данные</h2>
+<p>Синхронизация, сигналинг и уведомления разделены на самостоятельные сервисы. В исходниках предусмотрены scrubber логов и Sentry. Запуск нативного клиента требует соответствующей сборки и платформенных зависимостей; web имеет собственные ограничения.</p>
+<h3>Данные и миграции</h3>
+<p>У мутации есть идентификатор, ревизия, владелец и признак удаления. sync_entity_heads хранит локальные версии, sync_state — курсор и состояние синхронизации. Схема применяется на стороне соответствующего сервиса; это не одна общая база для всех клиентов.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Сущность</th>
+<th scope="col">Что хранится</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Мутация</td>
+<td>idempotency key, revision, owner, tombstone</td>
+</tr>
+<tr>
+<td>sync_entity_heads</td>
+<td>Локальная версия синхронизируемой записи</td>
+</tr>
+<tr>
+<td>sync_state</td>
+<td>epoch, pull cursor, timestamps</td>
+</tr>
+<tr>
+<td>Медиа</td>
+<td>Зашифрованные байты + ссылка; ключ у клиента</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Ограничения</h3>
+<p>Сервер видит метаданные. Посты по публичной ссылке не зашифрованы. Защита ключей в браузере слабее нативного secure storage. Для синхронизации и звонков нужна связь. Независимый аудит криптографической системы здесь не заявляется.</p>
+</section>
+<section id="evidence">
+<h2>Проверяемые источники</h2>
+<div class="callout">
+<p>
+<strong>Проверено 24.09.2026:</strong> 71 проверка sync/vault-сервиса; локальный /health отвечает. Это целевая проверка описанных решений, не аудит всего приложения.</p>
+</div>
+<p class="fact-note">Утверждения выше связаны с публичным кодом и документацией. Ссылки закреплены за проверенной версией; статус CI по ссылке может меняться.</p>
+<ul class="sources">
+<li>
+<a href="https://github.com/kevinscott66/airchat/blob/c6b682234fda292296a5325f8a3481d87f14e4b4/docs/sync-architecture.md">Sync architecture</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/airchat/blob/c6b682234fda292296a5325f8a3481d87f14e4b4/server/cloud-vault/index.js">Cloud-vault service</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/airchat/blob/c6b682234fda292296a5325f8a3481d87f14e4b4/src/core">Client sync implementation</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/airchat/blob/c6b682234fda292296a5325f8a3481d87f14e4b4/SECURITY.md">Threat model</a>
+</li>
+</ul>
+<p>
+<a href="https://github.com/kevinscott66/airchat/actions/workflows/ci.yml">CI / checks</a> · <a href="https://github.com/kevinscott66/airchat/blob/main/LICENSE">MIT licence</a> · <a href="https://github.com/kevinscott66/airchat#quick-start">Запуск проекта</a>
+</p>
+</section>
+</article>
+</div>
+</div>
+</main>
+<section class="contact" id="contact">
+<div class="wrap">
+<div>
+<p class="eyebrow">Есть задача или идея?</p>
+<h2>Давайте обсудим.</h2>
+<p>Проект, партнёрство или сильная команда — открыт к разговору.</p>
+</div>
+<div class="actions">
+<a class="button primary" href="https://t.me/dobropalm">Telegram</a>
+<a class="button" href="mailto:hello@dobropalm.tech">Email</a>
+</div>
+</div>
+</section>
+<footer>
+<div class="wrap">
+<p>© 2026 dobropalm · Александр Павлович</p>
+<p>
+<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Проверено 24.09.2026</p>
+</div>
+</footer>
+</body>
+</html>

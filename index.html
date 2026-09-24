@@ -2,595 +2,268 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>dobropalm — Operational software engineering</title>
-<meta name="description" content="Independent engineering studio building personal AI assistants, research platforms, offline-first field software, and resilient communications. Open for partnerships and contract work.">
-<meta name="author" content="kevinscott66">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#070A14">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alexander Pavlovich — digital products &amp; AI · dobropalm</title>
+<meta name="description" content="I build digital products: AI assistants, messaging, Telegram platforms and research services. Real projects, demos and engineering case studies.">
+<meta name="theme-color" content="#090d16">
 <link rel="canonical" href="https://dobropalm.tech/">
+<link rel="alternate" hreflang="en" href="https://dobropalm.tech/">
+<link rel="alternate" hreflang="ru" href="https://dobropalm.tech/ru/">
+<link rel="alternate" hreflang="x-default" href="https://dobropalm.tech/">
 <meta property="og:type" content="website">
+<meta property="og:title" content="Alexander Pavlovich — digital products &amp; AI · dobropalm">
+<meta property="og:description" content="I build digital products: AI assistants, messaging, Telegram platforms and research services. Real projects, demos and engineering case studies.">
 <meta property="og:url" content="https://dobropalm.tech/">
-<meta property="og:title" content="dobropalm — Operational software engineering">
-<meta property="og:description" content="Personal AI assistants across Telegram, iPhone and a virtual office; research platforms, offline-first software and resilient communications.">
-<meta name="twitter:card" content="summary">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236D8BFF'/%3E%3Cstop offset='1' stop-color='%234FE3D0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%23070A14'/%3E%3Cpath d='M16 6 26 16 16 26 6 16Z' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='3.2' fill='%23070A14'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
-<script>document.documentElement.className+=" js";</script>
-<style>
-/* ==========================================================
-   dobropalm.tech — cinematic dark, motion-led
-   ========================================================== */
-@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
-
-:root{
-  --bg:#070A14;
-  --bg-2:#0B1020;
-  --surface:rgba(255,255,255,.035);
-  --surface-2:rgba(255,255,255,.06);
-  --line:rgba(255,255,255,.09);
-  --line-2:rgba(255,255,255,.16);
-  --txt:#E9EDF8;
-  --muted:#93A0BF;
-  --indigo:#6D8BFF;
-  --cyan:#4FE3D0;
-  --violet:#A78BFA;
-  --live:#34D399;
-  --grad:linear-gradient(100deg,var(--indigo),var(--cyan) 55%,var(--violet));
-  --ease:cubic-bezier(.16,1,.3,1);
-  --maxw:76rem;
-  --gut:clamp(1.15rem,4.5vw,3.5rem);
-  --r:18px;
-}
-*,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{
-  margin:0;background:var(--bg);color:var(--txt);
-  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
-  font-size:clamp(1rem,.96rem + .2vw,1.0625rem);line-height:1.6;
-  font-feature-settings:"cv02","cv03","cv04","ss01";
-  overflow-x:hidden;-webkit-font-smoothing:antialiased;
-}
-img{max-width:100%;display:block}
-a{color:var(--indigo);text-underline-offset:.2em}
-:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
-::selection{background:rgba(109,139,255,.32)}
-.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gut)}
-.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase}
-.gtext{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.skip{position:fixed;left:-9999px;top:0;z-index:200;background:var(--indigo);color:#0A0D18;padding:.85rem 1.15rem;border-radius:0 0 10px 0;font-weight:600}
-.skip:focus{left:0}
-
-/* ---------- ambient background ---------- */
-.aura{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
-.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform}
-.b1{width:52vw;height:52vw;background:radial-gradient(circle,#3757E8,transparent 66%);top:-16vw;left:-10vw;animation:drift1 26s ease-in-out infinite}
-.b2{width:44vw;height:44vw;background:radial-gradient(circle,#12A79A,transparent 66%);top:22vh;right:-14vw;opacity:.34;animation:drift2 32s ease-in-out infinite}
-.b3{width:40vw;height:40vw;background:radial-gradient(circle,#7A3DE8,transparent 66%);bottom:-12vw;left:16vw;opacity:.3;animation:drift3 38s ease-in-out infinite}
-@keyframes drift1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(8vw,7vh,0) scale(1.14)}}
-@keyframes drift2{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-9vw,-6vh,0) scale(1.2)}}
-@keyframes drift3{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(6vw,-9vh,0) scale(.88)}}
-.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
-.mesh{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
-  background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
-  background-size:72px 72px;
-  -webkit-mask-image:radial-gradient(ellipse 90% 55% at 50% 0%,#000 20%,transparent 75%);
-  mask-image:radial-gradient(ellipse 90% 55% at 50% 0%,#000 20%,transparent 75%)}
-
-/* ---------- scroll progress ---------- */
-.prog{position:fixed;top:0;left:0;height:2px;width:100%;z-index:60;background:var(--grad);transform:scaleX(0);transform-origin:0 50%}
-@supports (animation-timeline:scroll()){
-  .prog{animation:grow linear both;animation-timeline:scroll(root block)}
-  @keyframes grow{to{transform:scaleX(1)}}
-}
-
-/* ---------- header ---------- */
-.nav{position:sticky;top:0;z-index:50;padding-block:.7rem;
-  backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
-  background:rgba(7,10,20,.62);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}
-.nav.stuck{border-bottom-color:var(--line);background:rgba(7,10,20,.82)}
-.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.brand{display:inline-flex;align-items:center;gap:.6rem;color:var(--txt);text-decoration:none;font-weight:600;letter-spacing:-.01em;font-size:.95rem}
-.brand .mark{width:22px;height:22px;border-radius:7px;background:var(--grad);position:relative;flex:none}
-.brand .mark::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--bg)}
-.pills{display:none;gap:.15rem;padding:.25rem;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
-@media(min-width:900px){.pills{display:flex}}
-.pills a{position:relative;color:var(--muted);text-decoration:none;font-size:.8125rem;font-weight:500;padding:.5rem .95rem;border-radius:999px;transition:color .25s}
-.pills a:hover{color:var(--txt)}
-.pills a[aria-current="true"]{color:var(--txt)}
-.pills a[aria-current="true"]::before{content:"";position:absolute;inset:0;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);z-index:-1}
-.nav-cta{display:inline-flex;align-items:center;gap:.45rem;font-size:.8125rem;font-weight:600;text-decoration:none;color:#08101C;
-  background:var(--grad);padding:.6rem 1.05rem;border-radius:999px;min-height:40px;transition:transform .25s var(--ease),box-shadow .25s}
-.nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(109,139,255,.7)}
-
-/* ---------- buttons ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;min-height:52px;padding:.9rem 1.6rem;
-  border-radius:999px;font-weight:600;font-size:.9375rem;text-decoration:none;cursor:pointer;border:1px solid transparent;
-  transition:transform .3s var(--ease),box-shadow .3s var(--ease),background .3s,border-color .3s;will-change:transform}
-.btn svg{width:17px;height:17px;flex:none;transition:transform .3s var(--ease)}
-.btn-p{background:var(--grad);color:#08101C;box-shadow:0 12px 40px -16px rgba(109,139,255,.85)}
-.btn-p:hover{box-shadow:0 20px 55px -18px rgba(109,139,255,1)}
-.btn-p:hover svg{transform:translateX(3px)}
-.btn-s{background:var(--surface);color:var(--txt);border-color:var(--line-2)}
-.btn-s:hover{background:var(--surface-2);border-color:var(--line-2)}
-
-/* ---------- hero ---------- */
-.hero{padding-block:clamp(3.5rem,10vw,7.5rem) clamp(2.5rem,6vw,4rem);position:relative}
-.status{display:inline-flex;align-items:center;gap:.6rem;padding:.42rem .95rem .42rem .55rem;border:1px solid var(--line);border-radius:999px;
-  background:var(--surface);color:var(--muted);font-size:.78rem;font-weight:500;margin-bottom:clamp(1.5rem,3vw,2.25rem)}
-.status .ping{position:relative;width:8px;height:8px;flex:none}
-.status .ping i{position:absolute;inset:0;border-radius:50%;background:var(--live)}
-.status .ping i::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--live);animation:ping 2s cubic-bezier(0,0,.2,1) infinite}
-@keyframes ping{0%{transform:scale(1);opacity:.75}80%,100%{transform:scale(2.6);opacity:0}}
-h1{font-size:clamp(2.5rem,1.4rem + 5.4vw,5.4rem);line-height:1.03;letter-spacing:-.035em;font-weight:700;margin:0;max-width:17ch;text-wrap:balance}
-h1 .w{display:inline-block}
-.js h1 .w{opacity:0;transform:translateY(.5em) rotate(2deg);filter:blur(10px);animation:wordin .95s var(--ease) forwards}
-@keyframes wordin{to{opacity:1;transform:none;filter:blur(0)}}
-.lede{color:var(--muted);font-size:clamp(1.05rem,1rem + .45vw,1.3rem);font-weight:300;line-height:1.55;max-width:52ch;margin:1.6rem 0 0}
-.js .lede,.js .hero .cta,.js .stats{opacity:0;transform:translateY(20px);animation:up .9s var(--ease) forwards}
-@keyframes up{to{opacity:1;transform:none}}
-.js .lede{animation-delay:.55s}
-.js .hero .cta{animation-delay:.68s}
-.js .stats{animation-delay:.8s}
-.cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2.25rem}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-top:clamp(2.75rem,6vw,4.5rem);
-  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--line)}
-@media(min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
-.stat{background:rgba(11,16,32,.72);padding:1.35rem 1.25rem;backdrop-filter:blur(8px)}
-.stat b{display:block;font-size:clamp(1.6rem,1.2rem + 1.5vw,2.4rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;
-  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
-.stat span{color:var(--muted);font-size:.8125rem;display:block;margin-top:.3rem}
-
-/* ---------- marquee ---------- */
-.marq{border-block:1px solid var(--line);overflow:hidden;margin-block:clamp(2rem,5vw,3.5rem);
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
-.marq-t{display:flex;width:max-content;gap:2.6rem;padding-block:.95rem;animation:slide 42s linear infinite}
-.marq:hover .marq-t{animation-play-state:paused}
-@keyframes slide{to{transform:translateX(-50%)}}
-.marq-t span{color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:.75rem;letter-spacing:.1em;white-space:nowrap;display:flex;align-items:center;gap:2.6rem}
-.marq-t span::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--indigo);opacity:.55}
-
-/* ---------- sections ---------- */
-section{scroll-margin-top:80px}
-.head{max-width:44rem;margin-bottom:clamp(2rem,4vw,3rem)}
-.eyebrow{display:inline-flex;align-items:center;gap:.5rem;color:var(--cyan);margin-bottom:1rem}
-.eyebrow::before{content:"";width:22px;height:1px;background:var(--cyan);opacity:.6}
-h2{font-size:clamp(1.85rem,1.35rem + 2.4vw,3.15rem);line-height:1.08;letter-spacing:-.032em;font-weight:700;margin:0}
-.head p{color:var(--muted);font-weight:300;margin:.9rem 0 0;font-size:1.0625rem;max-width:46ch}
-
-/* ---------- glass card + spotlight ---------- */
-.glass{position:relative;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden;isolation:isolate}
-.glass::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .4s;
-  background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(109,139,255,.16),transparent 65%)}
-.glass:hover::before{opacity:1}
-.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .4s;
-  background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%),rgba(160,190,255,.35),transparent 62%);
-  -webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
-  mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
-  -webkit-mask-composite:xor;mask-composite:exclude;padding:1px}
-.glass:hover::after{opacity:1}
-
-/* ---------- work ---------- */
-.work-grid{display:grid;gap:clamp(1rem,2vw,1.4rem)}
-@media(min-width:980px){.work-grid{grid-template-columns:repeat(2,1fr)}
-  .work-grid .proj:first-child{grid-column:1/-1}}
-.proj{padding:clamp(1.5rem,3vw,2.4rem);display:flex;flex-direction:column;gap:1rem;
-  transition:transform .45s var(--ease),border-color .45s,background .45s}
-.proj:hover{transform:translateY(-6px);border-color:var(--line-2);background:var(--surface-2)}
-.proj-top{display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.proj .ix{font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--muted);letter-spacing:.1em}
-.badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.6875rem;line-height:1rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  padding:.375rem .65rem;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:rgba(255,255,255,.03)}
-.badge.on{color:var(--live);border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.09)}
-.badge.on i{width:6px;height:6px;border-radius:50%;background:var(--live);box-shadow:0 0 10px var(--live)}
-.proj h3{font-size:clamp(1.3rem,1.1rem + .9vw,1.85rem);line-height:1.15;letter-spacing:-.024em;font-weight:650;margin:0}
-.proj .role{color:var(--cyan);font-family:"JetBrains Mono",monospace;font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;margin-top:-.4rem}
-.proj p{color:var(--muted);font-weight:300;margin:0;line-height:1.62}
-.proj:first-child p{max-width:62ch}
-.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:auto;padding-top:.4rem}
-.chip{font-family:"JetBrains Mono",monospace;font-size:.6875rem;color:var(--muted);padding:.3rem .6rem;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.02)}
-.plink{display:inline-flex;align-items:center;gap:.45rem;color:var(--txt);text-decoration:none;font-size:.875rem;font-weight:550;min-height:40px;width:fit-content}
-.plink svg{width:14px;height:14px;transition:transform .3s var(--ease)}
-.plink:hover{color:var(--cyan)}
-.plink:hover svg{transform:translate(3px,-3px)}
-.plinks{display:flex;flex-wrap:wrap;align-items:center;gap:.2rem 1.4rem}
-.plinks .plink + .plink{color:var(--muted);font-weight:450}
-.plinks .plink + .plink:hover{color:var(--cyan)}
-
-/* ---------- bento capabilities ---------- */
-.bento{display:grid;gap:clamp(.8rem,1.6vw,1.15rem);grid-template-columns:1fr}
-@media(min-width:720px){.bento{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:1040px){
-  .bento{grid-template-columns:repeat(6,1fr)}
-  .cap:nth-child(1){grid-column:span 3}
-  .cap:nth-child(2){grid-column:span 3}
-  .cap:nth-child(3){grid-column:span 2}
-  .cap:nth-child(4){grid-column:span 2}
-  .cap:nth-child(5){grid-column:span 2}
-  .cap:nth-child(6){grid-column:span 6}
-}
-.cap{padding:clamp(1.25rem,2.4vw,1.75rem);transition:transform .4s var(--ease),border-color .4s,background .4s}
-.cap:hover{transform:translateY(-4px);border-color:var(--line-2);background:var(--surface-2)}
-.cap .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;margin-bottom:1rem;
-  background:linear-gradient(140deg,rgba(109,139,255,.22),rgba(79,227,208,.13));border:1px solid var(--line)}
-.cap .ic svg{width:19px;height:19px;stroke:var(--cyan);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.cap h3{font-size:1.075rem;font-weight:600;letter-spacing:-.015em;margin:0 0 .45rem}
-.cap p{color:var(--muted);font-weight:300;font-size:.9375rem;margin:0;line-height:1.58}
-
-/* ---------- method ---------- */
-.steps{display:grid;gap:clamp(.8rem,1.6vw,1.1rem)}
-@media(min-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
-.step{padding:clamp(1.35rem,2.5vw,1.9rem);display:grid;gap:.6rem;transition:border-color .4s,background .4s}
-.step:hover{border-color:var(--line-2);background:var(--surface-2)}
-.step .n{font-family:"JetBrains Mono",monospace;font-size:.75rem;letter-spacing:.1em;
-  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:500}
-.step h3{font-size:1.15rem;font-weight:600;letter-spacing:-.018em;margin:0}
-.step p{color:var(--muted);font-weight:300;margin:0;line-height:1.6;font-size:.9375rem}
-
-/* ---------- contact ---------- */
-.contact{position:relative;padding:clamp(2rem,5vw,4rem);border-radius:26px;overflow:hidden;
-  border:1px solid var(--line-2);background:linear-gradient(150deg,rgba(109,139,255,.14),rgba(79,227,208,.07) 45%,rgba(167,139,250,.12));
-  margin-block:clamp(3rem,7vw,5rem)}
-.contact::before{content:"";position:absolute;width:60%;aspect-ratio:1;border-radius:50%;filter:blur(80px);
-  background:radial-gradient(circle,rgba(109,139,255,.5),transparent 70%);top:-30%;left:8%;animation:drift2 24s ease-in-out infinite;pointer-events:none}
-.contact-in{position:relative;display:grid;gap:clamp(1.75rem,4vw,3rem)}
-@media(min-width:940px){.contact-in{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center}}
-.contact h2{max-width:15ch}
-.contact p{color:var(--muted);font-weight:300;margin:1.1rem 0 0;max-width:44ch}
-.chans{display:grid;gap:.7rem}
-.ch{display:flex;align-items:center;gap:.95rem;padding:1rem 1.15rem;border-radius:14px;min-height:64px;
-  border:1px solid var(--line);background:rgba(7,10,20,.42);color:var(--txt);text-decoration:none;
-  transition:transform .35s var(--ease),border-color .35s,background .35s}
-.ch:hover{transform:translateX(6px);border-color:var(--line-2);background:rgba(7,10,20,.72)}
-.ch .ci{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line)}
-.ch .ci svg{width:18px;height:18px;stroke:var(--cyan);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.ch .lbl{display:block;color:var(--muted);font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;font-family:"JetBrains Mono",monospace}
-.ch .val{display:block;font-size:.9375rem;font-weight:550;margin-top:.15rem;word-break:break-word}
-.ch .ar{margin-left:auto;color:var(--muted);transition:transform .35s var(--ease),color .35s}
-.ch:hover .ar{transform:translateX(4px);color:var(--cyan)}
-
-/* ---------- footer ---------- */
-footer{border-top:1px solid var(--line);padding-block:2rem 2.75rem}
-footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-between;align-items:center}
-footer p{margin:0;color:var(--muted)}
-footer a{color:var(--muted);text-decoration:none}
-footer a:hover{color:var(--txt)}
-
-/* ---------- scroll reveal ---------- */
-.js .rv{opacity:0;transform:translateY(26px);filter:blur(8px)}
-.js .rv.in{opacity:1;transform:none;filter:blur(0);transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease)}
-
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .js .rv,.js .rv.in{opacity:1;transform:none;filter:none;transition:none}
-  .js h1 .w,.js .lede,.js .hero .cta,.js .stats{opacity:1;transform:none;filter:none;animation:none}
-  .blob,.marq-t,.status .ping i::after,.contact::before{animation:none}
-  .prog{display:none}
-  .btn:hover,.proj:hover,.cap:hover,.ch:hover,.nav-cta:hover{transform:none}
-}
-</style>
+<meta property="og:image" content="https://dobropalm.tech/assets/og-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Alexander Pavlovich — digital products &amp; AI">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="prog" id="prog" aria-hidden="true"></div>
-<div class="aura" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
-<div class="mesh" aria-hidden="true"></div>
-<div class="grain" aria-hidden="true"></div>
-
-<header class="nav" id="nav">
-  <div class="wrap">
-    <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>dobropalm</a>
-    <nav class="pills" aria-label="Sections">
-      <a href="#work">Work</a>
-      <a href="#capabilities">Capabilities</a>
-      <a href="#method">Method</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <a class="nav-cta" href="#contact">Start a project</a>
-  </div>
-</header>
-
-<main id="main">
-
-<!-- ============ HERO ============ -->
-<section class="hero" id="top">
-  <div class="wrap">
-    <p class="status"><span class="ping" aria-hidden="true"><i></i></span>Available for contracts &amp; partnerships</p>
-    <h1><span class="w" style="animation-delay:.05s">Software</span> <span class="w" style="animation-delay:.11s">that</span> <span class="w" style="animation-delay:.17s">keeps</span> <span class="w" style="animation-delay:.23s">working</span> <span class="w" style="animation-delay:.29s">when</span> <span class="w" style="animation-delay:.35s">the</span> <span class="w gtext" style="animation-delay:.41s">network</span> <span class="w" style="animation-delay:.47s">doesn&rsquo;t.</span></h1>
-    <p class="lede">I build operational systems end to end &mdash; autonomous agent platforms, research and editorial products, offline-first field tooling, and resilient communications. Architecture through production, and the tooling that keeps it running.</p>
-    <div class="cta">
-      <a class="btn btn-p mag" href="mailto:hello@dobropalm.tech?subject=Project%20enquiry">Start a project
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6"/></svg>
-      </a>
-      <a class="btn btn-s mag" href="#work">Explore the work</a>
-    </div>
-    <div class="stats">
-      <div class="stat"><b data-count="12">12</b><span>Role-scoped agents</span></div>
-      <div class="stat" title="534,143 lines including tests in tracked .ts/.tsx files on public main: AI Agents bd0c176 and AirChat dc936dc; counted 24 September 2026"><b data-count="534" data-suffix="k">534k</b><span>Lines of TypeScript</span></div>
-      <div class="stat" title="1,840 tracked .test.ts/.test.tsx/.spec.ts/.spec.tsx files on public main: AI Agents bd0c176 and AirChat dc936dc; counted 24 September 2026. File count, not a test-run result."><b data-count="1840">1840</b><span>Test files</span></div>
-      <div class="stat"><b data-count="5">5</b><span>Featured projects</span></div>
-    </div>
-  </div>
-</section>
-
-<div class="marq" aria-hidden="true">
-  <div class="marq-t">
-    <span>TypeScript</span><span>Next.js</span><span>Bun</span><span>Claude Agent SDK</span><span>SwiftUI</span><span>MCP</span><span>React Native</span><span>Expo</span><span>Python</span><span>aiogram</span><span>Supabase</span><span>SQLite</span><span>WebRTC</span><span>IPFS</span><span>Tauri</span><span>Capacitor</span><span>Docker</span>
-    <span>TypeScript</span><span>Next.js</span><span>Bun</span><span>Claude Agent SDK</span><span>SwiftUI</span><span>MCP</span><span>React Native</span><span>Expo</span><span>Python</span><span>aiogram</span><span>Supabase</span><span>SQLite</span><span>WebRTC</span><span>IPFS</span><span>Tauri</span><span>Capacitor</span><span>Docker</span>
-  </div>
+<header class="nav">
+<div class="wrap">
+<a class="brand" href="/">
+<b>◈</b> dobropalm</a>
+<nav class="navlinks" aria-label="Main navigation">
+<a href="/#work">Projects</a>
+<a class="desktop" href="/#demos">Demos</a>
+<a class="desktop" href="/#about">About</a>
+<a href="/#contact">Contact</a>
+<a class="language" lang="ru" hreflang="ru" href="/ru/">RU</a>
+</nav>
 </div>
-
-<!-- ============ WORK ============ -->
-<section id="work">
-  <div class="wrap">
-    <div class="head rv">
-      <p class="eyebrow mono">Selected work</p>
-      <h2>Five projects, built<br>and operated end to end.</h2>
-      <p>Agent operations, communications, field tooling, community services, and research publishing. Updated <time datetime="2026-09-24">24 September 2026</time>.</p>
-    </div>
-
-    <div class="work-grid">
-
-      <article class="glass proj rv">
-        <div class="proj-top"><span class="ix">01</span><span class="badge on"><i aria-hidden="true"></i>Open source</span></div>
-        <h3>DOBROPALM Agent &mdash; a personal AI ecosystem</h3>
-        <p class="role">Architecture &middot; Agent orchestration &middot; iOS &middot; 3D</p>
-        <p>A Russian-first personal assistant with twelve specialist roles sharing a Telegram bot, a native iPhone app, browser chat and a virtual office with dedicated role workstations. Shared conversation history, scoped memory, delegation and audited tools connect the interfaces; permissions and approval gates govern execution.</p>
-        <p>Browser and iPhone conversations support voice input and spoken replies, shared history and in-chat approvals. Active development adds a 2D/3D office, cross-client role routing and a scoped read-only GitHub MCP adapter. Office changes are available on the development branch; app releases and account setup remain separate steps. Personal banking execution remains planned.</p>
-        <div class="chips"><span class="chip">Bun</span><span class="chip">TypeScript</span><span class="chip">Claude Agent SDK</span><span class="chip">SQLite WAL</span><span class="chip">SwiftUI</span><span class="chip">React Three Fiber</span><span class="chip">MCP</span></div>
-        <a class="plink" href="https://github.com/kevinscott66/ai-agents/tree/codex/virtual-office-live" rel="noopener">Explore current source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-      </article>
-
-      <article class="glass proj rv">
-        <div class="proj-top"><span class="ix">02</span><span class="badge on"><i aria-hidden="true"></i>Open source</span></div>
-        <h3>AirChat &mdash; messenger on an untrusted server</h3>
-        <p class="role">Mobile &middot; Networking &middot; Cryptography</p>
-        <p>A messenger with a seed-phrase identity: no phone number or sign-up. Encrypted account sync restores conversations on another device; servers still see routing and sync metadata. Posts shared by public link are unencrypted. The browser supports internet connectivity and WebRTC; native builds add LAN messaging. Your seed phrase is your account: no operator can issue or recover it, and the same identity unlocks your encrypted history on another device. Browser key storage offers weaker protection than native secure storage; sync and calls require connectivity.</p>
-        <div class="chips"><span class="chip">React Native</span><span class="chip">Expo 55</span><span class="chip">E2E sync</span><span class="chip">libp2p</span><span class="chip">WebRTC</span><span class="chip">LAN</span></div>
-        <div class="plinks"><a class="plink" href="https://air.dobropalm.tech" rel="noopener">Open live app<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="plink" href="https://github.com/kevinscott66/airchat" rel="noopener">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
-      </article>
-
-      <article class="glass proj rv">
-        <div class="proj-top"><span class="ix">03</span><span class="badge on"><i aria-hidden="true"></i>In production</span></div>
-        <h3>VahtaHoz &mdash; field ops for rotational crews</h3>
-        <p class="role">Product &middot; Full stack &middot; Release engineering</p>
-        <p>Warehouse and task management for rotational crews, with offline workflows for unreliable connections. Stable and beta releases use separate service-worker caches, and changes reach the stable channel through an explicit promotion. Supabase provides row-level access controls and account administration; Capacitor and Tauri package the web app for mobile and desktop.</p>
-        <div class="chips"><span class="chip">PWA</span><span class="chip">Supabase RLS</span><span class="chip">Edge Functions</span><span class="chip">Capacitor</span><span class="chip">Tauri</span></div>
-        <div class="plinks"><a class="plink" href="https://vahta.razvedchick.ru/vahtahoz.html" rel="noopener">Open live app<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="plink" href="https://github.com/kevinscott66/bazahoz" rel="noopener">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
-      </article>
-
-      <article class="glass proj rv">
-        <div class="proj-top"><span class="ix">04</span><span class="badge on"><i aria-hidden="true"></i>Open source</span></div>
-        <h3>KOM17 &mdash; community platform for Telegram</h3>
-        <p class="role">Backend &middot; Legacy migration</p>
-        <p>Invite tracking, moderation, an in-chat economy, payment integrations, games, statistics and AI text and voice assistance for Telegram communities. The migration from a single-file bot to a typed aiogram 3 service completed in May 2026. FastAPI webhooks, dependency injection and five independently versioned SQLite databases now support the modular application; the public repository is a source snapshot.</p>
-        <div class="chips"><span class="chip">Python</span><span class="chip">aiogram 3</span><span class="chip">SQLite</span><span class="chip">Docker</span><span class="chip">FastAPI</span><span class="chip">SQLAlchemy</span></div>
-        <div class="plinks"><a class="plink" href="https://t.me/kom17bot" rel="noopener">Open the bot<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="plink" href="https://github.com/kevinscott66/kom17" rel="noopener">View source<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
-      </article>
-
-      <article class="glass proj rv" id="delabs">
-        <div class="proj-top"><span class="ix">05</span><span class="badge on"><i aria-hidden="true"></i>In production</span></div>
-        <h3>DeLabs &mdash; crypto &amp; AI research platform</h3>
-        <p class="role">Product &middot; Full stack &middot; Editorial data pipelines</p>
-        <p>A Russian-language research site that brings daily briefs, activity guides, airdrop tracking and token unlocks into one searchable project catalog. Public source links sit beside the reporting; editorial revisions survive data refreshes, and a protected editor keeps corrections separate from source snapshots.</p>
-        <p>As of <time datetime="2026-09-24">24 September 2026</time>: 536 research briefs, 181 activity guides and 315 project profiles, with 22 airdrop programs tracked and 132 token unlock entries. Built with Next.js, React and TypeScript, with server-rendered pages, locally served project logos, RSS and a searchable archive.</p>
-        <div class="chips"><span class="chip">Next.js</span><span class="chip">React</span><span class="chip">TypeScript</span><span class="chip">Editorial workflows</span><span class="chip">Search &amp; RSS</span></div>
-        <div class="plinks"><a class="plink" href="https://delabs.space" rel="noopener">Open DeLabs<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a><a class="plink" href="https://delabs.space/activities" rel="noopener">Explore activity guides<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
-      </article>
-
-    </div>
-  </div>
+</header>
+<main id="main">
+<section class="hero">
+<div class="wrap hero-grid">
+<div>
+<p class="eyebrow">Alexander Pavlovich · dobropalm</p>
+<h1>From an idea<br>to a <em>working<br>product.</em>
+</h1>
+<p class="lead">I build AI assistants, apps and services. I shape the product logic, design the system and take responsibility for the outcome.</p>
+<div class="actions">
+<a class="button primary" href="/#work">Explore the work</a>
+<a class="button" href="https://t.me/dobropalm">Discuss a project</a>
+</div>
+<p class="status">Open to projects, partnerships and strong teams</p>
+</div>
+<div>
+<p class="eyebrow">A decision behind every project</p>
+<ul class="proof-list">
+<li>
+<a href="/case-studies/agent/">
+<small aria-hidden="true">↗</small>An assistant with human control</a>
+<span>Propose, explain, ask for approval</span>
+</li>
+<li>
+<a href="/case-studies/airchat/">
+<small aria-hidden="true">↗</small>An account owned by its user</a>
+<span>Seed identity and encrypted history</span>
+</li>
+<li>
+<a href="/case-studies/kom17/">
+<small aria-hidden="true">↗</small>A completed migration</a>
+<span>One execution path instead of two systems</span>
+</li>
+</ul>
+</div>
+</div>
 </section>
-
-<!-- ============ CAPABILITIES ============ -->
-<section id="capabilities" style="padding-top:clamp(4rem,9vw,7rem)">
-  <div class="wrap">
-    <div class="head rv">
-      <p class="eyebrow mono">Capabilities</p>
-      <h2>Whole problems,<br>not tickets.</h2>
-      <p>Discovery through deployment, and the operations that come after it.</p>
-    </div>
-    <div class="bento">
-
-      <div class="glass cap rv">
-        <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="m6.7 6.7 2.8 2.8m5 5 2.8 2.8m0-10.6-2.8 2.8m-5 5-2.8 2.8"/></svg></div>
-        <h3>Agent systems</h3>
-        <p>Multi-agent architectures with defined roles, budgets and escalation paths. Autonomy that is auditable, reversible, and bounded by permissions rather than by hope.</p>
-      </div>
-
-      <div class="glass cap rv">
-        <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6.2v5.4c0 4.6 3.3 8.3 8 9.4 4.7-1.1 8-4.8 8-9.4V6.2Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></div>
-        <h3>Security &amp; permissions</h3>
-        <p>Threat modelling, least-privilege design, row-level security, secret hygiene and history auditing. Defaults that deny, and logs that let you prove what actually happened.</p>
-      </div>
-
-      <div class="glass cap rv">
-        <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12a10 10 0 0 1 20 0"/><path d="M5.5 15a6.5 6.5 0 0 1 13 0"/><circle cx="12" cy="19" r="1.5"/><path d="m3 3 18 18"/></svg></div>
-        <h3>Resilient networking</h3>
-        <p>P2P and mesh transports, offline queues, conflict resolution, graceful degradation. Designed for a network assumed to fail.</p>
-      </div>
-
-      <div class="glass cap rv">
-        <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10.5 18.5h3"/></svg></div>
-        <h3>Cross-platform apps</h3>
-        <p>Native iPhone apps with SwiftUI, shared mobile and web apps with React Native, and PWAs packaged with Capacitor and Tauri. Release channels and platform limits are designed into the delivery workflow.</p>
-      </div>
-
-      <div class="glass cap rv">
-        <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V8m5 12V4m5 16v-9m5 9V7"/></svg></div>
-        <h3>Legacy migration</h3>
-        <p>Strangler-pattern rewrites of systems that cannot stop running. Incremental replacement with a working rollback at every step.</p>
-      </div>
-
-      <div class="glass cap rv">
-        <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v5m0 8v5M3 12h5m8 0h5"/><circle cx="12" cy="12" r="3.5"/></svg></div>
-        <h3>Operational tooling</h3>
-        <p>Dashboards, approval queues, health checks and deployment pipelines &mdash; the unglamorous layer that decides whether a system is genuinely operable, or merely deployed.</p>
-      </div>
-
-    </div>
-  </div>
+<section class="section" id="work">
+<div class="wrap">
+<div class="section-head">
+<div>
+<p class="eyebrow">Selected work</p>
+<h2>What’s been built</h2>
+</div>
+<p>Three detailed cases: the problem, my decisions, architecture, outcome and honest limits.</p>
+</div>
+<article class="project">
+<div class="project-media">
+<img src="/assets/media/agent.webp" width="1280" height="800" alt="Actual dashboard UI running locally. Tasks and counters are sample data; execution is disabled. This demonstrates the interface, not production usage." loading="lazy">
+</div>
+<div class="project-copy">
+<div class="badges">
+<span class="badge">DOBROPALM Agent</span>
+<span class="badge neutral">Active development</span>
+</div>
+<h3>An AI team with clear boundaries</h3>
+<p>Telegram, browser and iPhone with shared history, voice and action approvals.</p>
+<p>Challenge: connect AI to real work while keeping a person in control.</p>
+<p class="result">Outcome: history, roles and approvals connected in one system.</p>
+<p class="stack">Bun · TypeScript · SwiftUI · SQLite · Preact</p>
+<div class="actions">
+<a class="button" href="/case-studies/agent/">Read the case →</a>
+<a class="textlink" href="https://github.com/kevinscott66/ai-agents">GitHub ↗</a>
+</div>
+</div>
+</article>
+<article class="project">
+<div class="project-media">
+<img src="/assets/media/airchat.webp" width="1280" height="800" alt="Actual public web client in a clean browser session. No account was created; no private conversations or seed phrases are present." loading="lazy">
+</div>
+<div class="project-copy">
+<div class="badges">
+<span class="badge">AirChat</span>
+<span class="badge neutral">Active development · web available</span>
+</div>
+<h3>Your conversations. Your key.</h3>
+<p>Messaging without a phone number. One seed phrase unlocks encrypted history on another device.</p>
+<p>Challenge: make accounts portable without giving servers the keys to the content.</p>
+<p class="result">Outcome: an available web client and separate storage and connectivity services.</p>
+<p class="stack">React Native · Expo · WebRTC · Node.js · SQLite</p>
+<div class="actions">
+<a class="button" href="/case-studies/airchat/">Read the case →</a>
+<a class="textlink" href="https://github.com/kevinscott66/airchat">GitHub ↗</a>
+</div>
+</div>
+</article>
+<article class="project">
+<div class="project-media">
+<img src="/assets/media/kom17-architecture.svg" width="1280" height="800" alt="The actual post-migration request path, shown as an architecture illustration rather than a screenshot of private community chats." loading="lazy">
+</div>
+<div class="project-copy">
+<div class="badges">
+<span class="badge">KOM17</span>
+<span class="badge neutral">Operating product · public snapshot</span>
+</div>
+<h3>Evolve a community platform in place</h3>
+<p>Invites, moderation, economy, payments and AI in Telegram.</p>
+<p>Challenge: replace a monolith incrementally while preserving existing rules.</p>
+<p class="result">Outcome: cutover completed on 26 May 2026; legacy runtime bridge removed.</p>
+<p class="stack">Python · aiogram 3 · FastAPI · SQLAlchemy · Alembic</p>
+<div class="actions">
+<a class="button" href="/case-studies/kom17/">Read the case →</a>
+<a class="textlink" href="https://github.com/kevinscott66/kom17">GitHub ↗</a>
+</div>
+</div>
+</article>
+</div>
 </section>
-
-<!-- ============ METHOD ============ -->
-<section id="method" style="padding-top:clamp(4rem,9vw,7rem)">
-  <div class="wrap">
-    <div class="head rv">
-      <p class="eyebrow mono">Method</p>
-      <h2>Four commitments<br>on every engagement.</h2>
-    </div>
-    <div class="steps">
-      <div class="glass step rv"><span class="n">01</span><h3>Failure is the design brief</h3><p>The interesting question is never the happy path. I start from the network dropping, the token leaking, the agent going wrong &mdash; and design so the answer is a degraded but safe state, not an outage or a breach.</p></div>
-      <div class="glass step rv"><span class="n">02</span><h3>Ownership, end to end</h3><p>Architecture, implementation, tests, deployment and the operational tooling afterwards. No hand-off gap where a decision quietly gets lost between people.</p></div>
-      <div class="glass step rv"><span class="n">03</span><h3>Ship in slices</h3><p>Something real in production early, then grown. Migrations happen behind stable interfaces, so the running system is never held hostage to the rewrite.</p></div>
-      <div class="glass step rv"><span class="n">04</span><h3>Readable systems</h3><p>Code, docs and history written for whoever inherits them. Every project I hand over is one another engineer can pick up without me in the room.</p></div>
-    </div>
-  </div>
+<section class="section">
+<div class="wrap">
+<div class="section-head">
+<h2>Two more working products</h2>
+<p>Media, data and daily operations: different problems, the same goal — useful products.</p>
+</div>
+<div class="grid2">
+<article class="tile">
+<img src="/assets/media/delabs.webp" width="1280" height="800" alt="DeLabs: Research platform · operating" loading="lazy">
+<p class="label">Research platform · operating</p>
+<h3>DeLabs</h3>
+<p>From crypto media to a searchable product with sources and editorial revisions. 536 briefs, 181 guides and 315 profiles as of 24 September 2026.</p>
+<p class="stack">Next.js · React · TypeScript</p>
+<a href="https://delabs.space">Open DeLabs ↗</a>
+</article>
+<article class="tile">
+<img src="/assets/media/vahtahoz.webp" width="1280" height="800" alt="VahtaHoz: Operations product · operating" loading="lazy">
+<p class="label">Operations product · operating</p>
+<h3>VahtaHoz</h3>
+<p>Warehouse and task management for rotational crews. Offline workflows, isolated stable/beta caches and controlled releases.</p>
+<p class="stack">PWA · Supabase · Capacitor · Tauri</p>
+<a href="https://vahta.razvedchick.ru/vahtahoz.html">Open the app ↗</a>
+</article>
+</div>
+</div>
 </section>
-
-<!-- ============ CONTACT ============ -->
-<section id="contact">
-  <div class="wrap">
-    <div class="contact rv">
-      <div class="contact-in">
-        <div>
-          <p class="eyebrow mono">Contact</p>
-          <h2>Let&rsquo;s build the <span class="gtext">difficult</span> part.</h2>
-          <p>Available for contract engineering, technical partnerships and long-term product ownership. Tell me the constraint you are stuck on &mdash; the network, the trust model, the legacy system that cannot go down &mdash; and I will tell you honestly whether I am the right person for it.</p>
-          <p class="mono" style="color:var(--cyan);margin-top:1.5rem">Contract engineering &amp; product partnerships</p>
-        </div>
-        <div class="chans">
-          <a class="ch" href="mailto:hello@dobropalm.tech?subject=Project%20enquiry">
-            <span class="ci"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></span>
-            <span><span class="lbl">Email</span><span class="val">hello@dobropalm.tech</span></span>
-            <span class="ar" aria-hidden="true">&rarr;</span>
-          </a>
-          <a class="ch" href="https://t.me/dobropalm" rel="noopener">
-            <span class="ci"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 4-3.2 15.5a1 1 0 0 1-1.6.55L11.8 16.4 9.3 20l-1-6.2L20.4 5.1"/><path d="M3.2 10.6 21 4l-2.9 15"/></svg></span>
-            <span><span class="lbl">Telegram</span><span class="val">@dobropalm</span></span>
-            <span class="ar" aria-hidden="true">&rarr;</span>
-          </a>
-          <a class="ch" href="https://github.com/kevinscott66" rel="noopener">
-            <span class="ci"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 20c-4.5 1.4-4.5-2.2-6-2.6m12 4.6v-3.6c0-1 .1-1.4-.5-2 2.6-.3 5-1.3 5-5.6a4.3 4.3 0 0 0-1.2-3 4 4 0 0 0-.1-3s-1-.3-3.3 1.2a11.3 11.3 0 0 0-6 0C6.6 2.5 5.6 2.8 5.6 2.8a4 4 0 0 0-.1 3A4.3 4.3 0 0 0 4.3 8.8c0 4.3 2.4 5.3 5 5.6-.6.6-.6 1.2-.5 2V20"/></svg></span>
-            <span><span class="lbl">Code</span><span class="val">github.com/kevinscott66</span></span>
-            <span class="ar" aria-hidden="true">&rarr;</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+<section class="section" id="demos">
+<div class="wrap">
+<div class="section-head">
+<div>
+<p class="eyebrow">See it in action</p>
+<h2>Short demos</h2>
+</div>
+<p>Recorded interfaces, not promotional mockups. Silent videos with explanatory captions.</p>
+</div>
+<div class="grid2">
+<article class="demo">
+<video controls playsinline preload="none" poster="/assets/media/agent.webp" aria-label="Agent dashboard">
+<source src="/assets/media/agent-demo.mp4" type="video/mp4">
+<track kind="captions" src="/assets/media/agent-en.vtt" srclang="en" label="EN" default>
+</video>
+<h3>Agent dashboard</h3>
+<p>Overview → tasks → approvals → roles. Actual UI with sample data; server actions are disabled.</p>
+<a class="textlink" href="/assets/media/agent-demo.mp4">Open video ↗</a>
+</article>
+<article class="demo">
+<video controls playsinline preload="none" poster="/assets/media/delabs.webp" aria-label="DeLabs: from catalog to guide">
+<source src="/assets/media/delabs-demo.mp4" type="video/mp4">
+<track kind="captions" src="/assets/media/delabs-en.vtt" srclang="en" label="EN" default>
+</video>
+<h3>DeLabs: from catalog to guide</h3>
+<p>A recording of the public site: project catalog, table and activity guides. No account required.</p>
+<a class="textlink" href="/assets/media/delabs-demo.mp4">Open video ↗</a>
+</article>
+</div>
+</div>
 </section>
-
+<section class="section" id="services">
+<div class="wrap">
+<div class="section-head">
+<h2>What we can work on</h2>
+<p>Start with the problem and an outcome we can verify. Agree on scope before building.</p>
+</div>
+<div class="grid3">
+<article class="tile">
+<h3>AI &amp; automation</h3>
+<p>Assistants, Telegram bots and tool-connected workflows with explicit approvals.</p>
+</article>
+<article class="tile">
+<h3>Products &amp; interfaces</h3>
+<p>Web services, apps, dashboards and products built around content and data.</p>
+</article>
+<article class="tile">
+<h3>Evolving working systems</h3>
+<p>Incremental migration, failure recovery and understandable operations.</p>
+</article>
+</div>
+</div>
+</section>
+<section class="section" id="about">
+<div class="wrap about">
+<div>
+<p class="eyebrow">The person behind the products</p>
+<h2>Define it.<br>Build it.<br>Make it work.</h2>
+</div>
+<div>
+<p>I’m Alexander Pavlovich. Since 2022 I’ve worked in crypto and developed a channel covering activities; since 2023 I’ve also worked with AI. That experience has grown into digital products, from a research platform to an assistant and a messenger.</p>
+<p>I’m responsible for product logic, architectural decisions and the final outcome. I use AI tools in development. What matters is whether a decision can be explained, behavior can be verified and the product can keep evolving.</p>
+<div class="callout">
+<p>Open to client projects, partnerships and a company where I can make a useful contribution. Interested in people who want to build strong products together.</p>
+</div>
+<div class="actions">
+<a class="button" href="/assets/alexander-pavlovich-en.pdf">Profile & projects · PDF</a>
+<a href="https://github.com/kevinscott66">GitHub ↗</a>
+</div>
+<p class="caption">Repository history: some repositories are public snapshots rather than the full development record. Cases label this explicitly; commits have not been rewritten for presentation.</p>
+</div>
+</div>
+</section>
 </main>
-
+<section class="contact" id="contact">
+<div class="wrap">
+<div>
+<p class="eyebrow">Have a problem or an idea?</p>
+<h2>Let’s talk.</h2>
+<p>A project, a partnership or a strong team — I’m open to a conversation.</p>
+</div>
+<div class="actions">
+<a class="button primary" href="https://t.me/dobropalm">Telegram</a>
+<a class="button" href="mailto:hello@dobropalm.tech">Email</a>
+</div>
+</div>
+</section>
 <footer>
-  <div class="wrap">
-    <p class="mono">&copy; 2026 dobropalm.tech</p>
-    <p class="mono">Source released under <a href="https://opensource.org/licenses/MIT" rel="noopener">MIT</a></p>
-    <p class="mono">Built in the open</p>
-  </div>
+<div class="wrap">
+<p>© 2026 dobropalm · Alexander Pavlovich</p>
+<p>
+<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Reviewed 24 Sep 2026</p>
+</div>
 </footer>
-
-<script>
-(function(){
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---- scroll reveal (with failsafe) ---- */
-  var rv = [].slice.call(document.querySelectorAll('.rv'));
-  function showAll(){ rv.forEach(function(n){ n.classList.add('in'); }); }
-  if (reduce || !('IntersectionObserver' in window)) {
-    showAll();
-  } else {
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e,i){
-        if(!e.isIntersecting) return;
-        var el = e.target;
-        setTimeout(function(){ el.classList.add('in'); }, i*80);
-        io.unobserve(el);
-      });
-    }, { rootMargin:'0px 0px -6% 0px', threshold:0 });
-    rv.forEach(function(n){ io.observe(n); });
-    setTimeout(showAll, 3000);
-  }
-
-  /* ---- spotlight follows the pointer ---- */
-  if (!reduce && window.matchMedia('(hover:hover)').matches) {
-    document.querySelectorAll('.glass').forEach(function(card){
-      card.addEventListener('pointermove', function(e){
-        var r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-        card.style.setProperty('--my', (e.clientY - r.top) + 'px');
-      });
-    });
-  }
-
-  /* ---- magnetic buttons ---- */
-  if (!reduce && window.matchMedia('(hover:hover)').matches) {
-    document.querySelectorAll('.mag').forEach(function(b){
-      b.addEventListener('pointermove', function(e){
-        var r = b.getBoundingClientRect();
-        var x = (e.clientX - r.left - r.width/2) * .22;
-        var y = (e.clientY - r.top - r.height/2) * .32;
-        b.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-      });
-      b.addEventListener('pointerleave', function(){ b.style.transform = ''; });
-    });
-  }
-
-  /* ---- count-up stats ---- */
-  var nums = [].slice.call(document.querySelectorAll('[data-count]'));
-  if (!reduce && 'IntersectionObserver' in window) {
-    var nio = new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(!e.isIntersecting) return;
-        var el = e.target, to = +el.dataset.count, sfx = el.dataset.suffix || '', t0 = null;
-        nio.unobserve(el);
-        function tick(ts){
-          if(!t0) t0 = ts;
-          var p = Math.min((ts - t0) / 1400, 1);
-          var e2 = 1 - Math.pow(1 - p, 4);
-          el.textContent = Math.round(to * e2) + sfx;
-          if (p < 1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      });
-    }, { threshold:.4 });
-    nums.forEach(function(n){ nio.observe(n); });
-  }
-
-  /* ---- sticky header state ---- */
-  var nav = document.getElementById('nav');
-  function onScroll(){
-    nav.classList.toggle('stuck', window.scrollY > 12);
-    if (!CSS.supports('animation-timeline','scroll()')) {
-      var h = document.documentElement;
-      var max = h.scrollHeight - h.clientHeight;
-      document.getElementById('prog').style.transform =
-        'scaleX(' + (max > 0 ? h.scrollTop / max : 0) + ')';
-    }
-  }
-  addEventListener('scroll', onScroll, { passive:true });
-  onScroll();
-
-  /* ---- scroll-spy on the pill nav ---- */
-  var links = [].slice.call(document.querySelectorAll('.pills a'));
-  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
-  if ('IntersectionObserver' in window && secs.length) {
-    var sio = new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(!e.isIntersecting) return;
-        links.forEach(function(a){
-          a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id ? 'true' : 'false');
-        });
-      });
-    }, { rootMargin:'-45% 0px -50% 0px', threshold:0 });
-    secs.forEach(function(s){ sio.observe(s); });
-  }
-})();
-</script>
 </body>
 </html>

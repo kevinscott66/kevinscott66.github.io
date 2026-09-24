@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DOBROPALM Agent — An AI assistant that asks before it acts · dobropalm</title>
+<meta name="description" content="One team of AI roles across Telegram, browser and iPhone. Shared history, voice conversations and clear boundaries: the assistant can propose an action; the person keeps control.">
+<meta name="theme-color" content="#090d16">
+<link rel="canonical" href="https://dobropalm.tech/case-studies/agent/">
+<link rel="alternate" hreflang="en" href="https://dobropalm.tech/case-studies/agent/">
+<link rel="alternate" hreflang="ru" href="https://dobropalm.tech/ru/case-studies/agent/">
+<link rel="alternate" hreflang="x-default" href="https://dobropalm.tech/case-studies/agent/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DOBROPALM Agent — An AI assistant that asks before it acts · dobropalm">
+<meta property="og:description" content="One team of AI roles across Telegram, browser and iPhone. Shared history, voice conversations and clear boundaries: the assistant can propose an action; the person keeps control.">
+<meta property="og:url" content="https://dobropalm.tech/case-studies/agent/">
+<meta property="og:image" content="https://dobropalm.tech/assets/og-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="DOBROPALM Agent — An AI assistant that asks before it acts">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+<div class="wrap">
+<a class="brand" href="/">
+<b>◈</b> dobropalm</a>
+<nav class="navlinks" aria-label="Main navigation">
+<a href="/#work">Projects</a>
+<a class="desktop" href="/#demos">Demos</a>
+<a class="desktop" href="/#about">About</a>
+<a href="/#contact">Contact</a>
+<a class="language" lang="ru" hreflang="ru" href="/ru/case-studies/agent/">RU</a>
+</nav>
+</div>
+</header>
+<main id="main">
+<div class="wrap">
+<header class="case-hero">
+<p class="crumb">
+<a href="/#work">← All projects</a>
+</p>
+<div class="badges">
+<span class="badge">Active development</span>
+<span class="badge neutral">DOBROPALM Agent</span>
+</div>
+<h1>An AI assistant that asks before it acts</h1>
+<p class="lead">One team of AI roles across Telegram, browser and iPhone. Shared history, voice conversations and clear boundaries: the assistant can propose an action; the person keeps control.</p>
+<div class="actions">
+<a class="button primary" href="https://github.com/kevinscott66/ai-agents">Source code</a>
+<a class="button" href="/#demos">View demos</a>
+</div>
+<div class="case-meta">
+<div>
+<span class="label">My role</span>
+<p>Product logic, architecture and outcome ownership</p>
+</div>
+<div>
+<span class="label">Milestone / date</span>
+<p>Current snapshot: September 2026</p>
+</div>
+<div>
+<span class="label">Development approach</span>
+<p>I own logic and architecture. Code is developed with AI tools.</p>
+</div>
+</div>
+</header>
+<div class="case-layout">
+<aside class="case-nav" aria-label="Case contents">
+<a href="#problem">Problem & my contribution</a>
+<a href="#outcome">Outcome</a>
+<a href="#engineering">Engineering highlights</a>
+<a href="#architecture">Architecture</a>
+<a href="#tradeoffs">Trade-offs & lessons</a>
+<a href="#operations">Operations & data</a>
+<a href="#evidence">Evidence & source</a>
+</aside>
+<article class="case-body">
+<section id="problem">
+<h2>Problem & my contribution</h2>
+<p>A regular AI chat has limited memory and little connection to real work. Giving it tools creates another problem: crossing project boundaries, repeating an action after a failure or treating its own inference as permission.</p>
+<div class="callout">
+<p>
+<strong>My contribution.</strong> I define the assistant’s roles, interaction rules, memory boundaries and action policies. My responsibility is the product logic and system design: what it may decide, when it must ask and how the user understands what happened.</p>
+</div>
+<p>A coordinator delegates to specialist roles. History stays scoped to its owner and conversation. Sharing a fact with a project requires an explicit decision. Risky actions pass through a separate approval queue.</p>
+</section>
+<section id="outcome">
+<h2>Outcome</h2>
+<p class="lead">The source implements shared browser/iPhone conversations, voice input and spoken replies, message history with actual role attribution and in-chat approvals. These are delivered capabilities; no unmeasured time savings or user counts are claimed.</p>
+<figure>
+<img src="/assets/media/agent.webp" width="1280" height="800" alt="Actual dashboard UI running locally. Tasks and counters are sample data; execution is disabled. This demonstrates the interface, not production usage." loading="lazy">
+<figcaption>Actual dashboard UI running locally. Tasks and counters are sample data; execution is disabled. This demonstrates the interface, not production usage.</figcaption>
+</figure>
+</section>
+<section id="engineering">
+<h2>Engineering highlights</h2>
+<div class="tile">
+<h3>Do not repeat an unknown outcome</h3>
+<p>Losing a response does not prove an action failed. Provider fallback is restricted to eligible failures before execution.</p>
+</div>
+<div class="tile">
+<h3>Memory with provenance</h3>
+<p>Facts reference source messages. Ownership, revision checks and writes share a transaction, so a stale model response cannot overwrite newer memory.</p>
+</div>
+<div class="tile">
+<h3>Delegate only when useful</h3>
+<p>The coordinator selects relevant roles. Call limits and cycle detection keep delegation bounded.</p>
+</div>
+</section>
+<section id="architecture">
+<h2>Architecture</h2>
+<figure class="flow">
+<div class="flow-row">
+<div class="node">
+<strong>Telegram</strong>
+</div>
+<div class="node">
+<strong>Browser / iPhone</strong>
+</div>
+</div>
+<div class="connector">↓ request and history</div>
+<div class="flow-row">
+<div class="node">
+<strong>Coordinator + roles</strong>
+</div>
+</div>
+<div class="connector">↓ proposed action</div>
+<div class="flow-row">
+<div class="node emphasis">
+<strong>Permissions → approval</strong>
+</div>
+</div>
+<div class="connector">↓ validated execution</div>
+<div class="flow-row">
+<div class="node">
+<strong>Tools</strong>
+</div>
+<div class="node">
+<strong>SQLite + audit log</strong>
+</div>
+</div>
+</figure>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Layer</th>
+<th scope="col">Technology &amp; purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interfaces</td>
+<td>Telegram, Preact, SwiftUI; browser chat</td>
+</tr>
+<tr>
+<td>Backend / AI</td>
+<td>Bun, TypeScript, role orchestration, Claude Agent SDK</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>SQLite WAL; conversations, tasks, approvals, project memory</td>
+</tr>
+<tr>
+<td>Infrastructure</td>
+<td>systemd, GitHub Actions, separate execution bridge</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="tradeoffs">
+<h2>Trade-offs & lessons</h2>
+<p>SQLite keeps operations simple and memory updates atomic, but long operations in one process need care. Voice uses recording → transcription → response → synthesis: easier to control, but not full-duplex speech.</p>
+<h3>What the implementation taught</h3>
+<p>A documented dashboard defect counted “not paused” as “online”, allowing 12/12 above red indicators. The fix made the counter and indicators use the same health predicate. Lesson: process state and readiness to do work are different facts.</p>
+<h3>What I would improve now</h3>
+<p>I would start with one executable scenario set across Telegram, browser and iPhone, then measure response latency and time to an approved action. This is a next step, not a claimed result.</p>
+</section>
+<section id="operations">
+<h2>Operations & data</h2>
+<p>The service and dashboard are deployed separately from the signed iPhone build. Queues, action logs and health states distinguish completed work, pending decisions and failures. Credentials and production databases are excluded from the public repository.</p>
+<h3>Data & migrations</h3>
+<p>A conversation belongs to an owner; project membership is a separate mapping. Chat memory carries a revision, proposals snapshot it, and approved knowledge preserves provenance. New tables are additive to the existing conversation store.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Layer</th>
+<th scope="col">Relationship / rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conversations</td>
+<td>owner → conversation → messages</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>conversation → revision + sourceMessageIds</td>
+</tr>
+<tr>
+<td>Projects</td>
+<td>project → approved knowledge</td>
+</tr>
+<tr>
+<td>Approvals</td>
+<td>proposal → owner decision → action</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Limits</h3>
+<p>Provider accounts and owner setup are required. Working conversations are not public demos. The 2D/3D office and GitHub MCP adapter remain on a development branch; banking execution is not presented as a shipped capability.</p>
+</section>
+<section id="evidence">
+<h2>Evidence & source</h2>
+<div class="callout">
+<p>
+<strong>Verified 24 Sep 2026:</strong> 15 memory/fallback checks; dashboard build. These are targeted checks of the described decisions, not a full application audit.</p>
+</div>
+<p class="fact-note">Claims above are tied to public code and documentation. Evidence links point to the reviewed revision; CI status may change.</p>
+<ul class="sources">
+<li>
+<a href="https://github.com/kevinscott66/ai-agents/blob/bd0c17627f8f4fd176afdd093083f37363d08685/docs/native-knowledge.md">Memory boundaries &amp; schema</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/ai-agents/blob/bd0c17627f8f4fd176afdd093083f37363d08685/docs/conversational-voice.md">Voice architecture</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/ai-agents/blob/bd0c17627f8f4fd176afdd093083f37363d08685/agent/tests/native-knowledge.test.ts">Memory regression tests</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/ai-agents/blob/bd0c17627f8f4fd176afdd093083f37363d08685/agent/tests/mac-provider-fallback.test.ts">Provider fallback tests</a>
+</li>
+<li>
+<a href="https://github.com/kevinscott66/ai-agents/blob/bd0c17627f8f4fd176afdd093083f37363d08685/agent/miniapp/src/pages/Dashboard.tsx">Dashboard health correction</a>
+</li>
+</ul>
+<p>
+<a href="https://github.com/kevinscott66/ai-agents/actions/workflows/checks.yml">CI / checks</a> · <a href="https://github.com/kevinscott66/ai-agents/blob/main/LICENSE">MIT licence</a> · <a href="https://github.com/kevinscott66/ai-agents#quick-start">Quick start</a>
+</p>
+</section>
+</article>
+</div>
+</div>
+</main>
+<section class="contact" id="contact">
+<div class="wrap">
+<div>
+<p class="eyebrow">Have a problem or an idea?</p>
+<h2>Let’s talk.</h2>
+<p>A project, a partnership or a strong team — I’m open to a conversation.</p>
+</div>
+<div class="actions">
+<a class="button primary" href="https://t.me/dobropalm">Telegram</a>
+<a class="button" href="mailto:hello@dobropalm.tech">Email</a>
+</div>
+</div>
+</section>
+<footer>
+<div class="wrap">
+<p>© 2026 dobropalm · Alexander Pavlovich</p>
+<p>
+<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Reviewed 24 Sep 2026</p>
+</div>
+</footer>
+</body>
+</html>
