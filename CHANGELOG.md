@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-24 - Screenshot cache fix
+
+- Versioned shared CSS on all eight pages so returning mobile browsers load portrait screenshot styles instead of cached landscape cropping.
+- Added a stylesheet-version check to prevent recurrence.
+
 ## 2026-09-24 - Owner screenshots
 
 - Added original mobile screenshots for Agent, AirChat, KOM17 and VahtaHoz to both languages.

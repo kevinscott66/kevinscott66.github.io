@@ -4,6 +4,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit, unquote
 import xml.etree.ElementTree as ET
+import hashlib
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -46,6 +47,8 @@ for path in [ROOT / 'index.html', ROOT / 'ru/index.html', *ROOT.glob('case-studi
     assert p.h1 == 1 and p.canonical == 1, f'{path}: h1/canonical count'
     assert len(p.ids) == len(set(p.ids)), f'{path}: duplicate IDs'
     assert p.captions == p.videos, f'{path}: video caption track missing'
+    css_version = hashlib.sha256((ROOT / "assets/site.css").read_bytes()).hexdigest()[:12]
+    assert f"/assets/site.css?v={css_version}" in p.links, f"{path}: stale stylesheet version"
     pages[path.resolve()] = p
 assert len(pages) == 8, f'Expected 8 public pages, got {len(pages)}'
 for path, page in pages.items():

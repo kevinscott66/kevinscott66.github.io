@@ -4,7 +4,7 @@ The website is a static GitHub Pages tree. There is no application backend or bu
 
 ## Publishing
 
-`main` is served through the existing custom domain. Run `python3 tools/check_site.py`, check both languages at desktop/mobile widths, verify the PDFs visually and confirm media playback before publishing. Check GitHub Actions and the public HTTPS response after deployment.
+`main` is served through the existing custom domain. Run `python3 tools/check_site.py`, check both languages at desktop/mobile widths, verify the PDFs visually and confirm media playback before publishing. Check GitHub Actions and the public HTTPS response after deployment. Stylesheet URLs include `?v=` followed by the first 12 characters of the CSS SHA-256; update all eight references when CSS changes. The static checker enforces this to avoid new HTML using cached, incompatible image styles.
 
 ## Content ownership
 
