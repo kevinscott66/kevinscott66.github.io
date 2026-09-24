@@ -22,8 +22,12 @@ Captured 24 September 2026:
 - Agent: actual public-source Preact dashboard, local build of reviewed source, with API fixtures. Every role is paused, autonomy locked, provider actions disconnected; the image and video carry a demo label. Counters are not production metrics.
 - KOM17: authored diagram of the documented post-cutover request path, not a UI screenshot.
 
-Videos are silent MP4 with English/Russian WebVTT explanation tracks and transcript-like descriptions beside the controls. Posters and `preload="none"` avoid fetching video on initial load. Images use WebP; Open Graph uses 1200×630 PNG. PDF profiles have selectable text and clickable product links.
+Videos are silent MP4 with English/Russian WebVTT explanation tracks and transcript-like descriptions beside the controls. Posters and `preload="none"` avoid fetching video on initial load. Browser captures use WebP; owner screenshots retain original JPEG; Open Graph uses 1200×630 PNG. PDF profiles have selectable text and clickable product links.
 
 ## Limits
 
 Working accounts, production logs and private operational details stay out of the public tree. No analytics or contact form is added; contact links use Telegram/email. Keep services' own release and availability requirements distinct from the portfolio release.
+
+### Owner-provided mobile screenshots (24 September 2026)
+
+The home project cards and three cases use original JPEG screenshots supplied by the owner: AirChat profile, KOM17 daily bonus, Agent Telegram dashboard and native iPhone menu. Images are copied without alteration; CSS preserves the full frame. Dashboard counts are capture-time interface values, not independently measured impact. Previous isolated Agent fixtures remain only as the explicitly labelled video/poster. Other original public captures remain available. The owner explicitly approved publication of all nine supplied screenshots. Seven visually clear screens were selected: the four above, AirChat contact card, VahtaHoz inventory and settings. Screens 4 and 6 were omitted because Telegram overlays obscure the presentation and their conversations require extra context. Operational values are screenshot contents, not portfolio impact metrics.

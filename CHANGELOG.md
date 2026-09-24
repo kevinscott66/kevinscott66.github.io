@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-24 - Owner screenshots
+
+- Added original mobile screenshots for Agent, AirChat, KOM17 and VahtaHoz to both languages.
+- Replaced three project-card previews and case illustrations with full-frame product UI; retained architecture diagrams and labelled demo footage.
+
 ## 2026-09-24 - Evidence-led portfolio
 
 - Replaced code-size counters with outcomes, product purpose and personal contribution.
