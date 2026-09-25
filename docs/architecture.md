@@ -4,7 +4,13 @@ The website is a static GitHub Pages tree. There is no application backend or bu
 
 ## Publishing
 
-`main` is served through the existing custom domain. Run `python3 tools/check_site.py`, check both languages at desktop/mobile widths, verify the PDFs visually and confirm media playback before publishing. Check GitHub Actions and the public HTTPS response after deployment. Stylesheet URLs include `?v=` followed by the first 12 characters of the CSS SHA-256; update all eight references when CSS changes. The static checker enforces this to avoid new HTML using cached, incompatible image styles.
+`main` is served through the existing custom domain. Run `python3 tools/check_site.py`, check both languages at desktop/mobile widths, verify the PDFs visually and confirm media playback before publishing. Check GitHub Actions and the public HTTPS response after deployment. Stylesheet URLs include `?v=` followed by the first 12 characters of the CSS SHA-256; run `python3 tools/sync_assets.py` to update all eight references when CSS changes. The static checker enforces this to avoid new HTML using cached, incompatible image styles.
+
+## Maintenance tools
+
+`tools/site_common.py` defines the supported languages, cases, routes and stylesheet hash. HTML remains hand-editable and deployable as-is: tools are development checks, not a site build. `sync_assets.py` validates all references before writing and is idempotent. `check_site.py` checks exact sitemap/canonical routes, reciprocal language links, language-specific metadata, per-video caption tracks, intrinsic image dimensions and full-frame portrait classes. `test_site.py` exercises common publication failures in temporary copies. Both check commands run in CI.
+
+CSS uses readable blocks and explicit `portrait` image classes. Shared full-frame rules override landscape previews for phone screenshots, including in case studies and product cards. Original media and bilingual copy are preserved.
 
 ## Content ownership
 
