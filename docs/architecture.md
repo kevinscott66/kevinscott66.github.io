@@ -41,3 +41,9 @@ The home project cards and three cases use original JPEG screenshots supplied by
 ## Commit attribution
 
 The author remains `kevinscott66` with the exact owner noreply address. GitHub rebase may set the committer display name to `Alexander Pavlovich`; this is accepted only with that same owner address. GitHub platform commits remain allowed. Additional author trailers are rejected. This does not authorize another account.
+
+## Audience-first presentation (25 September 2026)
+
+The home prioritizes client problems and concrete capabilities: Agent, VahtaHoz, KOM17, then AirChat and DeLabs. Collaboration explicitly seeks a developer partner, as confirmed by the owner. The four-step client process sets expectations without invented price or delivery promises. Engineering evidence remains in case studies. See [audience-check.md](audience-check.md) for human research questions and outstanding demo evidence.
+
+`delabs-walkthrough.mp4` is a 23.52-second read-only recording from the public activity table to a guide and its steps, captured25 September2026. Original recording trimmed to remove initial loading; no product UI or result synthesized. Matching bilingual captions and a real screenshot poster are provided. No wallet connected or activity performed. Previous demo assets retained for existing links.
