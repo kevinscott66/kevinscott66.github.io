@@ -37,3 +37,7 @@ Working accounts, production logs and private operational details stay out of th
 ### Owner-provided mobile screenshots (24 September 2026)
 
 The home project cards and three cases use original JPEG screenshots supplied by the owner: AirChat profile, KOM17 daily bonus, Agent Telegram dashboard and native iPhone menu. Images are copied without alteration; CSS preserves the full frame. Dashboard counts are capture-time interface values, not independently measured impact. Previous isolated Agent fixtures remain only as the explicitly labelled video/poster. Other original public captures remain available. The owner explicitly approved publication of all nine supplied screenshots. Seven visually clear screens were selected: the four above, AirChat contact card, VahtaHoz inventory and settings. Screens 4 and 6 were omitted because Telegram overlays obscure the presentation and their conversations require extra context. Operational values are screenshot contents, not portfolio impact metrics.
+
+## Commit attribution
+
+The author remains `kevinscott66` with the exact owner noreply address. GitHub rebase may set the committer display name to `Alexander Pavlovich`; this is accepted only with that same owner address. GitHub platform commits remain allowed. Additional author trailers are rejected. This does not authorize another account.

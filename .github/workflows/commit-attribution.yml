@@ -31,6 +31,8 @@ jobs:
 
           # The single identity allowed to appear anywhere in this repository.
           OWNER_NAME='kevinscott66'
+          # GitHub rebase uses the profile display name with the same account email.
+          OWNER_DISPLAY_NAME='Alexander Pavlovich'
           OWNER_EMAIL='156429557+kevinscott66@users.noreply.github.com'
           # GitHub signs web-UI edits and merge commits with this committer.
           # It is a platform signature, not a person, and never becomes a contributor.
@@ -69,7 +71,7 @@ jobs:
             fi
 
             # The committer is shown in the UI next to the author.
-            if [[ "$committer_name" != "$OWNER_NAME" || "$committer_email" != "$OWNER_EMAIL" ]] \
+            if [[ ( "$committer_name" != "$OWNER_NAME" && "$committer_name" != "$OWNER_DISPLAY_NAME" ) || "$committer_email" != "$OWNER_EMAIL" ]] \
                && [[ "$committer_name" != "$WEB_NAME" || "$committer_email" != "$WEB_EMAIL" ]]; then
               printf 'ERROR: %s committer is %q <%s>; expected %q <%s> (%s)\n' \
                 "$commit" "$committer_name" "$committer_email" \
