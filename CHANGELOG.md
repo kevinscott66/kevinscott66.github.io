@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-25 - Client and developer collaboration paths
+
+- Reframed both homepages around workflow problems, product capabilities and a concrete first message.
+- Promoted VahtaHoz and simplified project descriptions; retained technical cases.
+- Added a four-step collaboration process and an explicit developer-partner invitation.
+- Added a real DeLabs comparison-to-guide walkthrough and bilingual captions.
+- Documented the audience research plan and remaining authenticated demo needs.
+
 ## 2026-09-25 - Portfolio maintenance refactor
 
 - Formatted shared styles and consolidated portrait screenshot behavior.
