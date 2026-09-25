@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-25 - Portfolio maintenance refactor
+
+- Formatted shared styles and consolidated portrait screenshot behavior.
+- Added an idempotent CSS-version synchronization command.
+- Centralized route/version helpers and strengthened translation, metadata, sitemap and per-video caption checks.
+- Added six regression checks to CI and documented the editing workflow.
+- Preserved product copy, routes, original screenshots, videos and PDF profiles.
+
 ## 2026-09-24 - Screenshot cache fix
 
 - Versioned shared CSS on all eight pages so returning mobile browsers load portrait screenshot styles instead of cached landscape cropping.

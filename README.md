@@ -1,5 +1,7 @@
 # dobropalm.tech
 
+[Русский README](README.ru.md)
+
 [![Static site checks](https://github.com/kevinscott66/kevinscott66.github.io/actions/workflows/site-checks.yml/badge.svg)](https://github.com/kevinscott66/kevinscott66.github.io/actions/workflows/site-checks.yml) · [MIT](LICENSE)
 
 Alexander Pavlovich's product portfolio: AI assistants, messaging, community platforms, research and field software.
@@ -13,7 +15,7 @@ Alexander Pavlovich's product portfolio: AI assistants, messaging, community pla
 - A concise professional profile in PDF, in both languages.
 - Source evidence, explicit limitations and links to real products and CI.
 
-Agent footage uses the actual UI with labelled sample data and disabled execution. DeLabs footage records the public site. No private conversations are published.
+Agent footage uses the actual UI with labelled sample data and disabled execution. DeLabs footage records the public site. Additional mobile screenshots were supplied and approved for publication by the owner.
 
 ## Quick start
 
@@ -34,8 +36,20 @@ No build, framework, package installation or runtime JavaScript is required. Fon
 - `assets/site.css`: shared responsive styles.
 - `assets/media/`: screenshots, architecture image, videos and WebVTT captions.
 - `assets/`: bilingual PDF profiles and Open Graph images.
-- `tools/check_site.py`: standard-library checks for the static tree.
+- `tools/`: shared routes, CSS version synchronization and static publication checks.
 - `sitemap.xml`, `robots.txt`, `CNAME`, `.nojekyll`: GitHub Pages configuration.
+
+## Editing styles
+
+After changing `assets/site.css`, run:
+
+```bash
+python3 tools/sync_assets.py
+python3 tools/check_site.py
+python3 tools/test_site.py
+```
+
+This updates the CSS version on every page so returning browsers receive the correct layout. Use `class="portrait"` for full-frame mobile screenshots, with original width/height attributes. Keep translations and their language-switch targets aligned.
 
 ## Deployment & changes
 

@@ -11,3 +11,5 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Check links, assets and page structure
         run: python3 tools/check_site.py
+      - name: Test publication safeguards
+        run: python3 tools/test_site.py
