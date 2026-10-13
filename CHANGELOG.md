@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-13 - Source evidence refresh
+
+- Reviewed the public project inventory and linked live entry pages.
+- Added bilingual Agent primary-source checking and Codex runtime updates.
+- Added AirChat iOS OpenFlux session changes with explicit device acceptance limits.
+- Preserved dated September test results, screenshots and demo provenance.
+- Recorded source revisions and verification limits in docs/project-review-2026-10-13.md.
+
 ## 2026-09-25 - Client and developer collaboration paths
 
 - Reframed both homepages around workflow problems, product capabilities and a concrete first message.

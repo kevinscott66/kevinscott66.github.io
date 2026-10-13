@@ -61,7 +61,7 @@
 </div>
 <div>
 <span class="label">Milestone / date</span>
-<p>Current snapshot: September 2026</p>
+<p>Source update: October 2026</p>
 </div>
 <div>
 <span class="label">Development approach</span>
@@ -221,6 +221,13 @@
 </tbody>
 </table>
 </div>
+<h3>Source updates — 13 October 2026</h3>
+<p>The source adds a device-local OpenFlux session on iOS: login starts through an explicit user action and session data stays in the device Keychain. Changes also tighten publication consent and asynchronous start/stop ordering. Fresh-device login and real delivery through the tunnel remain release acceptance checks; the web client cannot run the native tunnel.</p>
+<ul class="sources">
+<li><a href="https://github.com/kevinscott66/airchat/blob/b8ad7bc0366de2d86c72d913679f5c6536e79ff4/docs/openflux-local-session.md">Local session and release acceptance</a></li>
+<li><a href="https://github.com/kevinscott66/airchat/blob/b8ad7bc0366de2d86c72d913679f5c6536e79ff4/src/core/vpn/openFluxController.ts">Start/stop ordering</a></li>
+<li><a href="https://github.com/kevinscott66/airchat/blob/b8ad7bc0366de2d86c72d913679f5c6536e79ff4/src/core/social/__tests__/publicPostConsentLifecycle.test.ts">Publication consent lifecycle</a></li>
+</ul>
 <h3>Limits</h3>
 <p>Servers see metadata. Public-link posts are unencrypted. Browser key storage is weaker than native secure storage. Sync and calls require connectivity. No independent cryptographic audit is claimed here.</p>
 </section>
@@ -270,7 +277,7 @@
 <div class="wrap">
 <p>© 2026 dobropalm · Alexander Pavlovich</p>
 <p>
-<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Reviewed 24 Sep 2026</p>
+<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Source review 13 Oct 2026</p>
 </div>
 </footer>
 </body>

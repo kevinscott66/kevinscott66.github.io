@@ -61,7 +61,7 @@
 </div>
 <div>
 <span class="label">Этап / дата</span>
-<p>Текущее состояние: сентябрь 2026</p>
+<p>Обновление исходников: октябрь 2026</p>
 </div>
 <div>
 <span class="label">Формат разработки</span>
@@ -221,6 +221,13 @@
 </tbody>
 </table>
 </div>
+<h3>Изменения исходников — 13 октября 2026</h3>
+<p>Добавлена локальная сессия OpenFlux на iOS: вход запускается явным действием пользователя, данные сессии остаются в Keychain устройства. Исходники также уточняют согласие на публикацию и порядок асинхронного запуска и остановки. Проверка входа на новом устройстве и реальной доставки через туннель остаётся условием выпуска; веб-клиент не запускает нативный туннель.</p>
+<ul class="sources">
+<li><a href="https://github.com/kevinscott66/airchat/blob/b8ad7bc0366de2d86c72d913679f5c6536e79ff4/docs/openflux-local-session.md">Локальная сессия и условия выпуска</a></li>
+<li><a href="https://github.com/kevinscott66/airchat/blob/b8ad7bc0366de2d86c72d913679f5c6536e79ff4/src/core/vpn/openFluxController.ts">Порядок запуска и остановки</a></li>
+<li><a href="https://github.com/kevinscott66/airchat/blob/b8ad7bc0366de2d86c72d913679f5c6536e79ff4/src/core/social/__tests__/publicPostConsentLifecycle.test.ts">Жизненный цикл согласия на публикацию</a></li>
+</ul>
 <h3>Ограничения</h3>
 <p>Сервер видит метаданные. Посты по публичной ссылке не зашифрованы. Защита ключей в браузере слабее нативного secure storage. Для синхронизации и звонков нужна связь. Независимый аудит криптографической системы здесь не заявляется.</p>
 </section>
@@ -270,7 +277,7 @@
 <div class="wrap">
 <p>© 2026 dobropalm · Александр Павлович</p>
 <p>
-<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Проверено 24.09.2026</p>
+<a href="https://github.com/kevinscott66">GitHub</a> · <a href="https://github.com/kevinscott66/kevinscott66.github.io">Source / MIT</a> · Сверка исходников 13.10.2026</p>
 </div>
 </footer>
 </body>
