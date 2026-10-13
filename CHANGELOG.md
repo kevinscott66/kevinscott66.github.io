@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-13 - Profile presentation
+
+- Published the Russian 11-slide project and collaboration presentation at the existing profile PDF route.
+
+
 ## 2026-10-13 - Viora public source
 
 - Added Viora to English and Russian homepages with actual UI screenshots, a fictional demo library and development status.
