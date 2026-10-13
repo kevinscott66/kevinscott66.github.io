@@ -57,3 +57,5 @@ Viora home/player PNGs render the actual public Flutter UI through a disposable 
 The Russian homepage PDF links serve the 11-slide Gamma presentation “Александр Павлович — проекты и сотрудничество”, authored in first person with real project screenshots and credited Unsplash photographs. Viora uses fictional demo records. The existing Russian PDF route is retained; the English route serves the corresponding English presentation. Native Gamma version: https://gamma.app/docs/es55d4hmer0z7jf. PDF is static.
 
 Both language presentations use the Viora home screenshot (390×844) instead of the full player. The English deck retains the six-project structure and the credited decorative photos.
+
+Project slides link to the five public repositories and, where available, the VahtaHoz app, AirChat web app, KOM17 Telegram bot and DeLabs website. No repository URL is invented for DeLabs; Agent and Viora have no public application endpoint in the presentation. Links are exported as PDF annotations.
