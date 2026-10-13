@@ -2,7 +2,7 @@
 
 ## 2026-10-13 - Viora public source
 
-- Added Viora to English and Russian homepages with its brand mark and development status.
+- Added Viora to English and Russian homepages with actual UI screenshots, a fictional demo library and development status.
 - Linked the sanitized public repository and stated the exclusion of personal music and metadata.
 
 ## 2026-10-13 - Source evidence refresh

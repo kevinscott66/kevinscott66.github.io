@@ -999,3 +999,8 @@ code {
 @media (max-width: 600px) {
   .process-list { grid-template-columns: 1fr; gap: 16px; }
 }
+
+.project-media img.viora-demo {
+  aspect-ratio: 390 / 1100;
+  object-fit: contain;
+}
