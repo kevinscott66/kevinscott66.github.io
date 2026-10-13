@@ -50,10 +50,10 @@ The home prioritizes client problems and concrete capabilities: Agent, VahtaHoz,
 
 ## Viora demo captures (13 October 2026)
 
-Viora home/player PNGs render the actual public Flutter UI through a disposable local harness. Three track titles/artists are fictional, the covers are original generated demo art, and a non-executing audio adapter simulates playing at 60/180 seconds. No audio was played or published. The owner explicitly requested this staged state. No personal library, lyrics, artwork or device data was used. The screenshot caption and alt text disclose the synthetic data. The home frame is retained at its intrinsic 390/1100 ratio.
+Viora home/player PNGs render the actual public Flutter UI through a disposable local harness. Three track titles/artists are fictional, the covers are original generated demo art, and a non-executing audio adapter simulates playing at 60/180 seconds. No audio was played or published. The owner explicitly requested this staged state. No personal library, lyrics, artwork or device data was used. The screenshot caption and alt text disclose the synthetic data. The home frame is retained at its intrinsic 390/844 ratio.
 
 ## Profile presentation (13 October 2026)
 
 The Russian homepage PDF links serve the 11-slide Gamma presentation “Александр Павлович — проекты и сотрудничество”, authored in first person with real project screenshots and credited Unsplash photographs. Viora uses fictional demo records. The existing Russian PDF route is retained; the English route serves the corresponding English presentation. Native Gamma version: https://gamma.app/docs/es55d4hmer0z7jf. PDF is static.
 
-Both language presentations use the Viora home screenshot (390×1100) instead of the full player. The English deck retains the six-project structure and the credited decorative photos.
+Both language presentations use the Viora home screenshot (390×844) instead of the full player. The English deck retains the six-project structure and the credited decorative photos.
