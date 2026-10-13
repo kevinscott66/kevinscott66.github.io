@@ -47,3 +47,7 @@ The author remains `kevinscott66` with the exact owner noreply address. GitHub r
 The home prioritizes client problems and concrete capabilities: Agent, VahtaHoz, KOM17, then AirChat and DeLabs. Collaboration explicitly seeks a developer partner, as confirmed by the owner. The four-step client process sets expectations without invented price or delivery promises. Engineering evidence remains in case studies. See [audience-check.md](audience-check.md) for human research questions and outstanding demo evidence.
 
 `delabs-walkthrough.mp4` is a 23.52-second read-only recording from the public activity table to a guide and its steps, captured25 September2026. Original recording trimmed to remove initial loading; no product UI or result synthesized. Matching bilingual captions and a real screenshot poster are provided. No wallet connected or activity performed. Previous demo assets retained for existing links.
+
+## Viora demo captures (13 October 2026)
+
+Viora home/player PNGs render the actual public Flutter UI through a disposable local harness. Three track titles/artists are fictional, the covers are original generated demo art, and a non-executing audio adapter simulates playing at 60/180 seconds. No audio was played or published. The owner explicitly requested this staged state. No personal library, lyrics, artwork or device data was used. The screenshot caption and alt text disclose the synthetic data. The home frame is retained at its intrinsic 390/1100 ratio.
