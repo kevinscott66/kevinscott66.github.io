@@ -32,3 +32,7 @@ The 24 September case-study test results remain dated historical results. They w
 From the isolated update checkout: `python3 tools/check_site.py` passed all eight pages; `python3 tools/test_site.py` passed six regression cases; `git diff --check` passed. Changed case content is checked in a browser in both languages and at desktop/mobile widths. No layout, stylesheet or media files changed, so media playback and PDF rendering were not rerun.
 
 Publication requires the owner's explicit go for the final commit under the local access policy. This source review does not assert that the October content is already deployed.
+
+## Viora addition
+
+The owner explicitly requested a new public Viora source snapshot and its inclusion in the portfolio. [Viora](https://github.com/kevinscott66/viora) is a Flutter/Dart personal music app with native import, background playback, mood selection, fragments and an optional Python/SQLite social service. The website uses its brand mark only. No App Store release, usage count, cryptographic certification or user music is claimed or published. The fresh public repository excludes original history, personal catalog/audio/artwork/lyrics, device and deployment material; test metadata is fictional. Implementation facts belong in Viora source and docs.
