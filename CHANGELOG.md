@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-13 - Viora public source
+
+- Added Viora to English and Russian homepages with its brand mark and development status.
+- Linked the sanitized public repository and stated the exclusion of personal music and metadata.
+
 ## 2026-10-13 - Source evidence refresh
 
 - Reviewed the public project inventory and linked live entry pages.
