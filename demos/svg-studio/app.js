@@ -768,15 +768,34 @@ document.querySelectorAll("[data-example]").forEach((button) =>
 );
 
 
-// Quick controls share the same actions and state as the full inspector.
-for (const [id, direction] of [["raise-object", 1], ["lower-object", -1]])
-  $(id).onclick = () => { const o = selectedObject(); if (o) { stopGesture(); moveLayer(o, direction); } };
-for (const [id, rotation, scale] of [["turn-left", -15, 0], ["turn-right", 15, 0], ["shrink", 0, -0.1], ["grow", 0, 0.1]])
+// All quick edits use the same selection and gesture lifecycle.
+function editSelectedObject(edit) {
+  const object = selectedObject();
+  if (!object) return;
+  stopGesture();
+  edit(object);
+  render();
+}
+function adjustSelectedTransform({ rotation = 0, scale = 0 }) {
+  editSelectedObject((object) => {
+    object.rotation = ((object.rotation + rotation + 180) % 360 + 360) % 360 - 180;
+    object.scale = Math.max(0.2, Math.min(3,
+      Math.round((object.scale + scale) * 100) / 100));
+  });
+}
+for (const [id, direction] of [["raise-object", 1], ["lower-object", -1]]) {
   $(id).onclick = () => {
-    const o = selectedObject();
-    if (!o) return;
+    const object = selectedObject();
+    if (!object) return;
     stopGesture();
-    o.rotation = ((o.rotation + rotation + 180) % 360 + 360) % 360 - 180;
-    o.scale = Math.max(0.2, Math.min(3, Math.round((o.scale + scale) * 100) / 100));
-    render();
+    moveLayer(object, direction);
   };
+}
+const quickTransforms = {
+  "turn-left": { rotation: -15 },
+  "turn-right": { rotation: 15 },
+  shrink: { scale: -0.1 },
+  grow: { scale: 0.1 },
+};
+for (const [id, adjustment] of Object.entries(quickTransforms))
+  $(id).onclick = () => adjustSelectedTransform(adjustment);
