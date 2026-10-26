@@ -266,11 +266,99 @@ function updateHandleSizes() {
 if (typeof ResizeObserver !== "undefined")
   new ResizeObserver(updateHandleSizes).observe($("canvas"));
 
+let layerDrag = null;
+function reorderLayerBefore(id, beforeId) {
+  const display = [...objects].reverse();
+  const from = display.findIndex(object => object.id === id);
+  if (from < 0 || id === beforeId ||
+      (beforeId !== null && !display.some(object => object.id === beforeId))) return false;
+  const [object] = display.splice(from, 1);
+  const to = beforeId === null ? display.length : display.findIndex(item => item.id === beforeId);
+  display.splice(to, 0, object);
+  if (display.every((item, index) => item === objects[objects.length - 1 - index])) return false;
+  objects = display.reverse();
+  return true;
+}
+function clearLayerDropMarkers() {
+  $("layers").querySelectorAll(".drop-before, .drop-after, .layer-dragging").forEach(row =>
+    row.classList.remove("drop-before", "drop-after", "layer-dragging"));
+}
+function cancelLayerDrag() {
+  if (!layerDrag) return;
+  const { pointerId, frame } = layerDrag;
+  layerDrag = null;
+  if (frame != null) cancelAnimationFrame(frame);
+  if ($("layers").hasPointerCapture(pointerId)) $("layers").releasePointerCapture(pointerId);
+  clearLayerDropMarkers();
+}
+function updateLayerDrop() {
+  if (!layerDrag?.active) return;
+  clearLayerDropMarkers();
+  layerDrag.row.classList.add("layer-dragging");
+  const rows = [...$("layers").querySelectorAll("[data-layer-id]")]
+    .filter(row => Number(row.dataset.layerId) !== layerDrag.id);
+  const before = rows.find(row => {
+    const box = row.getBoundingClientRect();
+    return layerDrag.y < box.top + box.height / 2;
+  });
+  layerDrag.beforeId = before ? Number(before.dataset.layerId) : null;
+  if (before) before.classList.add("drop-before");
+  else rows.at(-1)?.classList.add("drop-after");
+}
+function scrollLayerDrag() {
+  if (!layerDrag?.active) return;
+  const panel = $("layers").closest(".inspector-panel");
+  const box = panel.getBoundingClientRect();
+  const scrollable = panel.scrollHeight > panel.clientHeight && getComputedStyle(panel).overflowY === "auto";
+  const top = scrollable ? box.top : 0;
+  const bottom = scrollable ? box.bottom : window.innerHeight;
+  const delta = layerDrag.y < top + 48 ? -10 : layerDrag.y > bottom - 48 ? 10 : 0;
+  if (delta) {
+    if (scrollable) panel.scrollBy(0, delta);
+    else window.scrollBy(0, delta);
+    updateLayerDrop();
+  }
+  layerDrag.frame = requestAnimationFrame(scrollLayerDrag);
+}
+function beginLayerDrag(event, id, row) {
+  if (event.button !== 0 || event.isPrimary === false || layerDrag) return;
+  event.preventDefault();
+  stopGesture();
+  layerDrag = { id, row, pointerId: event.pointerId, startX: event.clientX,
+    startY: event.clientY, y: event.clientY, active: false, beforeId: null, frame: null };
+  $("layers").setPointerCapture(event.pointerId);
+}
+$("layers").onpointermove = event => {
+  if (!layerDrag || event.pointerId !== layerDrag.pointerId) return;
+  event.preventDefault();
+  layerDrag.y = event.clientY;
+  if (!layerDrag.active) {
+    if (Math.hypot(event.clientX - layerDrag.startX, event.clientY - layerDrag.startY) < 6) return;
+    layerDrag.active = true;
+    if (typeof requestAnimationFrame !== "undefined") layerDrag.frame = requestAnimationFrame(scrollLayerDrag);
+  }
+  updateLayerDrop();
+};
+for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
+  $("layers").addEventListener(type, event => {
+    if (!layerDrag || event.pointerId !== layerDrag.pointerId) return;
+    const { id, beforeId, active } = layerDrag;
+    cancelLayerDrag();
+    if (type === "pointerup" && active && reorderLayerBefore(id, beforeId)) {
+      render();
+      $("notice").textContent = "Порядок предметов изменён.";
+      $("layers").querySelector(`[data-layer-grip="${id}"]`)?.focus({ preventScroll: true });
+    }
+  });
+}
+
 function renderLayers() {
+  cancelLayerDrag();
   $("layers").replaceChildren();
   [...objects].reverse().forEach((o) => {
     const row = document.createElement("div"),
       name = document.createElement("button");
+    row.dataset.layerId = o.id;
     name.className = "layer-name";
     name.textContent = library.find((a) => a.id === o.asset)?.name || o.asset;
     name.onclick = () => {
@@ -279,7 +367,21 @@ function renderLayers() {
       renderCanvasSelection();
       renderSelection();
     };
-    row.append(name);
+    const grip = document.createElement("button");
+    grip.className = "layer-grip";
+    grip.textContent = "⠿";
+    grip.setAttribute("aria-label", `Порядок слоя: ${name.textContent}`);
+    grip.title = "Перетащите или используйте стрелки вверх и вниз";
+    grip.dataset.layerGrip = o.id;
+    grip.onpointerdown = event => beginLayerDrag(event, o.id, row);
+    grip.onkeydown = event => {
+      if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+      event.preventDefault();
+      stopGesture();
+      moveLayer(o, event.key === "ArrowUp" ? 1 : -1);
+      $("layers").querySelector(`[data-layer-grip="${o.id}"]`)?.focus();
+    };
+    row.append(name, grip);
     $("layers").append(row);
   });
 }
@@ -541,7 +643,7 @@ function finishDrag(e, eventName) {
   releasePointer(e.pointerId);
 }
 $("canvas").onpointerdown = (e) => {
-  if (e.button !== 0) return;
+  if (e.button !== 0 || layerDrag) return;
   const type = e.pointerType || "mouse";
   if (drag) {
     // A second touch transforms the same object; another mouse/pen or third

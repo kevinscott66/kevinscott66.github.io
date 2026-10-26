@@ -95,3 +95,5 @@ SVG Studio footer shows the confirmed administrator name, public email and links
 SVG editor selection now uses a topmost, export-stripped overlay with corner resize and rotation handles. Shared pointer ownership includes an exclusive single-pointer handle mode; proportional resize anchors the opposite corner, rotation accumulates wrapped angle deltas. Screen-sized hit targets update after transform and ResizeObserver notifications. Existing two-touch transforms remain independent.
 
 Transform overlay construction, handle gesture initialization and handle geometry updates are separate functions. Handle dimensions and corner signs share constants; wrapped angular accumulation is reused by rotation handles and two-touch gestures.
+
+Layer-list reorder uses a separate exclusive captured pointer, a movement threshold and a before-object insertion target in displayed top-first order. Only owner pointerup commits the reordered objects array; cancellation and list rebuild release capture and animation. Drop markers do not rebuild the list. A requestAnimationFrame loop scrolls the panel or viewport near its edge; keyboard grips reuse moveLayer.

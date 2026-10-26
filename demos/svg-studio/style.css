@@ -916,3 +916,12 @@ body.privacy-page { height: auto; min-height: 100%; overflow: auto; }
 #canvas .handle-nw, #canvas .handle-se { cursor: nwse-resize; }
 #canvas .handle-ne, #canvas .handle-sw { cursor: nesw-resize; }
 #canvas .handle-rotate { cursor: crosshair; }
+
+#layers > div { position: relative; }
+#layers .layer-grip { flex: 0 0 44px; color: var(--muted); background: transparent; border-color: transparent; font-size: 22px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+#layers .layer-grip:hover { color: var(--text); background: var(--hover); }
+#layers .layer-grip:active { cursor: grabbing; }
+#layers .layer-dragging { opacity: .45; }
+#layers .drop-before::before, #layers .drop-after::after { content: ""; position: absolute; left: 0; right: 0; height: 2px; background: var(--accent); pointer-events: none; }
+#layers .drop-before::before { top: -1px; }
+#layers .drop-after::after { bottom: -1px; }

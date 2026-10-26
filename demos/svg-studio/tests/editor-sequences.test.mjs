@@ -30,7 +30,7 @@ function editor() {
   };
   const context = vm.createContext({
     document: { getElementById: control, querySelectorAll: () => [],
-      createElement: () => ({ children: [], append(...nodes) { this.children.push(...nodes); } }),
+      createElement: () => ({ children: [], dataset: {}, setAttribute() {}, append(...nodes) { this.children.push(...nodes); } }),
     },
     initialLibrary: library,
     DOMPoint: class {
@@ -658,5 +658,44 @@ test("rotation handle supports mouse and touch, crosses angle boundary and cance
     canvas.onpointerdown(touch(2,id,700,400));assert.equal(canvas.capturedPointers.size,1,"handle retains exclusive ownership");
     canvas.listeners.pointercancel(pointer(1,id));const before=e.state();
     canvas.onpointermove(pointer(1,id,400,100));assert.deepEqual(e.state(),before);assert.equal(canvas.capturedPointers.size,0);
+  }
+});
+
+test("layer drop uses visual top-first order without changing selection or object poses", () => {
+  const e=editor();e.run("add(library[0]);add(library[1]);add(library[2])");
+  const before=e.state(), [a,b,c]=before.objects;
+  assert.equal(e.run(`reorderLayerBefore(${a.id},${c.id})`),true);
+  assert.deepEqual(e.state().objects,[b,c,a]);assert.equal(e.state().selected,c.id);
+  assert.equal(e.run(`reorderLayerBefore(${a.id},null)`),true);
+  assert.deepEqual(e.state().objects,[a,b,c]);
+  for (const [id,target] of [[a.id,null],[b.id,a.id],[a.id,a.id],[999,c.id],[a.id,999]])
+    assert.equal(e.run(`reorderLayerBefore(${id},${target})`),false);
+  assert.deepEqual(e.state(),before);
+});
+test("layer pointer cancellation and a tap do not reorder; unrelated pointers cannot end a drag", () => {
+  const e=editor(),list=e.control("layers");e.run("add(library[0]);add(library[1])");
+  const before=e.state(), id=before.objects[0].id;
+  e.run("beginLayerDrag") (pointer(1,id,20,30),id,{});
+  list.listeners.pointerup(pointer(2,id));assert.equal(list.capturedPointers.size,1);
+  list.listeners.pointercancel(pointer(1,id));assert.equal(list.capturedPointers.size,0);assert.deepEqual(e.state(),before);
+  e.run("beginLayerDrag")(pointer(3,id,20,30),id,{});
+  list.onpointermove(pointer(3,id,22,31));list.listeners.pointerup(pointer(3,id));
+  assert.deepEqual(e.state(),before);assert.equal(list.capturedPointers.size,0);
+});
+
+test("layer drop commits only on owner release and cancellation preserves order", () => {
+  for (const finish of ["pointerup","pointercancel","lostpointercapture"]) {
+    const e=editor(),list=e.control("layers");e.run("add(library[0]);add(library[1]);add(library[2])");
+    const before=e.state(),id=before.objects[0].id;
+    const rows=before.objects.slice().reverse().map((o,i)=>({dataset:{layerId:String(o.id)},
+      classList:{add(){},remove(){}},getBoundingClientRect:()=>({top:100+i*50,height:50})}));
+    list.querySelectorAll=selector=>selector==="[data-layer-id]"?rows:[];
+    e.run("beginLayerDrag")(pointer(1,id,20,225),id,rows[2]);
+    list.onpointermove(pointer(2,id,20,80));assert.deepEqual(e.state(),before);
+    list.onpointermove(pointer(1,id,20,80));assert.deepEqual(e.state(),before,"preview does not mutate order");
+    e.control("canvas").onpointerdown(touch(2,id));assert.equal(e.control("canvas").capturedPointers.size,0);
+    list.listeners[finish](pointer(1,id));assert.equal(list.capturedPointers.size,0);
+    assert.deepEqual(e.state().objects,finish==="pointerup"?[before.objects[1],before.objects[2],before.objects[0]]:before.objects);
+    assert.equal(e.state().selected,before.selected);
   }
 });
