@@ -154,7 +154,7 @@ a:focus-visible,
   padding-inline: 19px;
 }
 .workspace {
-  height: calc(100dvh - 72px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  height: calc(100dvh - 72px - 88px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   display: grid;
   grid-template-columns: 248px minmax(0, 1fr) 228px;
   gap: 16px;
@@ -888,8 +888,6 @@ input[type="range"] {
 .layer-controls { grid-column: span 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 8px; min-width: 0; }
 .layer-controls > span { grid-column: 1 / -1; color: var(--muted); font-size: 10px; line-height: 1.2; }
 
-.privacy-link { display: flex; align-items: center; min-height: 44px; padding: 10px 18px; color: var(--muted); font-size: 12px; text-underline-offset: 3px; }
-.privacy-link:hover { color: var(--text); }
 body.privacy-page { height: auto; min-height: 100%; overflow: auto; }
 .privacy-document { width: min(100%, 760px); margin: 0 auto; padding: 32px 24px 64px; font-size: 16px; line-height: 1.7; }
 .privacy-document a { color: var(--accent); text-underline-offset: 3px; overflow-wrap: anywhere; }
@@ -898,5 +896,18 @@ body.privacy-page { height: auto; min-height: 100%; overflow: auto; }
 .privacy-document h2 { margin: 32px 0 12px; font-size: 21px; line-height: 1.35; }
 .privacy-document p { margin: 0 0 16px; }
 .privacy-document .privacy-date { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
-.privacy-document a:focus-visible, .privacy-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.privacy-document a:focus-visible, .editor-footer a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 @media (max-width: 480px) { .privacy-document { padding: 16px 20px 40px; } }
+
+.editor-footer { height: 88px; padding: 12px 24px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px 32px; color: var(--muted); font-size: 12px; }
+.footer-owner p { margin: 0; }
+.editor-footer nav { display: flex; flex-wrap: wrap; gap: 0 24px; }
+.editor-footer a { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); text-underline-offset: 4px; overflow-wrap: anywhere; }
+.editor-footer a:hover { color: var(--text); }
+@media (max-width: 1199px), (max-height: 819px) {
+  .editor-footer { height: auto; min-height: 88px; }
+}
+@media (max-width: 719px) {
+  .editor-footer { padding: 16px 20px; align-items: flex-start; flex-direction: column; gap: 8px; }
+  .editor-footer nav { gap: 0 20px; }
+}
