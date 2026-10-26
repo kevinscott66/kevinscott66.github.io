@@ -1004,3 +1004,5 @@ code {
   aspect-ratio: 390 / 844;
   object-fit: contain;
 }
+
+.project-media img.editor-preview { aspect-ratio: 16 / 9; height: auto; object-fit: contain; }
