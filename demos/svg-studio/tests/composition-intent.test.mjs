@@ -13,7 +13,7 @@ test('explicit five-item list keeps every requested object in input order withou
 test('all catalogue objects fit and repeated names do not add unrequested copies',()=>{
  assert.equal(ids(lib.map(a=>a.name).join(', ')).length,10);
  assert.deepEqual(ids('Книга, книга, кошельки'),['book','wallet']);
- for(const n of [1,2,3,5,10]) for(const [w,h] of [[800,600],[1200,800],[600,600]]) {
+ for(const n of [1,2,3,5,10,81,100]) for(const [w,h] of [[800,600],[1200,800],[600,600]]) {
   const p=compositionPositions(n,w,h);assert.equal(p.length,n);
   assert.equal(new Set(p.map(o=>`${o.x},${o.y}`)).size,n);
   assert.ok(p.every(o=>o.x>0&&o.x<w&&o.y>0&&o.y<h&&o.scale>=.2&&o.scale<=3));

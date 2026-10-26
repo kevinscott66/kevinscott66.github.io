@@ -14,7 +14,9 @@ function editor() {
   const controls = new Map();
   const control = (id) => {
     if (!controls.has(id)) controls.set(id, {
-      value: id === "scheme" ? "lavender" : "", textContent: "",
+      value: id === "scheme" ? "lavender" : "", textContent: "", children: [],
+      replaceChildren(...nodes) { this.children = nodes; },
+      append(...nodes) { this.children.push(...nodes); },
       querySelector() { return null; }, querySelectorAll() { return []; },
       listeners: {}, capturedPointers: new Set(), focused: false,
       addEventListener(type, handler) { this.listeners[type] = handler; },
@@ -27,7 +29,9 @@ function editor() {
     return controls.get(id);
   };
   const context = vm.createContext({
-    document: { getElementById: control, querySelectorAll: () => [] },
+    document: { getElementById: control, querySelectorAll: () => [],
+      createElement: () => ({ children: [], append(...nodes) { this.children.push(...nodes); } }),
+    },
     initialLibrary: library,
     DOMPoint: class {
       constructor(x, y) { this.x = x; this.y = y; }
@@ -541,4 +545,41 @@ test("malformed imported JSON gives a readable error without echoing file conten
       "Не удалось прочитать JSON. Проверьте формат файла.");
     assert.deepEqual(e.state(), before);
   }
+});
+
+
+test("adding or selecting a layer ends the previous object's captured gesture", () => {
+  for (const operation of ["add", "layer"]) {
+    const e = editor(), canvas = e.control("canvas");
+    e.run("add(library[0]); add(library[1]); selected = objects[0].id");
+    const id = e.state().selected;
+    canvas.onpointerdown(touch(1, id, 300, 300));
+    canvas.onpointerdown(touch(2, id, 500, 300));
+    if (operation === "add") e.run("add(library[2])");
+    else {
+      e.run("renderLayers()");
+      e.control("layers").children[0].children[0].onclick();
+    }
+    assert.notEqual(e.state().selected, id);
+    assert.equal(canvas.capturedPointers.size, 0, operation);
+    assert.equal(e.run("drag"), null, operation);
+    const before = e.state();
+    canvas.onpointermove(touch(2, id, 900, 700));
+    assert.deepEqual(e.state(), before, "old pointers cannot move a now-unselected object");
+  }
+});
+
+test("over-limit composition plans preserve the current picture and gesture atomically", () => {
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0]); planComposition = () => ({assets: Array(101).fill(library[1]), unknown: []})");
+  const id = e.state().selected;
+  canvas.onpointerdown(touch(1, id, 400, 300));
+  const before = e.state();
+  e.control("compose").onclick();
+  assert.deepEqual(e.state(), before);
+  assert.equal(canvas.hasPointerCapture(1), true, "rejected plan preserves the gesture");
+  assert.match(e.control("notice").textContent, /100.*текущая картинка сохранена/);
+  canvas.onpointermove(touch(1, id, 410, 320));
+  near(e.state().objects[0].x, 410);
+  near(e.state().objects[0].y, 320);
 });
