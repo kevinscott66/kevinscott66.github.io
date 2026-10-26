@@ -529,3 +529,16 @@ test("pointerdown preserves an already-selected rectangle as the native event ta
   assert.equal(removals, 0);
   assert.equal(appends, 0);
 });
+
+
+test("malformed imported JSON gives a readable error without echoing file contents", async () => {
+  const e = editor();
+  e.run("add(library[0])");
+  const before = e.state();
+  for (const [handler, input] of [["openProject", "project"], ["importPalette", "palette"]]) {
+    await e.run(handler)(e.event(input, {size: 30, text: async () => "<script>alert(1)</script>"}));
+    assert.equal(e.control("notice").textContent,
+      "Не удалось прочитать JSON. Проверьте формат файла.");
+    assert.deepEqual(e.state(), before);
+  }
+});

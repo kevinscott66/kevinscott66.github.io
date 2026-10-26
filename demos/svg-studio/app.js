@@ -377,6 +377,13 @@ $("recolor").onclick = () => {
   renderLibrary();
   render();
 };
+function parseImportedJSON(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw Error("Не удалось прочитать JSON. Проверьте формат файла.");
+  }
+}
 async function importPalette(e) {
   const file = e.target.files[0];
   e.target.value = "";
@@ -385,7 +392,7 @@ async function importPalette(e) {
   if (!file) return;
   try {
     if (file.size > MAX_PALETTE_BYTES) throw Error("Файл цветов слишком большой");
-    const p = JSON.parse(await file.text());
+    const p = parseImportedJSON(await file.text());
     if (token !== paletteReadToken) return;
     validatePalette(p);
     customPalette = p;
@@ -672,7 +679,7 @@ async function openProject(e) {
   if (!file) return;
   try {
     if (file.size > MAX_PROJECT_BYTES) throw Error("Файл проекта слишком большой");
-    const p = JSON.parse(await file.text());
+    const p = parseImportedJSON(await file.text());
     if (token !== projectReadToken) return;
     validateProject(p, file.size);
     stopGesture();

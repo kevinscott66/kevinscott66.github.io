@@ -75,3 +75,11 @@
 60Node-тестов PASS; static8/regression6 PASS. Браузер: custom «Красная книга, телефон» даёт ровно2объекта; быстрые поворот/копия/слой/удаление и реальное mouse drag PASS, console clean. Ширина393px визуально проверена, proof qa/mobile-object-tools.png. Физический iPhone после исправления native selection не проверен.
 
 Новый статический security scan df5ce0c3-df80-45c0-ab5a-1f68122add15 завершён без подтверждённых уязвимостей; partial coverage, independent worker недоступен. Отчёт относится к исходному snapshot, не ко всему итоговому патчу. Дополнительно неизвестные local SVG fragments удаляются при клонировании; безопасный fallback цвета сохраняется, ссылки других instances недоступны.
+
+## Проверка каждого пункта «Дополнительно»
+
+На публичной версии fcff3aae проверены все3file inputs. SVG: смешанная загрузка валидного+битого+duplicateIDs+>2MB даёт1успех/3ошибки, повторныйтотжефайл работает; gradients сохраняются. Active SVG fixture со script/onload/onclick/style/@import/foreignObject/image/feImage/animate/javascript/data href очищен: active tags/attrs0 в DOM и реальном экспортеXML. Unknown #canvas reference отсутствует. Для custom-art проектJSON честно недоступен, SVG скачивается.
+
+Project: learning.json открывается; malformed JSON, HTML/script вместоJSON, >1MB и asset HTML payload отклоняются без изменения3объектов. Palette: valid7colors применяется и перекрашивает пути, malformed/missing/colliding/javascript-color отклоняются безпотери состояния. Сохранён реальныйJSON с custompalette, после другойкомпозиции повторнооткрыт:3объекта и фон#cceedd восстановлены. Console clean.
+
+Локально исправлены технические англоязычные JSON parser errors: общий parseImportedJSON выдаёт русское сообщение без содержимого файла.61Node+8static+6regression PASS; локальныйброузер подтвердил сообщение. Проверки payloads не являются доказательством безопасности против любых DoS/всехбраузеров.
