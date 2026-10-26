@@ -89,3 +89,5 @@ SVG Studio версионирует CSS/JS по хешу содержимого 
 Падающая тень монеты вынесена в единую SVG-группу opacity0.24 позади корпуса; подложка покрывает только боковую грань, чтобы не создавать белый слой под полупрозрачной тенью. Генератор в tools/repair_coin_opacity.py сохраняет набор атрибутов исходных путей, меняя только группировку/порядок тени.
 
 Imported SVG-editor JSON is projected onto the supported schema after validation: object fields and seven palette keys only. Unknown extension metadata is discarded so a valid compact input cannot inflate beyond the project-size limit when saved with indentation. Layer selection updates selection visuals without rebuilding list buttons, preserving keyboard focus.
+
+SVG Studio links to privacy.html in a separate tab to preserve the open composition. The script-free notice describes browser-local file handling, GitHub Pages IP logging, administrator contact and the separate rights in supplied artwork. It adds no tracking, consent storage or remote processing. Its shared stylesheet is covered by content-hash version checks.

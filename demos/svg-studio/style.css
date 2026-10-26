@@ -887,3 +887,16 @@ input[type="range"] {
 
 .layer-controls { grid-column: span 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 8px; min-width: 0; }
 .layer-controls > span { grid-column: 1 / -1; color: var(--muted); font-size: 10px; line-height: 1.2; }
+
+.privacy-link { display: flex; align-items: center; min-height: 44px; padding: 10px 18px; color: var(--muted); font-size: 12px; text-underline-offset: 3px; }
+.privacy-link:hover { color: var(--text); }
+body.privacy-page { height: auto; min-height: 100%; overflow: auto; }
+.privacy-document { width: min(100%, 760px); margin: 0 auto; padding: 32px 24px 64px; font-size: 16px; line-height: 1.7; }
+.privacy-document a { color: var(--accent); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.privacy-back { display: inline-flex; align-items: center; min-height: 44px; }
+.privacy-document h1 { margin: 24px 0 8px; font-size: clamp(28px, 5vw, 40px); line-height: 1.2; letter-spacing: -0.03em; }
+.privacy-document h2 { margin: 32px 0 12px; font-size: 21px; line-height: 1.35; }
+.privacy-document p { margin: 0 0 16px; }
+.privacy-document .privacy-date { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+.privacy-document a:focus-visible, .privacy-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+@media (max-width: 480px) { .privacy-document { padding: 16px 20px 40px; } }
