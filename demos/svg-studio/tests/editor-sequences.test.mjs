@@ -459,6 +459,7 @@ test("owned pointer movement updates only its existing transform and suppresses 
   const existingGroup = { setAttribute(name, value) { transforms.push([name, value]); } };
   canvas.onpointerdown(touch(1, id, 400, 300));
   canvas.querySelector = () => existingGroup;
+  canvas.querySelectorAll = selector => selector.startsWith("[data-object=") ? [existingGroup] : [];
   const before = e.run("renderCalls");
   const move = touch(1, id, 425, 315);
   canvas.onpointermove(move);
@@ -494,15 +495,9 @@ test("Delete and Backspace remove only canvas-focused selection and preserve for
   }
 });
 
-test("quick controls normalize rotation, bound scale and share copy/layer/delete state", () => {
+test("object controls share copy/layer/delete state", () => {
   const e = editor();
   e.run("add(library[0], {rotation:179, scale:2.95}); add(library[1]); selected=objects[0].id");
-  e.control("turn-right").onclick(); near(e.state().objects[0].rotation, -166);
-  e.control("turn-left").onclick(); near(e.state().objects[0].rotation, 179);
-  for (let i = 0; i < 40; i++) e.control("grow").onclick();
-  near(e.state().objects[0].scale, 3);
-  for (let i = 0; i < 40; i++) e.control("shrink").onclick();
-  near(e.state().objects[0].scale, .2);
   const original = e.state().objects[0];
   e.control("raise-object").onclick();
   assert.equal(e.state().objects.at(-1).id, original.id);
@@ -523,9 +518,9 @@ test("pointerdown preserves an already-selected rectangle as the native event ta
   e.run("add(library[0])");
   const id = e.state().selected;
   let removals = 0, appends = 0;
-  const rectangle = { parentNode: { dataset: { object: String(id) } }, remove() { removals++; } };
+  const rectangle = { dataset: { object: String(id) }, remove() { removals++; } };
   const group = { querySelector: () => rectangle, append() { appends++; } };
-  canvas.querySelectorAll = () => [rectangle];
+  canvas.querySelectorAll = selector => selector === "[data-selection]" ? [rectangle] : [];
   canvas.querySelector = () => group;
   const before = e.run("renderCalls");
   canvas.onpointerdown(touch(1, id, 400, 300));
@@ -630,4 +625,38 @@ test("palette-file imports retain only supported colors in state and saved outpu
   }));
   assert.equal(e.control("notice").textContent, "Картинка открыта.");
   assert.deepEqual(e.state().customPalette, supported);
+});
+
+function handlePointer(id, objectId, x, y, mode, extra = {}) {
+  return pointer(id, objectId, x, y, {
+    target: { closest: selector => selector === "[data-transform]" ? {dataset:{transform:mode}} : {dataset:{object:String(objectId)}} },
+    ...extra,
+  });
+}
+test("corner resizing anchors the opposite corner, keeps proportions and bounds scale", () => {
+  for (const rotation of [0, 45, 170]) for (const mode of ["nw","ne","se","sw"]) {
+    const e=editor(), canvas=e.control("canvas");
+    e.run(`add(library[0], {rotation:${rotation}})`);
+    const id=e.state().selected, angle=rotation*Math.PI/180;
+    const cx=mode.includes("w")?-124:124, cy=mode.includes("n")?-124:124;
+    const vx=cx*Math.cos(angle)-cy*Math.sin(angle), vy=cx*Math.sin(angle)+cy*Math.cos(angle);
+    canvas.onpointerdown(handlePointer(1,id,400+vx,300+vy,mode));
+    canvas.onpointermove(pointer(1,id,400+3*vx,300+3*vy));
+    let o=e.state().objects[0];near(o.scale,2);near(o.x,400+vx);near(o.y,300+vy);
+    canvas.onpointermove(pointer(1,id,400+100*vx,300+100*vy));
+    o=e.state().objects[0];near(o.scale,3);near(o.x-3*vx,400-vx);near(o.y-3*vy,300-vy);
+    canvas.onpointermove(pointer(1,id,400-10*vx,300-10*vy));near(e.state().objects[0].scale,.2);
+    canvas.listeners.pointerup(pointer(1,id));assert.equal(canvas.capturedPointers.size,0);
+  }
+});
+test("rotation handle supports mouse and touch, crosses angle boundary and cancels cleanly", () => {
+  for (const type of ["mouse","touch"]) {
+    const e=editor(),canvas=e.control("canvas");e.run("add(library[0],{rotation:170})");const id=e.state().selected;
+    canvas.onpointerdown(handlePointer(1,id,300,301,"rotate",{pointerType:type}));
+    canvas.onpointermove(pointer(1,id,300,299));
+    let o=e.state().objects[0];assert.ok(o.rotation>170 && o.rotation<173);near(o.x,400);near(o.y,300);near(o.scale,1);
+    canvas.onpointerdown(touch(2,id,700,400));assert.equal(canvas.capturedPointers.size,1,"handle retains exclusive ownership");
+    canvas.listeners.pointercancel(pointer(1,id));const before=e.state();
+    canvas.onpointermove(pointer(1,id,400,100));assert.deepEqual(e.state(),before);assert.equal(canvas.capturedPointers.size,0);
+  }
 });

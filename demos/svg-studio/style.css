@@ -911,3 +911,8 @@ body.privacy-page { height: auto; min-height: 100%; overflow: auto; }
   .editor-footer { padding: 16px 20px; align-items: flex-start; flex-direction: column; gap: 8px; }
   .editor-footer nav { gap: 0 20px; }
 }
+
+#canvas .transform-handle { touch-action: none; pointer-events: all; }
+#canvas .handle-nw, #canvas .handle-se { cursor: nwse-resize; }
+#canvas .handle-ne, #canvas .handle-sw { cursor: nesw-resize; }
+#canvas .handle-rotate { cursor: crosshair; }
