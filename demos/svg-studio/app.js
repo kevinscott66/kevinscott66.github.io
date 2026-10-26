@@ -213,15 +213,43 @@ function renderCanvas() {
 function renderCanvasSelection() {
   const canvas = $("canvas");
   canvas.querySelectorAll("[data-selection]").forEach((node) => {
-    if (node.parentNode?.dataset.object !== String(selected)) node.remove();
+    if (node.dataset.object !== String(selected)) node.remove();
   });
   const group = selected == null ? null : canvas.querySelector(`[data-object="${selected}"]`);
-  if (group && !group.querySelector("[data-selection]")) group.append(el("rect", {
-    x: -124, y: -124, width: 248, height: 248,
-    fill: "transparent", "pointer-events": "all", stroke: "#7775ed",
-    "stroke-dasharray": "5 5", "data-selection": "true",
-  }));
+  if (group && !canvas.querySelector("[data-selection]")) {
+    const overlay = el("g", { "data-selection": "true", "data-object": selected, transform: group.getAttribute("transform") });
+    overlay.append(el("rect", { x: -124, y: -124, width: 248, height: 248,
+      fill: "none", stroke: "#d9ff53", "vector-effect": "non-scaling-stroke",
+      "pointer-events": "none" }));
+    overlay.append(el("path", { d: "M0 -124V-164", "data-stem": "true", stroke: "#d9ff53",
+      "vector-effect": "non-scaling-stroke", "pointer-events": "none" }));
+    for (const [name, x, y] of [["nw", -124, -124], ["ne", 124, -124],
+      ["se", 124, 124], ["sw", -124, 124], ["rotate", 0, -164]]) {
+      const handle = el("g", { "data-transform": name,
+        transform: `translate(${x} ${y})`, "class": `transform-handle handle-${name}` });
+      handle.append(el("circle", { r: 22, fill: "transparent", "data-hit": "true" }));
+      handle.append(el("circle", { r: 6, fill: "#101112", stroke: "#d9ff53",
+        "stroke-width": 2, "vector-effect": "non-scaling-stroke", "data-knob": "true" }));
+      overlay.append(handle);
+    }
+    canvas.append(overlay);
+  }
+  updateHandleSizes();
 }
+function updateHandleSizes() {
+  const o = selectedObject();
+  if (!o) return;
+  const width = $("canvas").getBoundingClientRect?.().width || w;
+  const unit = w / Math.max(1, width) / o.scale;
+  $("canvas").querySelectorAll("[data-hit]").forEach(n => n.setAttribute("r", 22 * unit));
+  $("canvas").querySelectorAll("[data-knob]").forEach(n => n.setAttribute("r", 6 * unit));
+  $("canvas").querySelectorAll(".handle-rotate").forEach(n => n.setAttribute("transform", `translate(0 ${-124 - 36 * unit})`));
+  $("canvas").querySelectorAll("[data-stem]").forEach(n => n.setAttribute("d", `M0 -124V${-124 - 36 * unit}`));
+
+}
+
+if (typeof ResizeObserver !== "undefined")
+  new ResizeObserver(updateHandleSizes).observe($("canvas"));
 
 function renderLayers() {
   $("layers").replaceChildren();
@@ -412,9 +440,9 @@ function point(e) {
 function moveObject(object, x, y) {
   object.x = boundCoordinate(x);
   object.y = boundCoordinate(y);
-  const group = $("canvas").querySelector(`[data-object="${object.id}"]`);
-  if (group) group.setAttribute("transform",
-    `translate(${object.x} ${object.y}) rotate(${object.rotation}) scale(${object.scale})`);
+  $("canvas").querySelectorAll(`[data-object="${object.id}"]`).forEach(group =>
+    group.setAttribute("transform", `translate(${object.x} ${object.y}) rotate(${object.rotation}) scale(${object.scale})`));
+  updateHandleSizes();
   renderSelection();
 }
 function releasePointer(pointerId) {
@@ -468,7 +496,7 @@ $("canvas").onpointerdown = (e) => {
     // A second touch transforms the same object; another mouse/pen or third
     // finger cannot take ownership. Start the gesture on the object itself.
     if (drag.type !== "touch" || type !== "touch" || drag.pointers.size !== 1 ||
-        drag.pointers.has(e.pointerId)) return;
+        drag.pointers.has(e.pointerId) || drag.handle) return;
     const p = point(e);
     if (!p) return;
     e.preventDefault();
@@ -488,6 +516,16 @@ $("canvas").onpointerdown = (e) => {
     e.preventDefault();
     drag = { o, pointerId: e.pointerId, type, x: p.x - o.x, y: p.y - o.y,
       pointers: new Map([[e.pointerId, p]]), pair: null };
+    const handle = e.target.closest("[data-transform]")?.dataset.transform;
+    if (handle) {
+      const angle = o.rotation * Math.PI / 180;
+      const corner = { x: handle.includes("w") ? -124 : 124, y: handle.includes("n") ? -124 : 124 };
+      const vx = (corner.x * Math.cos(angle) - corner.y * Math.sin(angle)) * o.scale;
+      const vy = (corner.x * Math.sin(angle) + corner.y * Math.cos(angle)) * o.scale;
+      drag.handle = { mode: handle, start: p, scale: o.scale,
+        anchorX: o.x - vx, anchorY: o.y - vy, vx: 2 * vx, vy: 2 * vy,
+        previousAngle: Math.atan2(p.y - o.y, p.x - o.x), delta: 0, rotation: o.rotation };
+    }
     $("canvas").setPointerCapture(e.pointerId);
   }
   renderCanvasSelection();
@@ -504,6 +542,25 @@ $("canvas").onpointermove = (e) => {
   const p = point(e);
   if (!p) return;
   drag.pointers.set(e.pointerId, p);
+  if (drag.handle) {
+    const start = drag.handle, o = drag.o;
+    if (start.mode === "rotate") {
+      const angle = Math.atan2(p.y - o.y, p.x - o.x);
+      if (Math.hypot(p.x - o.x, p.y - o.y) < 1) return;
+      start.delta += Math.atan2(Math.sin(angle - start.previousAngle), Math.cos(angle - start.previousAngle));
+      start.previousAngle = angle;
+      o.rotation = normalizeObjectRotation(start.rotation + start.delta * 180 / Math.PI);
+      moveObject(o, o.x, o.y);
+    } else {
+      const dx = p.x - start.start.x, dy = p.y - start.start.y;
+      const ratio = ((start.vx + dx) * start.vx + (start.vy + dy) * start.vy) /
+        (start.vx * start.vx + start.vy * start.vy);
+      o.scale = clampObjectScale(start.scale * ratio);
+      const applied = o.scale / start.scale;
+      moveObject(o, start.anchorX + start.vx * applied / 2, start.anchorY + start.vy * applied / 2);
+    }
+    return;
+  }
   if (drag.pointers.size === 1) {
     moveObject(drag.o, p.x - drag.x, p.y - drag.y);
     return;
@@ -755,20 +812,6 @@ document.querySelectorAll("[data-example]").forEach((button) =>
 );
 
 
-// All quick edits use the same selection and gesture lifecycle.
-function editSelectedObject(edit) {
-  const object = selectedObject();
-  if (!object) return;
-  stopGesture();
-  edit(object);
-  render();
-}
-function adjustSelectedTransform({ rotation = 0, scale = 0 }) {
-  editSelectedObject((object) => {
-    object.rotation = normalizeObjectRotation(object.rotation + rotation);
-    object.scale = clampObjectScale(Math.round((object.scale + scale) * 100) / 100);
-  });
-}
 for (const [id, direction] of [["raise-object", 1], ["lower-object", -1]]) {
   $(id).onclick = () => {
     const object = selectedObject();
@@ -777,11 +820,3 @@ for (const [id, direction] of [["raise-object", 1], ["lower-object", -1]]) {
     moveLayer(object, direction);
   };
 }
-const quickTransforms = {
-  "turn-left": { rotation: -15 },
-  "turn-right": { rotation: 15 },
-  shrink: { scale: -0.1 },
-  grow: { scale: 0.1 },
-};
-for (const [id, adjustment] of Object.entries(quickTransforms))
-  $(id).onclick = () => adjustSelectedTransform(adjustment);
