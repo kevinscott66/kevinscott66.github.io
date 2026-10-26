@@ -583,3 +583,51 @@ test("over-limit composition plans preserve the current picture and gesture atom
   near(e.state().objects[0].x, 410);
   near(e.state().objects[0].y, 320);
 });
+
+
+test("large ignored project metadata cannot make the saved project impossible to reopen", async () => {
+  const e = editor(), input = project();
+  input.objects[0].unused = Array(120000).fill(0);
+  input.palette = JSON.parse(e.run("JSON.stringify(palettes.peach)"));
+  input.palette.unused = Array(120000).fill(0);
+  input.background = input.palette.backgroundLight;
+  const text = JSON.stringify(input), inputBytes = Buffer.byteLength(text);
+  assert.ok(inputBytes < 1000000, "the supplied file is within the import limit");
+  assert.ok(Buffer.byteLength(JSON.stringify(input, null, 2)) > 1000000,
+    "preserving ignored metadata would make pretty-printed output exceed the limit");
+  await e.run("openProject")(e.event("project", { size: inputBytes, text: async () => text }));
+  assert.equal(e.control("notice").textContent, "Картинка открыта.");
+  assert.deepEqual(Object.keys(e.state().objects[0]).sort(),
+    ["asset", "x", "y", "rotation", "scale", "role", "id"].sort());
+  assert.equal(Object.hasOwn(e.state().customPalette, "unused"), false);
+  const before = e.state();
+  e.control("save").onclick();
+  const savedText = e.run("downloads.at(-1).text"), savedBytes = Buffer.byteLength(savedText);
+  assert.ok(savedBytes < 1000000);
+  e.run("objects = []; customPalette = null");
+  await e.run("openProject")(e.event("project", { size: savedBytes, text: async () => savedText }));
+  assert.equal(e.control("notice").textContent, "Картинка открыта.");
+  const withoutIds = (objects) => objects.map(({ id, ...object }) => object);
+  assert.deepEqual(withoutIds(e.state().objects), withoutIds(before.objects));
+  assert.deepEqual(e.state().customPalette, before.customPalette);
+});
+
+test("palette-file imports retain only supported colors in state and saved output", async () => {
+  const e = editor(), colors = JSON.parse(e.run("JSON.stringify(palettes.aqua)"));
+  const supported = { ...colors };
+  colors.metadata = Array(10000).fill(0);
+  const text = JSON.stringify(colors), size = Buffer.byteLength(text);
+  assert.ok(size < 64000);
+  await e.run("importPalette")(e.event("palette", { size, text: async () => text }));
+  assert.equal(e.control("notice").textContent, "Цвета обновлены.");
+  assert.deepEqual(e.state().customPalette, supported);
+  assert.equal(e.control("background").value, supported.backgroundLight);
+  e.run("add(library[0]); saveProject()");
+  const savedText = e.run("downloads.at(-1).text"), saved = JSON.parse(savedText);
+  assert.deepEqual(saved.palette, supported);
+  await e.run("openProject")(e.event("project", {
+    size: Buffer.byteLength(savedText), text: async () => savedText,
+  }));
+  assert.equal(e.control("notice").textContent, "Картинка открыта.");
+  assert.deepEqual(e.state().customPalette, supported);
+});
