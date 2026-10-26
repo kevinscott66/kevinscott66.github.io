@@ -699,3 +699,9 @@ test("layer drop commits only on owner release and cancellation preserves order"
     assert.equal(e.state().selected,before.selected);
   }
 });
+
+test("startup failures show a Russian instruction without raw browser diagnostics", async () => {
+  const e=editor();await e.run("init()");
+  assert.equal(e.control("notice").textContent,"Не удалось загрузить предметы. Проверьте соединение и обновите страницу.");
+  assert.equal(e.run("editorReady"),false);
+});
