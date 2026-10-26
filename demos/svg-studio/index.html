@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="robots" content="noindex,nofollow" />
     <title>Слойра — редактор иллюстраций</title>
-    <link rel="stylesheet" href="style.css?v=c0781d7e0dd6" />
+    <link rel="stylesheet" href="style.css?v=ec66f4f84f97" />
   </head>
   <body>
     <header class="app-bar">
@@ -98,6 +98,19 @@
         <p id="canvas-hint" class="canvas-hint">
           Одним пальцем — перемещение, двумя — поворот и масштаб
         </p>
+        <div id="object-tools" class="object-tools" aria-label="Действия с предметом" hidden>
+          <strong id="tool-name"></strong>
+          <div class="quick-actions">
+            <button id="turn-left" aria-label="Повернуть влево на 15 градусов">↶ 15°</button>
+            <button id="turn-right" aria-label="Повернуть вправо на 15 градусов">↷ 15°</button>
+            <button id="shrink" aria-label="Уменьшить предмет">Меньше</button>
+            <button id="grow" aria-label="Увеличить предмет">Больше</button>
+            <button id="copy-object">Копия</button>
+            <button id="raise-object">Выше</button>
+            <button id="lower-object">Ниже</button>
+            <button id="remove-object" class="delete-button">Удалить</button>
+          </div>
+        </div>
         <section class="compose-section" aria-labelledby="compose-heading">
           <h2 id="compose-heading" class="sr-only">Опишите картинку</h2>
           <label class="sr-only" for="prompt">Описание картинки</label>
@@ -186,8 +199,8 @@
         </section>
       </aside>
     </main>
-    <script src="engine.js?v=cbc014bec670"></script>
+    <script src="engine.js?v=855aefe3b5a3"></script>
     <script src="svg-safety.js?v=5bb71d03f9d5"></script>
-    <script src="app.js?v=e2a4213604db"></script>
+    <script src="app.js?v=21bec4c94ea4"></script>
   </body>
 </html>

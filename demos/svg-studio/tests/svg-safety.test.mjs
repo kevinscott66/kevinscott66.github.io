@@ -81,3 +81,20 @@ test("local paint references retain safe fallback colors", () => {
     null,
   );
 });
+
+
+test("cloned artwork references stay inside their own instance", async () => {
+  const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
+  const scope = vm.createContext({});
+  vm.runInContext(app.slice(app.indexOf("function rewriteLocalReferences("),
+    app.indexOf("function cloneArtwork(")), scope);
+  const rewrite = vm.runInContext("rewriteLocalReferences", scope);
+  const ids = new Map([["gradient", "o1-id-0"]]);
+  assert.equal(rewrite("#gradient", ids, "href"), "#o1-id-0");
+  assert.equal(rewrite("#canvas", ids, "href"), null);
+  assert.equal(rewrite("#o2-id-0", ids, "xlink:href"), null);
+  assert.equal(rewrite("url(#gradient)", ids, "fill"), "url(#o1-id-0)");
+  assert.equal(rewrite("url(#canvas)", ids, "mask"), "none");
+  assert.equal(rewrite("url(#foreign) #fff", ids, "fill"), "#fff");
+  assert.equal(rewrite("#fff", ids, "fill"), "#fff");
+});

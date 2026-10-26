@@ -66,3 +66,22 @@ test('unknown entries survive mixed separators and repeated names without librar
  assert.deepEqual(plan.unknown, ['дракон','ракета']);
  assert.equal(JSON.stringify(lib), original);
 });
+
+test('complete imported names do not also select built-in words within them', () => {
+ const imported = {id:'custom-book', name:'Красная книга'};
+ const catalogue = [...lib, imported];
+ const plan = planComposition('Красная книга, телефон', catalogue);
+ assert.deepEqual(plan.assets.map(a=>a.id), ['custom-book','phone']);
+ assert.deepEqual(plan.unknown, []);
+ assert.deepEqual(planComposition('Красная книга и книга', catalogue).assets.map(a=>a.id),
+  ['custom-book','book']);
+});
+
+test('longest imported name owns a conjunction and nested catalogue names', () => {
+ const short = {id:'custom-short', name:'Книга и телефон'};
+ const long = {id:'custom-long', name:'Книга и телефон вместе'};
+ const catalogue = [...lib, short, long];
+ const plan = planComposition('Книга и телефон вместе и дракон, монета', catalogue);
+ assert.deepEqual(plan.assets.map(a=>a.id), ['custom-long','coin']);
+ assert.deepEqual(plan.unknown, ['дракон']);
+});
