@@ -115,15 +115,15 @@ a:focus-visible,
   min-height: 44px;
   text-decoration: none;
   color: var(--text);
-  font-size: 21px;
-  letter-spacing: -0.8px;
-  font-weight: 650;
 }
-.brand svg {
-  width: 25px;
-  height: 25px;
-  fill: var(--text);
-  color: var(--text);
+.brand-wordmark {
+  display: block;
+  width: 142px;
+  height: 36px;
+  overflow: visible;
+}
+.brand-accent {
+  stroke: var(--accent);
 }
 .app-bar h1 {
   margin: 0;
