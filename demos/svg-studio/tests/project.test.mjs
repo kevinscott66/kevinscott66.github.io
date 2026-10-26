@@ -58,3 +58,12 @@ test("import cannot bypass background/color or own-scheme checks", () => {
     /Нужен цвет/,
   );
 });
+
+
+test("maximum-size automatic layout remains a reopenable project", () => {
+  const positions = vm.runInContext("compositionPositions(100, 800, 600)", context);
+  const p = { ...valid, w: 800, h: 600,
+    objects: positions.map((position) => ({...valid.objects[0], ...position})) };
+  assert.equal(p.objects.length, 100);
+  assert.doesNotThrow(() => validate(p));
+});

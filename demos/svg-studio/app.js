@@ -172,6 +172,7 @@ function cloneArtwork(asset, role, prefix) {
 }
 function add(asset, opts = {}) {
   if (!canAddObject()) return null;
+  stopGesture();
   const o = {
     id: ++uid,
     asset: asset.id,
@@ -255,6 +256,7 @@ function renderLayers() {
     name.className = "layer-name";
     name.textContent = library.find((a) => a.id === o.asset)?.name || o.asset;
     name.onclick = () => {
+      stopGesture();
       selected = o.id;
       render();
     };
@@ -407,6 +409,10 @@ function composeFromPrompt() {
       "Не удалось подобрать элементы. Опишите тему другими словами или перечислите элементы из библиотеки.";
     return;
   }
+  if (plan.assets.length > MAX_OBJECTS) {
+    $("notice").textContent = "В описании больше 100 элементов. Сократите список — текущая картинка сохранена.";
+    return;
+  }
   stopGesture();
   objects = [];
   const positions = compositionPositions(plan.assets.length, w, h);
@@ -533,10 +539,10 @@ $("canvas").onpointermove = (e) => {
   start.delta += Math.atan2(Math.sin(current.angle - start.previousAngle),
     Math.cos(current.angle - start.previousAngle));
   start.previousAngle = current.angle;
-  const scale = Math.max(0.2, Math.min(3, start.scale * current.distance / start.distance));
+  const scale = clampObjectScale(start.scale * current.distance / start.distance);
   const ratio = scale / start.scale;
   const dx = (start.objectX - start.x) * ratio, dy = (start.objectY - start.y) * ratio;
-  drag.o.rotation = ((start.rotation + start.delta * 180 / Math.PI + 180) % 360 + 360) % 360 - 180;
+  drag.o.rotation = normalizeObjectRotation(start.rotation + start.delta * 180 / Math.PI);
   drag.o.scale = scale;
   moveObject(drag.o, current.x + dx * Math.cos(start.delta) - dy * Math.sin(start.delta),
     current.y + dx * Math.sin(start.delta) + dy * Math.cos(start.delta));
@@ -778,9 +784,8 @@ function editSelectedObject(edit) {
 }
 function adjustSelectedTransform({ rotation = 0, scale = 0 }) {
   editSelectedObject((object) => {
-    object.rotation = ((object.rotation + rotation + 180) % 360 + 360) % 360 - 180;
-    object.scale = Math.max(0.2, Math.min(3,
-      Math.round((object.scale + scale) * 100) / 100));
+    object.rotation = normalizeObjectRotation(object.rotation + rotation);
+    object.scale = clampObjectScale(Math.round((object.scale + scale) * 100) / 100);
   });
 }
 for (const [id, direction] of [["raise-object", 1], ["lower-object", -1]]) {

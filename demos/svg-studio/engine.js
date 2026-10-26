@@ -159,12 +159,20 @@ function planComposition(prompt, catalogue) {
   return { mode: "meaning", assets, unknown: [] };
 }
 
+// Automatic layout, touch gestures and buttons share portable transform bounds.
+function clampObjectScale(value) {
+  return Math.max(0.2, Math.min(3, value));
+}
+function normalizeObjectRotation(value) {
+  return ((value + 180) % 360 + 360) % 360 - 180;
+}
+
 // A row/grid keeps longer explicit lists inside the canvas instead of overlapping
 // ten full-sized illustrations in the former three-item layout.
 function compositionPositions(count, width, height) {
   const columns = count <= 3 ? count : Math.ceil(Math.sqrt(count * width / height));
   const rows = Math.ceil(count / columns);
-  const scale = count === 1 ? 1.5 : count <= 3 ? 1.05 : Math.min(1, 2.4 / columns, 1.8 / rows);
+  const scale = count === 1 ? 1.5 : count <= 3 ? 1.05 : clampObjectScale(Math.min(1, 2.4 / columns, 1.8 / rows));
   return Array.from({ length: count }, (_, index) => {
     const row = Math.floor(index / columns);
     const inRow = Math.min(columns, count - row * columns);

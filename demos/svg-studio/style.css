@@ -637,9 +637,6 @@ input[type="range"] {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .layers-section {
-    grid-column: 1 / -1;
-  }
 }
 /* Phones and small tablets: canvas, library, then full-width editing controls.
    Three readable library cards fit even at 320px; no compressed five-card row. */
@@ -841,6 +838,21 @@ input[type="range"] {
   }
   #canvas {
     max-height: none;
+  }
+}
+/* Expanded object controls must remain reachable in the fixed desktop layout. */
+@media (min-width: 1200px) and (min-height: 820px) {
+  .canvas-panel {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #4c4f54 transparent;
+  }
+  .canvas-panel > * {
+    flex-shrink: 0;
+  }
+  .canvas-viewport {
+    flex: 1 0 auto;
+    overflow: visible;
   }
 }
 @media (prefers-reduced-motion: reduce) {
