@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="robots" content="noindex,nofollow" />
     <title>Слойра — редактор иллюстраций</title>
-    <link rel="stylesheet" href="style.css?v=ec66f4f84f97" />
+    <link rel="stylesheet" href="style.css?v=da1fc3007875" />
   </head>
   <body>
     <header class="app-bar">
@@ -99,17 +99,43 @@
           Одним пальцем — перемещение, двумя — поворот и масштаб
         </p>
         <div id="object-tools" class="object-tools" aria-label="Действия с предметом" hidden>
-          <strong id="tool-name"></strong>
+          <strong id="selection" class="selection-name"></strong>
           <div class="quick-actions">
             <button id="turn-left" aria-label="Повернуть влево на 15 градусов">↶ 15°</button>
             <button id="turn-right" aria-label="Повернуть вправо на 15 градусов">↷ 15°</button>
             <button id="shrink" aria-label="Уменьшить предмет">Меньше</button>
             <button id="grow" aria-label="Увеличить предмет">Больше</button>
-            <button id="copy-object">Копия</button>
+            <button id="duplicate">Копия</button>
             <button id="raise-object">Выше</button>
             <button id="lower-object">Ниже</button>
-            <button id="remove-object" class="delete-button">Удалить</button>
+            <button id="delete" class="delete-button">Удалить</button>
           </div>
+          <details class="precise-tools">
+            <summary>Точная настройка</summary>
+            <div class="precise-fields">
+          <label class="field" for="role"
+            >Вид<select id="role">
+              <option value="main">Основной</option>
+              <option value="background">Фоновый</option>
+            </select></label
+          ><label class="field range-field" for="rotation"
+            >Поворот<input
+              id="rotation"
+              type="range"
+              min="-180"
+              max="180"
+              value="0" /></label
+          ><label class="field range-field" for="scale"
+            >Масштаб<input
+              id="scale"
+              type="range"
+              min="0.2"
+              max="3"
+              step="0.05"
+              value="1"
+          /></label>
+            </div>
+          </details>
         </div>
         <section class="compose-section" aria-labelledby="compose-heading">
           <h2 id="compose-heading" class="sr-only">Опишите картинку</h2>
@@ -136,7 +162,7 @@
           </p>
         </section>
       </section>
-      <aside class="inspector-panel" aria-label="Настройки композиции">
+      <aside class="inspector-panel" aria-label="Цвета и предметы">
         <section
           class="panel-section palette-section"
           aria-labelledby="palette-heading"
@@ -158,42 +184,10 @@
           </button>
         </section>
         <section
-          class="panel-section object-section"
-          aria-labelledby="object-heading"
-        >
-          <h2 id="object-heading">Объект</h2>
-          <p id="selection" class="selection-name">Ничего не выбрано</p>
-          <label class="field" for="role"
-            >Вид<select id="role">
-              <option value="main">Основной</option>
-              <option value="background">Фоновый</option>
-            </select></label
-          ><label class="field range-field" for="rotation"
-            >Поворот<input
-              id="rotation"
-              type="range"
-              min="-180"
-              max="180"
-              value="0" /></label
-          ><label class="field range-field" for="scale"
-            >Масштаб<input
-              id="scale"
-              type="range"
-              min="0.2"
-              max="3"
-              step="0.05"
-              value="1"
-          /></label>
-          <div class="object-actions">
-            <button id="duplicate">Дублировать</button
-            ><button id="delete" class="delete-button">Удалить</button>
-          </div>
-        </section>
-        <section
           class="panel-section layers-section"
           aria-labelledby="layers-heading"
         >
-          <h2 id="layers-heading">Порядок элементов</h2>
+          <h2 id="layers-heading">Предметы</h2>
           <p class="layer-hint">Выше в списке — поверх остальных</p>
           <div id="layers"></div>
         </section>
@@ -201,6 +195,6 @@
     </main>
     <script src="engine.js?v=855aefe3b5a3"></script>
     <script src="svg-safety.js?v=5bb71d03f9d5"></script>
-    <script src="app.js?v=cba464ddd126"></script>
+    <script src="app.js?v=3c7f86bc4a24"></script>
   </body>
 </html>
