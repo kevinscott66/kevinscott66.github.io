@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = ("style.css", "engine.js", "svg-safety.js", "app.js")
+FILES = ("style.css", "engine.js", "svg-safety.js", "composition-agent.js", "app.js")
 
 
 def sync():

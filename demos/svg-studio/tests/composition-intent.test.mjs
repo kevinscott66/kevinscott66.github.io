@@ -2,7 +2,7 @@ import {readFile} from 'node:fs/promises';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 const base=new URL('../',import.meta.url);
-const code=await readFile(new URL('engine.js',base),'utf8');
+const code=await readFile(new URL('engine.js',base),'utf8')+'\n'+await readFile(new URL('composition-agent.js',base),'utf8');
 const {planComposition,compositionPositions}=await import('data:text/javascript,'+encodeURIComponent(code+';export {planComposition,compositionPositions};'));
 const lib=JSON.parse(await readFile(new URL('assets/library.json',base),'utf8'));
 const ids=p=>planComposition(p,lib).assets.map(a=>a.id);

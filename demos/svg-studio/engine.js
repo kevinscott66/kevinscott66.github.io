@@ -136,8 +136,8 @@ function componentListParts(text, matchComponents) {
 }
 
 const countWords = {
-  один: 1, одна: 1, одно: 1, одну: 1, два: 2, две: 2, пару: 2, пара: 2,
-  три: 3, четыре: 4, пять: 5, шесть: 6, семь: 7, восемь: 8, девять: 9, десять: 10,
+  один: 1, одна: 1, одно: 1, одну: 1, два: 2, две: 2, двумя: 2, двух: 2, пару: 2, пара: 2,
+  три: 3, тремя: 3, трех: 3, четыре: 4, пять: 5, шесть: 6, семь: 7, восемь: 8, девять: 9, десять: 10,
   ноль: 0,
 };
 function placementFromWords(words) {
@@ -154,7 +154,7 @@ function placementFromWords(words) {
   return result;
 }
 
-function planComposition(prompt, catalogue) {
+function parseComposition(prompt, catalogue) {
   const text = normalize(prompt);
   const words = intentWords(text);
   const matchComponents = componentMatcher(catalogue);

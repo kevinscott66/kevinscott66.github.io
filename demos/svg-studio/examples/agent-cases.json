@@ -1,0 +1,205 @@
+[
+  {
+    "prompt": "2 телефона и цветы по середине",
+    "ids": [
+      "phone",
+      "phone",
+      "plant"
+    ]
+  },
+  {
+    "prompt": "два телефона и букет в центре",
+    "ids": [
+      "phone",
+      "phone",
+      "plant"
+    ]
+  },
+  {
+    "prompt": "пара телефонов и тюльпаны",
+    "ids": [
+      "phone",
+      "phone",
+      "plant"
+    ]
+  },
+  {
+    "prompt": "три книги и две лампы",
+    "ids": [
+      "book",
+      "book",
+      "book",
+      "lamp",
+      "lamp"
+    ]
+  },
+  {
+    "prompt": "лампа и цветы на столе",
+    "ids": [
+      "lamp",
+      "plant"
+    ],
+    "surface": "table"
+  },
+  {
+    "prompt": "за столом",
+    "ids": [
+      "lamp",
+      "book",
+      "plant"
+    ],
+    "surface": "table"
+  },
+  {
+    "prompt": "рабочее место без цветов",
+    "ids": [
+      "lamp",
+      "book"
+    ]
+  },
+  {
+    "prompt": "телефон слева от книги",
+    "ids": [
+      "phone",
+      "book"
+    ],
+    "xOrder": [
+      0,
+      1
+    ]
+  },
+  {
+    "prompt": "книга справа от телефона",
+    "ids": [
+      "book",
+      "phone"
+    ],
+    "xOrder": [
+      1,
+      0
+    ]
+  },
+  {
+    "prompt": "лампа выше монеты",
+    "ids": [
+      "lamp",
+      "coin"
+    ],
+    "yOrder": [
+      0,
+      1
+    ]
+  },
+  {
+    "prompt": "кошелёк ниже книги",
+    "ids": [
+      "wallet",
+      "book"
+    ],
+    "yOrder": [
+      1,
+      0
+    ]
+  },
+  {
+    "prompt": "цветы между двумя телефонами",
+    "ids": [
+      "plant",
+      "phone",
+      "phone"
+    ],
+    "between": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "prompt": "лампа между книгой и телефоном",
+    "ids": [
+      "lamp",
+      "book",
+      "phone"
+    ],
+    "between": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "prompt": "книга слева и справа",
+    "question": true
+  },
+  {
+    "prompt": "лампа сверху и снизу",
+    "question": true
+  },
+  {
+    "prompt": "телефон слева от телефона",
+    "question": true
+  },
+  {
+    "prompt": "цветы между телефоном",
+    "question": true
+  },
+  {
+    "prompt": "сделай красиво",
+    "question": true
+  },
+  {
+    "prompt": "бюджет и сбережения",
+    "contains": "coin"
+  },
+  {
+    "prompt": "вместе решаем сложные задачи",
+    "contains": "puzzle"
+  },
+  {
+    "prompt": "учиться и открывать новое",
+    "contains": "book"
+  },
+  {
+    "prompt": "музыка и отдых",
+    "contains": "headphones"
+  },
+  {
+    "prompt": "2 телефона и без цветов",
+    "ids": [
+      "phone",
+      "phone"
+    ]
+  },
+  {
+    "prompt": "0 монет и одна лампа",
+    "ids": [
+      "lamp"
+    ]
+  },
+  {
+    "prompt": "100 телефонов",
+    "count": 100
+  },
+  {
+    "prompt": "101 телефон",
+    "tooMany": true
+  },
+  {
+    "prompt": "книга и дракон",
+    "unknown": [
+      "дракон"
+    ]
+  },
+  {
+    "prompt": "несколько цветов",
+    "question": true
+  },
+  {
+    "prompt": "лампа позади книги",
+    "question": true
+  },
+  {
+    "prompt": "цветы перед телефоном",
+    "question": true
+  }
+]

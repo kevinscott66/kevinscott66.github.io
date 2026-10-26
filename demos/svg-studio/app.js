@@ -525,6 +525,10 @@ $("palette").onchange = importPalette;
 $("search").oninput = renderLibrary;
 function composeFromPrompt() {
   const plan = planComposition($("prompt").value, library);
+  if (plan.question) {
+    $("notice").textContent = plan.question;
+    return;
+  }
   if (plan.unknown.length) {
     $("notice").textContent = `Нет в библиотеке: ${plan.unknown.join(", ")}. Уточните список — текущая картинка сохранена.`;
     return;
