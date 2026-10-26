@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import assert from "node:assert/strict";
 const base = new URL("../", import.meta.url);
-const code = await readFile(new URL("engine.js", base), "utf8");
+const code = await readFile(new URL("engine.js", base), "utf8") + "\n" + await readFile(new URL("composition-agent.js", base), "utf8");
 const { chooseAssets, validatePalette, palettes } = await import(
   "data:text/javascript," +
     encodeURIComponent(

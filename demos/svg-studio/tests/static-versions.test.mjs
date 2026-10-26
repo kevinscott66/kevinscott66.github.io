@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 const root=new URL('../',import.meta.url);
 test('HTML versions match deployed CSS and scripts to avoid mixed cached releases',async()=>{
- for(const [page, files] of [['index.html',['style.css','engine.js','svg-safety.js','app.js']], ['privacy.html',['style.css']]]) {
+ for(const [page, files] of [['index.html',['style.css','engine.js','svg-safety.js','composition-agent.js','app.js']], ['privacy.html',['style.css']]]) {
  const html=await readFile(new URL(page,root),'utf8');
  for(const file of files) {
   const bytes=await readFile(new URL(file,root));

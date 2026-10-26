@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 const base = new URL("../", import.meta.url);
-const engine = await readFile(new URL("engine.js", base), "utf8");
+const engine = await readFile(new URL("engine.js", base), "utf8") + "\n" + await readFile(new URL("composition-agent.js", base), "utf8");
 const app = await readFile(new URL("app.js", base), "utf8");
 const library = JSON.parse(await readFile(new URL("assets/library.json", base), "utf8"));
 
@@ -208,7 +208,7 @@ test("unknown/empty prompts and canceled file dialogs preserve composition", asy
     e.control("prompt").value = prompt;
     e.run("composeFromPrompt()");
     assert.deepEqual(e.state(), before);
-    assert.match(e.control("notice").textContent, /Не удалось подобрать/);
+    assert.match(e.control("notice").textContent, /Какие предметы нужны/);
   }
   await e.run("openProject")(e.event("project", null));
   await e.run("importPalette")(e.event("palette", null));
@@ -742,4 +742,13 @@ test('compose executes quantities and centre placement without extra decorations
  assert.equal(result.objects[2].x,result.w/2);assert.equal(result.objects[2].y,result.h/2);
  const before=e.state();e.control('prompt').value='101 телефон';e.control('compose').onclick();
  assert.deepEqual(e.state(),before,'oversized request keeps current composition');
+});
+
+test('agent clarification leaves the existing composition and active gesture untouched',()=>{
+ const e=editor();e.run('add(library[0]);');const before=e.state();
+ e.control('prompt').value='книга слева и справа';e.control('compose').onclick();
+ assert.deepEqual(e.state(),before);assert.match(e.control('notice').textContent,/слева или справа/);
+ e.control('prompt').value='цветы между двумя телефонами';e.control('compose').onclick();
+ const result=e.state().objects;assert.deepEqual(result.map(o=>o.asset),['plant','phone','phone']);
+ assert.ok(result[1].x<result[0].x&&result[0].x<result[2].x);
 });

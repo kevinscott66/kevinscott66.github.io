@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import vm from "node:vm";
 const base = new URL("../", import.meta.url),
   app = await readFile(new URL("app.js", base), "utf8"),
-  engine = await readFile(new URL("engine.js", base), "utf8"),
+  engine = await readFile(new URL("engine.js", base), "utf8") + "\n" + await readFile(new URL("composition-agent.js", base), "utf8"),
   library = JSON.parse(
     await readFile(new URL("assets/library.json", base), "utf8"),
   );
