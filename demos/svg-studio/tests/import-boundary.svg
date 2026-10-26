@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="import-root" viewBox="0 0 100 100" onload="console.error('unexpected-handler')">
+  <defs><linearGradient id="gradient"><stop stop-color="#f9a3aa"/><stop offset="1" stop-color="#f9ecb0"/></linearGradient></defs>
+  <script>console.error('unexpected-script')</script>
+  <foreignObject width="50" height="50"><div xmlns="http://www.w3.org/1999/xhtml">removed</div></foreignObject>
+  <rect id="shape" x="10" y="10" width="80" height="80" rx="12" fill="url('#gradient') red" cursor="u\72l(https://example.invalid/tracker.cur), auto"/>
+  <use href="#shape" transform="translate(0 0)"/>
+</svg>

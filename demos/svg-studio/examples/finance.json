@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "w": 800,
+  "h": 600,
+  "objects": [
+    {
+      "id": 12,
+      "asset": "plant",
+      "x": 624,
+      "y": 192,
+      "rotation": 10,
+      "scale": 0.9,
+      "role": "background"
+    },
+    {
+      "id": 9,
+      "asset": "folder",
+      "x": 200,
+      "y": 341.99999999999994,
+      "rotation": -5,
+      "scale": 1.05,
+      "role": "main"
+    },
+    {
+      "id": 10,
+      "asset": "coin",
+      "x": 400,
+      "y": 276,
+      "rotation": 7,
+      "scale": 1.05,
+      "role": "main"
+    },
+    {
+      "id": 11,
+      "asset": "wallet",
+      "x": 600,
+      "y": 341.99999999999994,
+      "rotation": -5,
+      "scale": 1.05,
+      "role": "main"
+    }
+  ],
+  "scheme": "aqua",
+  "palette": null,
+  "background": "#beebeb"
+}

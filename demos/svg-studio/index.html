@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Сборка — SVG Studio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="app-bar">
+      <a class="brand" href="./" aria-label="Сборка, главная редактора"
+        ><svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3z" />
+          <path
+            d="M13 17h8M17 13v8"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          /></svg
+        ><span>Сборка</span></a
+      >
+      <h1>Иллюстрация</h1>
+      <div class="document-actions">
+        <button id="save" class="bar-button">Сохранить</button
+        ><button id="export" class="primary export-button">
+          Скачать <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </header>
+    <main class="workspace">
+      <aside class="library-panel" aria-label="Библиотека и сборка">
+        <section
+          class="panel-section assets-section"
+          aria-labelledby="library-heading"
+        >
+          <div class="section-heading">
+            <h2 id="library-heading">Элементы</h2>
+          </div>
+          <label class="sr-only" for="search">Поиск по библиотеке</label>
+          <input id="search" type="search" placeholder="Найти элемент" />
+          <div id="library"></div>
+        </section>
+        <details class="file-tools">
+          <summary>Дополнительно</summary>
+          <div class="file-fields">
+            <label for="files">Добавить SVG</label
+            ><input id="files" type="file" accept=".svg" multiple /><label
+              for="project"
+              >Открыть сохранённую картинку</label
+            ><input id="project" type="file" accept=".json" /><label
+              for="palette"
+              >Загрузить свои цвета (JSON)</label
+            ><input id="palette" type="file" accept=".json" />
+          </div>
+        </details>
+      </aside>
+      <section class="canvas-panel" aria-label="Рабочая область">
+        <div class="canvas-toolbar">
+          <span id="count">Объектов: 0</span
+          ><label for="size"
+            ><span class="sr-only">Размер картинки</span
+            ><select id="size">
+              <option>800 × 600</option>
+              <option>1200 × 800</option>
+              <option>600 × 600</option>
+            </select></label
+          >
+        </div>
+        <div class="canvas-viewport">
+          <div class="stage">
+            <div class="watermark" aria-hidden="true">dobropalm</div>
+            <svg
+              id="canvas"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 800 600"
+              aria-label="Холст композиции"
+            ></svg>
+            <div id="empty">
+              <svg viewBox="0 0 40 40" aria-hidden="true">
+                <rect x="5" y="5" width="15" height="15" rx="1" />
+                <circle cx="27" cy="27" r="9" /></svg
+              ><strong>Нет элементов</strong
+              ><span>Выберите элементы или опишите картинку</span>
+            </div>
+          </div>
+        </div>
+        <p class="canvas-hint">
+          Перетаскивайте элементы, чтобы изменить композицию
+        </p>
+        <section class="compose-section" aria-labelledby="compose-heading">
+          <h2 id="compose-heading" class="sr-only">Опишите картинку</h2>
+          <label class="sr-only" for="prompt">Описание картинки</label>
+          <div class="prompt-row">
+            <textarea
+              id="prompt"
+              placeholder="Опишите картинку или перечислите элементы…"
+              rows="2"
+            ></textarea>
+            <button id="compose" class="primary">
+              Собрать <span aria-hidden="true">→</span>
+            </button>
+          </div>
+          <div class="examples" aria-label="Примеры описаний">
+            <button data-example="Рост знаний и новые идеи">Рост знаний</button
+            ><button data-example="Музыка и отдых">Музыка</button
+            ><button data-example="Деньги и порядок в документах">
+              Финансы
+            </button>
+          </div>
+          <p id="notice" role="status" aria-live="polite">
+            Загружаем элементы…
+          </p>
+        </section>
+      </section>
+      <aside class="inspector-panel" aria-label="Настройки композиции">
+        <section
+          class="panel-section palette-section"
+          aria-labelledby="palette-heading"
+        >
+          <h2 id="palette-heading">Цвета</h2>
+          <label class="field" for="scheme"
+            >Набор цветов<select id="scheme">
+              <option value="lavender">Лаванда</option>
+              <option value="peach">Персик</option>
+              <option value="aqua">Аквамарин</option>
+            </select></label
+          >
+          <div class="color-row">
+            <label for="background">Фон холста</label
+            ><input id="background" type="color" value="#d7cdf5" />
+          </div>
+          <button id="recolor" class="wide-button" hidden>
+            Применить цвета
+          </button>
+        </section>
+        <section
+          class="panel-section object-section"
+          aria-labelledby="object-heading"
+        >
+          <h2 id="object-heading">Объект</h2>
+          <p id="selection" class="selection-name">Ничего не выбрано</p>
+          <label class="field" for="role"
+            >Вид<select id="role">
+              <option value="main">Основной</option>
+              <option value="background">Фоновый</option>
+            </select></label
+          ><label class="field range-field" for="rotation"
+            >Поворот<input
+              id="rotation"
+              type="range"
+              min="-180"
+              max="180"
+              value="0" /></label
+          ><label class="field range-field" for="scale"
+            >Масштаб<input
+              id="scale"
+              type="range"
+              min="0.2"
+              max="3"
+              step="0.05"
+              value="1"
+          /></label>
+          <div class="object-actions">
+            <button id="duplicate">Дублировать</button
+            ><button id="delete" class="delete-button">Удалить</button>
+          </div>
+        </section>
+        <section
+          class="panel-section layers-section"
+          aria-labelledby="layers-heading"
+        >
+          <h2 id="layers-heading">Порядок элементов</h2>
+          <p class="layer-hint">Выше в списке — поверх остальных</p>
+          <div id="layers"></div>
+        </section>
+      </aside>
+    </main>
+    <script src="engine.js"></script>
+    <script src="svg-safety.js"></script>
+    <script src="app.js?v=3"></script>
+  </body>
+</html>
