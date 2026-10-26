@@ -752,3 +752,12 @@ test('agent clarification leaves the existing composition and active gesture unt
  const result=e.state().objects;assert.deepEqual(result.map(o=>o.asset),['plant','phone','phone']);
  assert.ok(result[1].x<result[0].x&&result[0].x<result[2].x);
 });
+
+test('compose applies a reserved text area and rejects conflicting global layouts atomically',()=>{
+ const e=editor();e.control('prompt').value='книга и лампа, оставь место для текста справа';
+ e.control('compose').onclick();
+ const result=e.state();assert.deepEqual(result.objects.map(o=>o.asset),['book','lamp']);
+ assert.ok(result.objects.every(o=>o.x+120*o.scale<result.w/2));
+ e.control('prompt').value='книга и лампа в ряд и в столбик';e.control('compose').onclick();
+ assert.deepEqual(e.state(),result);assert.match(e.control('notice').textContent,/Выберите один способ/);
+});

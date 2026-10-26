@@ -229,7 +229,7 @@ function normalizeObjectRotation(value) {
 
 // A row/grid keeps longer explicit lists inside the canvas instead of overlapping
 // ten full-sized illustrations in the former three-item layout.
-function compositionPositions(count, width, height, directives = [], surface = null) {
+function compositionPositions(count, width, height, directives = [], surface = null, arrangement = {}) {
   const columns = count <= 3 ? count : Math.ceil(Math.sqrt(count * width / height));
   const rows = Math.ceil(count / columns);
   const scale = count === 1 ? 1.5 : count <= 3 ? 1.05 : clampObjectScale(Math.min(1, 2.4 / columns, 1.8 / rows));
@@ -274,7 +274,34 @@ function compositionPositions(count, width, height, directives = [], surface = n
     available.delete(slot);
     result[index] = positions[slot];
   }
-  return result;
+  return arrangeComposition(result, width, height, arrangement);
+}
+
+function arrangeComposition(positions, width, height, arrangement) {
+  const count=positions.length;
+  const mode=arrangement.mode;
+  return positions.map((position,index)=>{
+    let p={...position};
+    if(mode==="row" || mode==="symmetric") {
+      p.x=width*(index+1)/(count+1);p.y=height*.5;p.rotation=0;
+      p.scale=clampObjectScale(Math.min(p.scale,width*.8/(count*240)));
+    } else if(mode==="column") {
+      p.x=width*.5;p.y=height*(index+1)/(count+1);p.rotation=0;
+      p.scale=clampObjectScale(Math.min(p.scale,height*.8/(count*240)));
+    } else if(mode==="grid") {
+      const columns=Math.ceil(Math.sqrt(count*width/height)),rows=Math.ceil(count/columns);
+      p.x=width*((index%columns)+1)/(columns+1);p.y=height*(Math.floor(index/columns)+1)/(rows+1);p.rotation=0;
+      p.scale=clampObjectScale(Math.min(p.scale,width*.8/(columns*240),height*.8/(rows*240)));
+    } else if(mode==="thirds") {
+      p.x=width*(index%2?2/3:1/3);p.y=height*(index<2?1/3:2/3);p.rotation=0;
+      p.scale=clampObjectScale(Math.min(p.scale,width/720,height/720));
+    }
+    if(arrangement.emptySide) {
+      p.x=width*(arrangement.emptySide==="right"?.06:.56)+p.x*.38;
+      p.scale=clampObjectScale(Math.min(p.scale,width*.3/(240*Math.max(1,Math.ceil(Math.sqrt(count))))));
+    }
+    return p;
+  });
 }
 
 function chooseAssets(prompt, catalogue) {
