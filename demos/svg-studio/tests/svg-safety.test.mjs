@@ -98,3 +98,17 @@ test("cloned artwork references stay inside their own instance", async () => {
   assert.equal(rewrite("url(#foreign) #fff", ids, "fill"), "#fff");
   assert.equal(rewrite("#fff", ids, "fill"), "#fff");
 });
+
+
+test("oversized SVG text is rejected before the XML parser is invoked", async () => {
+  const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
+  let parsed = false;
+  const scope = vm.createContext({DOMParser: class {
+    parseFromString() { parsed = true; throw Error("parser must not run"); }
+  }});
+  vm.runInContext(app.slice(app.indexOf("function cleanSVG("),
+    app.indexOf("function palette(")), scope);
+  const clean = vm.runInContext("cleanSVG", scope);
+  assert.throws(() => clean("x".repeat(2000001)), /SVG слишком большой/);
+  assert.equal(parsed, false);
+});

@@ -1,3 +1,10 @@
+// Imported artwork supports passive vector elements only.
+const SVG_ALLOWED_ELEMENTS = new Set(
+  "svg g defs path rect circle ellipse polygon polyline line text tspan use symbol title desc linearGradient radialGradient stop clipPath mask pattern filter feGaussianBlur feOffset feBlend feColorMatrix feComposite feFlood feMerge feMergeNode feComponentTransfer feFuncR feFuncG feFuncB feFuncA".split(
+    " ",
+  ),
+);
+
 // Attribute boundary shared by imported artwork and the bundled library.
 // Return a normalized safe value, or null to remove the attribute.
 const SVG_SAFE_ATTRIBUTES = new Set(

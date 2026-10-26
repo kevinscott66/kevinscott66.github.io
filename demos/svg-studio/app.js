@@ -39,6 +39,7 @@ const el = (tag, attrs = {}) => {
   return n;
 };
 function cleanSVG(text) {
+  if (text.length > 2000000) throw Error("SVG слишком большой");
   const d = new DOMParser().parseFromString(text, "image/svg+xml");
   if (
     d.querySelector("parsererror") ||
@@ -47,36 +48,10 @@ function cleanSVG(text) {
   )
     throw Error("Некорректный SVG");
   const root = d.documentElement;
-  if (text.length > 2000000 || root.querySelectorAll("*").length > 15000)
+  if (root.querySelectorAll("*").length > 15000)
     throw Error("SVG слишком большой");
-  const allowed = new Set(
-    "svg g defs path rect circle ellipse polygon polyline line text tspan use symbol title desc linearGradient radialGradient stop clipPath mask pattern filter feGaussianBlur feOffset feBlend feColorMatrix feComposite feFlood feMerge feMergeNode feComponentTransfer feFuncR feFuncG feFuncB feFuncA".split(
-      " ",
-    ),
-  );
   for (const n of [root, ...root.querySelectorAll("*")]) {
-    if (n.namespaceURI !== NS || !allowed.has(n.localName)) {
-      n.remove();
-      continue;
-    }
-    if (
-      [
-        "script",
-        "foreignObject",
-        "iframe",
-        "image",
-        "style",
-        "animate",
-        "animateTransform",
-        "set",
-        "a",
-        "audio",
-        "video",
-        "embed",
-        "object",
-        "feImage",
-      ].includes(n.localName)
-    ) {
+    if (n.namespaceURI !== NS || !SVG_ALLOWED_ELEMENTS.has(n.localName)) {
       n.remove();
       continue;
     }
