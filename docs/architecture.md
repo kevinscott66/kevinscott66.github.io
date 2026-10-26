@@ -73,3 +73,5 @@ The SVG demo was subsequently refactored with independent editor, matching, logi
 The final visual reference is Higgsfield's creative workspace: dark surfaces, floating graphite panels, lime action accent, a central composition and a description dock beneath it. UI UX Pro Max guidance was used for readable hierarchy, focus/contrast and responsive interaction. No Higgsfield branding, media, remote fonts or generation services are embedded. The UI starts with a real bundled example and uses simple Russian action labels; technical import controls are under Additional options. Preview watermark is the plain dobropalm name; it is not output protection. The source-provided illustration licence remains separate.
 
 Предрелизная приёмка SVG Studio: `demos/svg-studio/QA.md`. Файловые чтения используют токены актуальности; интерфейс и формат проекта имеют общие лимиты.
+
+Подбор SVG Studio разделён в `planComposition`: явные имена без дополнительных объектов, затем локальные смысловые правила для ограниченных тем. `compositionPositions` размещает длинные списки сеткой. Универсальная языковая модель не используется.

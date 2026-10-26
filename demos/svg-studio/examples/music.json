@@ -4,21 +4,21 @@
   "h": 600,
   "objects": [
     {
-      "id": 8,
-      "asset": "plant",
-      "x": 624,
-      "y": 192,
-      "rotation": 10,
-      "scale": 0.9,
-      "role": "background"
-    },
-    {
-      "id": 7,
+      "id": 25,
       "asset": "headphones",
-      "x": 400,
+      "x": 266.66666666666663,
       "y": 341.99999999999994,
       "rotation": -5,
-      "scale": 1.5,
+      "scale": 1.05,
+      "role": "main"
+    },
+    {
+      "id": 26,
+      "asset": "plant",
+      "x": 533.3333333333333,
+      "y": 276,
+      "rotation": 7,
+      "scale": 1.05,
       "role": "main"
     }
   ],

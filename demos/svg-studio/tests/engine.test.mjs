@@ -84,12 +84,7 @@ test("matching normalizes case and ё without mutating the library", () => {
   assert.equal(JSON.stringify(lib), original);
 });
 
-test("matching counts each token once and keeps catalogue order for ties", () => {
-  const first = { id: "first", name: "книга", tags: ["книга", "книги"] };
-  const second = { id: "second", name: "книга", tags: ["рост"] };
-  assert.deepEqual(chooseAssets("книга", [first, second]), [first, second]);
-  assert.deepEqual(chooseAssets("книга рост", [first, second]), [
-    second,
-    first,
-  ]);
+test("semantic matching is deterministic and does not add unknown objects", () => {
+  assert.deepEqual(chooseAssets("рост знаний", lib), chooseAssets("рост знаний", lib));
+  assert.ok(chooseAssets("рост знаний", lib).every(asset => lib.includes(asset)));
 });

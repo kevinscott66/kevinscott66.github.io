@@ -1,0 +1,37 @@
+import {readFile} from 'node:fs/promises';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const base=new URL('../',import.meta.url);
+const code=await readFile(new URL('engine.js',base),'utf8');
+const {planComposition,compositionPositions}=await import('data:text/javascript,'+encodeURIComponent(code+';export {planComposition,compositionPositions};'));
+const lib=JSON.parse(await readFile(new URL('assets/library.json',base),'utf8'));
+const ids=p=>planComposition(p,lib).assets.map(a=>a.id);
+test('explicit five-item list keeps every requested object in input order without decoration',()=>{
+ assert.deepEqual(ids('Книга, телефон, пазлы, монета, наушники'),['book','phone','puzzle','coin','headphones']);
+ assert.deepEqual(ids('Наушники и книга'),['headphones','book']);
+});
+test('all catalogue objects fit and repeated names do not add unrequested copies',()=>{
+ assert.equal(ids(lib.map(a=>a.name).join(', ')).length,10);
+ assert.deepEqual(ids('Книга, книга, кошельки'),['book','wallet']);
+ for(const n of [1,2,3,5,10]) for(const [w,h] of [[800,600],[1200,800],[600,600]]) {
+  const p=compositionPositions(n,w,h);assert.equal(p.length,n);
+  assert.equal(new Set(p.map(o=>`${o.x},${o.y}`)).size,n);
+  assert.ok(p.every(o=>o.x>0&&o.x<w&&o.y>0&&o.y<h&&o.scale>=.2&&o.scale<=3));
+ }
+});
+test('unavailable explicit component is reported instead of silently dropped',()=>{
+ const p=planComposition('Книга, дракон, телефон',lib);
+ assert.deepEqual(p.unknown,['дракон']);
+});
+test('meaning scenarios select only existing relevant objects',()=>{
+ for(const [prompt,wanted] of [
+  ['Преодолеть преграды на пути к мечте','puzzle'],
+  ['Вместе решаем сложные задачи','puzzle'],
+  ['Сбережения на будущее','coin'],
+  ['Навести порядок в делах','folder'],
+  ['Вдохновение для новых открытий','lamp'],
+  ['Перезагрузка после рабочего дня','headphones'],
+  ['Учиться и открывать новое','book'],
+ ]) {const result=planComposition(prompt,lib);assert.equal(result.mode,'meaning');assert.ok(result.assets.some(a=>a.id===wanted),prompt);assert.ok(result.assets.every(a=>lib.includes(a)));}
+ for(const prompt of ['', 'zxqv123', 'непонятная абракадабра'])assert.deepEqual(ids(prompt),[]);
+});

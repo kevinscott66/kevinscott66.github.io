@@ -193,9 +193,21 @@ test("unknown/empty prompts and canceled file dialogs preserve composition", asy
     e.control("prompt").value = prompt;
     e.run("composeFromPrompt()");
     assert.deepEqual(e.state(), before);
-    assert.match(e.control("notice").textContent, /Не нашёл/);
+    assert.match(e.control("notice").textContent, /Не удалось подобрать/);
   }
   await e.run("openProject")(e.event("project", null));
   await e.run("importPalette")(e.event("palette", null));
   assert.deepEqual(e.state(), before);
+});
+
+test("actual compose handler preserves all named items and rejects unavailable ones atomically", () => {
+  const e=editor();
+  e.control("prompt").value="Книга, телефон, пазлы, монета, наушники";
+  e.control("compose").onclick();
+  assert.deepEqual(e.state().objects.map(o=>o.asset),["book","phone","puzzle","coin","headphones"]);
+  const before=e.state();
+  e.control("prompt").value="Книга, дракон";
+  e.control("compose").onclick();
+  assert.deepEqual(e.state(),before);
+  assert.match(e.control("notice").textContent,/дракон/);
 });
