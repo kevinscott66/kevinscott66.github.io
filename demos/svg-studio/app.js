@@ -208,6 +208,36 @@ function renderCanvas() {
   $("count").textContent = `Элементов: ${objects.length}`;
 }
 
+const FRAME_HALF_SIZE = 124;
+const HANDLE_HIT_RADIUS = 22;
+const HANDLE_KNOB_RADIUS = 6;
+const ROTATION_HANDLE_GAP = 36;
+const RESIZE_CORNERS = {
+  nw: [-1, -1], ne: [1, -1], se: [1, 1], sw: [-1, 1],
+};
+
+function createSelectionOverlay(group) {
+  const overlay = el("g", { "data-selection": "true", "data-object": selected,
+    transform: group.getAttribute("transform") });
+  const line = { stroke: "#d9ff53", "vector-effect": "non-scaling-stroke",
+    "pointer-events": "none" };
+  overlay.append(el("rect", { ...line, x: -FRAME_HALF_SIZE, y: -FRAME_HALF_SIZE,
+    width: FRAME_HALF_SIZE * 2, height: FRAME_HALF_SIZE * 2, fill: "none" }));
+  overlay.append(el("path", { ...line, "data-stem": "true" }));
+  const positions = Object.entries(RESIZE_CORNERS).map(([name, [x, y]]) =>
+    [name, x * FRAME_HALF_SIZE, y * FRAME_HALF_SIZE]);
+  positions.push(["rotate", 0, -FRAME_HALF_SIZE]);
+  for (const [name, x, y] of positions) {
+    const handle = el("g", { "data-transform": name,
+      transform: `translate(${x} ${y})`, "class": `transform-handle handle-${name}` });
+    handle.append(el("circle", { r: HANDLE_HIT_RADIUS, fill: "transparent", "data-hit": "true" }));
+    handle.append(el("circle", { r: HANDLE_KNOB_RADIUS, fill: "#101112", stroke: "#d9ff53",
+      "stroke-width": 2, "vector-effect": "non-scaling-stroke", "data-knob": "true" }));
+    overlay.append(handle);
+  }
+  return overlay;
+}
+
 // Keep the pointer target alive throughout a gesture, including its selection
 // rectangle. Replacing the SVG subtree on pointerdown/move disrupts native touch.
 function renderCanvasSelection() {
@@ -216,24 +246,8 @@ function renderCanvasSelection() {
     if (node.dataset.object !== String(selected)) node.remove();
   });
   const group = selected == null ? null : canvas.querySelector(`[data-object="${selected}"]`);
-  if (group && !canvas.querySelector("[data-selection]")) {
-    const overlay = el("g", { "data-selection": "true", "data-object": selected, transform: group.getAttribute("transform") });
-    overlay.append(el("rect", { x: -124, y: -124, width: 248, height: 248,
-      fill: "none", stroke: "#d9ff53", "vector-effect": "non-scaling-stroke",
-      "pointer-events": "none" }));
-    overlay.append(el("path", { d: "M0 -124V-164", "data-stem": "true", stroke: "#d9ff53",
-      "vector-effect": "non-scaling-stroke", "pointer-events": "none" }));
-    for (const [name, x, y] of [["nw", -124, -124], ["ne", 124, -124],
-      ["se", 124, 124], ["sw", -124, 124], ["rotate", 0, -164]]) {
-      const handle = el("g", { "data-transform": name,
-        transform: `translate(${x} ${y})`, "class": `transform-handle handle-${name}` });
-      handle.append(el("circle", { r: 22, fill: "transparent", "data-hit": "true" }));
-      handle.append(el("circle", { r: 6, fill: "#101112", stroke: "#d9ff53",
-        "stroke-width": 2, "vector-effect": "non-scaling-stroke", "data-knob": "true" }));
-      overlay.append(handle);
-    }
-    canvas.append(overlay);
-  }
+  if (group && !canvas.querySelector("[data-selection]"))
+    canvas.append(createSelectionOverlay(group));
   updateHandleSizes();
 }
 function updateHandleSizes() {
@@ -241,10 +255,11 @@ function updateHandleSizes() {
   if (!o) return;
   const width = $("canvas").getBoundingClientRect?.().width || w;
   const unit = w / Math.max(1, width) / o.scale;
-  $("canvas").querySelectorAll("[data-hit]").forEach(n => n.setAttribute("r", 22 * unit));
-  $("canvas").querySelectorAll("[data-knob]").forEach(n => n.setAttribute("r", 6 * unit));
-  $("canvas").querySelectorAll(".handle-rotate").forEach(n => n.setAttribute("transform", `translate(0 ${-124 - 36 * unit})`));
-  $("canvas").querySelectorAll("[data-stem]").forEach(n => n.setAttribute("d", `M0 -124V${-124 - 36 * unit}`));
+  $("canvas").querySelectorAll("[data-hit]").forEach(n => n.setAttribute("r", HANDLE_HIT_RADIUS * unit));
+  $("canvas").querySelectorAll("[data-knob]").forEach(n => n.setAttribute("r", HANDLE_KNOB_RADIUS * unit));
+  const rotationY = -FRAME_HALF_SIZE - ROTATION_HANDLE_GAP * unit;
+  $("canvas").querySelectorAll(".handle-rotate").forEach(n => n.setAttribute("transform", `translate(0 ${rotationY})`));
+  $("canvas").querySelectorAll("[data-stem]").forEach(n => n.setAttribute("d", `M0 ${-FRAME_HALF_SIZE}V${rotationY}`));
 
 }
 
@@ -461,6 +476,42 @@ function pairGeometry(points) {
     distance: Math.hypot(b.x - a.x, b.y - a.y),
     angle: Math.atan2(b.y - a.y, b.x - a.x) };
 }
+function accumulateRotation(start, angle) {
+  start.delta += Math.atan2(Math.sin(angle - start.previousAngle),
+    Math.cos(angle - start.previousAngle));
+  start.previousAngle = angle;
+  return normalizeObjectRotation(start.rotation + start.delta * 180 / Math.PI);
+}
+function createHandleGesture(object, point, mode) {
+  if (mode === "rotate") return {
+    mode, rotation: object.rotation, delta: 0,
+    previousAngle: Math.atan2(point.y - object.y, point.x - object.x),
+  };
+  const corner = RESIZE_CORNERS[mode];
+  if (!corner) return null;
+  const angle = object.rotation * Math.PI / 180;
+  const x = corner[0] * FRAME_HALF_SIZE * object.scale;
+  const y = corner[1] * FRAME_HALF_SIZE * object.scale;
+  const vx = x * Math.cos(angle) - y * Math.sin(angle);
+  const vy = x * Math.sin(angle) + y * Math.cos(angle);
+  return { mode, start: point, scale: object.scale,
+    anchorX: object.x - vx, anchorY: object.y - vy, vx: 2 * vx, vy: 2 * vy };
+}
+function transformFromHandle(object, start, point) {
+  if (start.mode === "rotate") {
+    if (Math.hypot(point.x - object.x, point.y - object.y) < 1) return;
+    object.rotation = accumulateRotation(start,
+      Math.atan2(point.y - object.y, point.x - object.x));
+    return;
+  }
+  const dx = point.x - start.start.x, dy = point.y - start.start.y;
+  const ratio = ((start.vx + dx) * start.vx + (start.vy + dy) * start.vy) /
+    (start.vx * start.vx + start.vy * start.vy);
+  object.scale = clampObjectScale(start.scale * ratio);
+  const applied = object.scale / start.scale;
+  object.x = start.anchorX + start.vx * applied / 2;
+  object.y = start.anchorY + start.vy * applied / 2;
+}
 function beginPair() {
   const geometry = pairGeometry(drag.pointers);
   drag.pair = geometry.distance < 1 ? null : {
@@ -517,15 +568,7 @@ $("canvas").onpointerdown = (e) => {
     drag = { o, pointerId: e.pointerId, type, x: p.x - o.x, y: p.y - o.y,
       pointers: new Map([[e.pointerId, p]]), pair: null };
     const handle = e.target.closest("[data-transform]")?.dataset.transform;
-    if (handle) {
-      const angle = o.rotation * Math.PI / 180;
-      const corner = { x: handle.includes("w") ? -124 : 124, y: handle.includes("n") ? -124 : 124 };
-      const vx = (corner.x * Math.cos(angle) - corner.y * Math.sin(angle)) * o.scale;
-      const vy = (corner.x * Math.sin(angle) + corner.y * Math.cos(angle)) * o.scale;
-      drag.handle = { mode: handle, start: p, scale: o.scale,
-        anchorX: o.x - vx, anchorY: o.y - vy, vx: 2 * vx, vy: 2 * vy,
-        previousAngle: Math.atan2(p.y - o.y, p.x - o.x), delta: 0, rotation: o.rotation };
-    }
+    drag.handle = createHandleGesture(o, p, handle);
     $("canvas").setPointerCapture(e.pointerId);
   }
   renderCanvasSelection();
@@ -543,22 +586,8 @@ $("canvas").onpointermove = (e) => {
   if (!p) return;
   drag.pointers.set(e.pointerId, p);
   if (drag.handle) {
-    const start = drag.handle, o = drag.o;
-    if (start.mode === "rotate") {
-      const angle = Math.atan2(p.y - o.y, p.x - o.x);
-      if (Math.hypot(p.x - o.x, p.y - o.y) < 1) return;
-      start.delta += Math.atan2(Math.sin(angle - start.previousAngle), Math.cos(angle - start.previousAngle));
-      start.previousAngle = angle;
-      o.rotation = normalizeObjectRotation(start.rotation + start.delta * 180 / Math.PI);
-      moveObject(o, o.x, o.y);
-    } else {
-      const dx = p.x - start.start.x, dy = p.y - start.start.y;
-      const ratio = ((start.vx + dx) * start.vx + (start.vy + dy) * start.vy) /
-        (start.vx * start.vx + start.vy * start.vy);
-      o.scale = clampObjectScale(start.scale * ratio);
-      const applied = o.scale / start.scale;
-      moveObject(o, start.anchorX + start.vx * applied / 2, start.anchorY + start.vy * applied / 2);
-    }
+    transformFromHandle(drag.o, drag.handle, p);
+    moveObject(drag.o, drag.o.x, drag.o.y);
     return;
   }
   if (drag.pointers.size === 1) {
@@ -572,13 +601,10 @@ $("canvas").onpointermove = (e) => {
   const current = pairGeometry(drag.pointers), start = drag.pair;
   if (current.distance < 1) return;
   // Accumulate the shortest angle between events, avoiding a jump at ±180°.
-  start.delta += Math.atan2(Math.sin(current.angle - start.previousAngle),
-    Math.cos(current.angle - start.previousAngle));
-  start.previousAngle = current.angle;
+  drag.o.rotation = accumulateRotation(start, current.angle);
   const scale = clampObjectScale(start.scale * current.distance / start.distance);
   const ratio = scale / start.scale;
   const dx = (start.objectX - start.x) * ratio, dy = (start.objectY - start.y) * ratio;
-  drag.o.rotation = normalizeObjectRotation(start.rotation + start.delta * 180 / Math.PI);
   drag.o.scale = scale;
   moveObject(drag.o, current.x + dx * Math.cos(start.delta) - dy * Math.sin(start.delta),
     current.y + dx * Math.sin(start.delta) + dy * Math.cos(start.delta));
