@@ -45,3 +45,51 @@ test("every object has real S/L and main/background source assets", async () => 
         assert.ok(!svg.includes("<image"));
       }
 });
+
+test("invalid palette shapes report a usable validation error", () => {
+  for (const palette of [null, undefined, [], "#ffffff", 42]) {
+    assert.throws(() => validatePalette(palette), /Нужна палитра/);
+  }
+  for (const color of [null, 123456, "#fff", "#12345g", " #123456"])
+    assert.throws(
+      () => validatePalette({ ...palettes.peach, ink: color }),
+      /Нужен цвет ink/,
+    );
+});
+
+test("palette separation is case insensitive and permits shared paper", () => {
+  assert.throws(
+    () =>
+      validatePalette({
+        ...palettes.peach,
+        backgroundDark: palettes.peach.primary.toUpperCase(),
+      }),
+    /фоновую палитру/,
+  );
+  assert.equal(
+    validatePalette({ ...palettes.peach, backgroundLight: "#FFFFFF" }),
+    true,
+  );
+});
+
+test("empty or short-only prompts return no matches", () => {
+  for (const prompt of ["", "  ", "и в на", "!? 12"])
+    assert.deepEqual(chooseAssets(prompt, lib), []);
+  assert.deepEqual(chooseAssets("книга", []), []);
+});
+
+test("matching normalizes case and ё without mutating the library", () => {
+  const original = JSON.stringify(lib);
+  assert.deepEqual(chooseAssets("КОШЕЛЁК", lib), chooseAssets("кошелек", lib));
+  assert.equal(JSON.stringify(lib), original);
+});
+
+test("matching counts each token once and keeps catalogue order for ties", () => {
+  const first = { id: "first", name: "книга", tags: ["книга", "книги"] };
+  const second = { id: "second", name: "книга", tags: ["рост"] };
+  assert.deepEqual(chooseAssets("книга", [first, second]), [first, second]);
+  assert.deepEqual(chooseAssets("книга рост", [first, second]), [
+    second,
+    first,
+  ]);
+});

@@ -27,46 +27,73 @@ const palettes = {
     paper: "#ffffff",
   },
 };
-const normalize = (s) => s.toLowerCase().replaceAll("ё", "е").trim();
-function validatePalette(p) {
-  for (const k of Object.keys(palettes.lavender))
-    if (!/^#[\da-f]{6}$/i.test(p[k] || ""))
-      throw Error(`Нужен цвет ${k} в формате #RRGGBB`);
-  const bg = [p.backgroundLight, p.backgroundMid, p.backgroundDark].map(
-      normalize,
-    ),
-    fg = [p.primary, p.secondary, p.ink].map(normalize);
-  if (bg.some((c) => fg.includes(c)))
+// These names remain globals because the editor loads this file as a classic script.
+const normalize = (text) => text.toLowerCase().replaceAll("ё", "е").trim();
+const paletteColorKeys = Object.keys(palettes.lavender);
+const backgroundColorKeys = [
+  "backgroundLight",
+  "backgroundMid",
+  "backgroundDark",
+];
+const objectColorKeys = ["primary", "secondary", "ink"];
+
+function validatePalette(palette) {
+  if (!palette || typeof palette !== "object" || Array.isArray(palette)) {
+    throw Error("Нужна палитра с цветами в формате #RRGGBB");
+  }
+  for (const key of paletteColorKeys) {
+    if (
+      typeof palette[key] !== "string" ||
+      !/^#[0-9a-f]{6}$/i.test(palette[key])
+    ) {
+      throw Error(`Нужен цвет ${key} в формате #RRGGBB`);
+    }
+  }
+  const backgroundColors = backgroundColorKeys.map((key) =>
+    normalize(palette[key]),
+  );
+  const objectColors = objectColorKeys.map((key) => normalize(palette[key]));
+  if (backgroundColors.some((color) => objectColors.includes(color))) {
     throw Error("Цвета главных объектов не должны входить в фоновую палитру");
+  }
   return true;
 }
+
+function matchesAssetKeyword(token, keyword) {
+  const normalizedKeyword = normalize(keyword);
+  const tokenStem = token.slice(0, -2);
+  // Lightweight Russian inflection matching, not a general language model.
+  return (
+    normalizedKeyword.includes(token) ||
+    token.includes(normalizedKeyword) ||
+    (tokenStem.length > 2 && normalizedKeyword.startsWith(tokenStem)) ||
+    (token.length >= 4 &&
+      normalizedKeyword.length >= 4 &&
+      normalizedKeyword.slice(0, 3) === token.slice(0, 3))
+  );
+}
+
+function scoreAsset(tokens, asset) {
+  const keywords = [asset.name, ...asset.tags];
+  let score = 0;
+  for (const token of tokens) {
+    // A token counts once even when it matches several of the asset's tags.
+    if (keywords.some((keyword) => matchesAssetKeyword(token, keyword)))
+      score += 1;
+  }
+  return score;
+}
+
 function chooseAssets(prompt, library) {
   const tokens = normalize(prompt)
     .split(/[^а-яa-z0-9]+/)
-    .filter((t) => t.length > 2);
+    .filter((token) => token.length > 2);
   return library
-    .map((a, i) => ({
-      a,
-      i,
-      score: tokens.reduce(
-        (sum, t) =>
-          sum +
-          [a.name, ...a.tags].some((k) => {
-            const n = normalize(k);
-            return (
-              n.includes(t) ||
-              t.includes(n) ||
-              (t.slice(0, -2).length > 2 && n.startsWith(t.slice(0, -2))) ||
-              (t.length >= 4 &&
-                n.length >= 4 &&
-                n.slice(0, 3) === t.slice(0, 3))
-            );
-          }) *
-            1,
-        0,
-      ),
-    }))
-    .filter((x) => x.score > 0)
-    .sort((a, b) => b.score - a.score || a.i - b.i)
-    .map((x) => x.a);
+    .map((asset, index) => ({ asset, index, score: scoreAsset(tokens, asset) }))
+    .filter((match) => match.score > 0)
+    .sort(
+      (first, second) =>
+        second.score - first.score || first.index - second.index,
+    )
+    .map((match) => match.asset);
 }
