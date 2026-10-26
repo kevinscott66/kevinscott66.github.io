@@ -1,12 +1,70 @@
 /* Слойра — © 2026 Павлович Александр Кириллович / dobropalm. Code: MIT. */
 // Local agent: interpretation -> spatial constraints -> validation. No network,
 // generated code or persistent prompt collection is involved.
+// One-edit correction is deliberately bounded: never rewrite short words,
+// numbers, exact catalogue names or an ambiguous object/command family.
+function oneTypoApart(a, b) {
+  if (Math.abs(a.length-b.length)>1) return false;
+  if (a.length===b.length) {
+    const different=[];
+    for(let i=0;i<a.length;i++) if(a[i]!==b[i]) different.push(i);
+    return different.length===1 || (different.length===2 && different[1]===different[0]+1 &&
+      a[different[0]]===b[different[1]] && a[different[1]]===b[different[0]]);
+  }
+  const shorter=a.length<b.length?a:b, longer=a.length<b.length?b:a;
+  let i=0,j=0;
+  while(i<shorter.length&&j<longer.length) {
+    if(shorter[i]===longer[j]) {i++;j++;}
+    else {j++;if(j-i>1)return false;}
+  }
+  return true;
+}
+function correctCompositionTypos(text, catalogue) {
+  const commands = ["слева","справа","сверху","снизу","вверху","внизу","посередине","посредине",
+    "центре","центру","бокам","краям","между","рядом","горизонтали","вертикали","столбик",
+    "сеткой","симметрично","третей","диагонали","кольцом","кругу","оставь","оставить",
+    "свободное","место","текста","пожалуйста","столом","столе"];
+  const known = new Map();
+  for(const asset of catalogue) for(const word of componentForms[asset.id] || [])
+    known.set(normalize(word),{word:normalize(word),family:asset.id,canonical:normalize(word)===normalize(asset.name)});
+  for(const word of commands) known.set(word,{word,family:"command:"+word});
+  for(const word of Object.keys(countWords)) known.set(word,{word,family:"count:"+countWords[word]});
+  const protectedWords = new Set(["палка","лапка","шапка","маска","марка","рамка","почка","слова","слава","цвета","планы","плана","плане"]);
+  const tokens=[...text.matchAll(/[а-яa-z0-9]+/g)];
+  const exact=componentMatcher(catalogue)(tokens.map(t=>t[0]));
+  const protectedIndexes=new Set(exact.flatMap(m=>Array.from({length:m.length},(_,i)=>m.position+i)));
+  const aliases={цвты:"цветы",телф:"телефон"};
+  const corrections=[], ambiguous=[];
+  let cursor=0, result="";
+  tokens.forEach((token,index)=>{
+    const word=token[0];let replacement=word;
+    if(!protectedIndexes.has(index)&&!known.has(word)&&!protectedWords.has(word)) {
+      const compact=word.match(/^(\d+)([а-я]+)$/);
+      if(compact && known.has(compact[2]) && !known.get(compact[2]).family.startsWith("command:") && !known.get(compact[2]).family.startsWith("count:"))
+        replacement=compact[1]+" "+compact[2];
+      else if(aliases[word]) replacement=aliases[word];
+      else if(word.length>=5&&word.length<=32&&!/\d/.test(word)) {
+        const candidates=[...known.values()].filter(c=>oneTypoApart(word,c.word));
+        const families=new Set(candidates.map(c=>c.family));
+        if(families.size===1) replacement=candidates.sort((a,b)=>Number(Boolean(b.canonical))-Number(Boolean(a.canonical))||Math.abs(a.word.length-word.length)-Math.abs(b.word.length-word.length)||a.word.localeCompare(b.word))[0].word;
+        else if(families.size>1) ambiguous.push(word);
+      }
+    }
+    result+=text.slice(cursor,token.index)+replacement;cursor=token.index+word.length;
+    if(replacement!==word)corrections.push({from:word,to:replacement});
+  });
+  return {text:result+text.slice(cursor),corrections,ambiguous};
+}
+
 class LocalCompositionAgent {
   plan(prompt, catalogue) {
     const empty = {mode: "clarify", assets: [], layout: [], unknown: []};
     if (typeof prompt !== "string" || prompt.length > 2000)
       return {...empty, question: "Сократите описание до 2000 символов."};
-    const original = normalize(prompt);
+    const spelling = correctCompositionTypos(normalize(prompt), catalogue);
+    if(spelling.ambiguous.length)
+      return {...empty,question:`Уточните слово «${spelling.ambiguous[0]}»: возможны разные исправления.`};
+    const original = spelling.text;
     const arrangement = {};
     const modes = [
       ["row", /(?:в (?:один )?ряд|по горизонтали)/g],
@@ -104,7 +162,7 @@ class LocalCompositionAgent {
       return {...plan,question:"Для этой раскладки по третям выберите не больше четырёх предметов."};
     if ((arrangement.mode || arrangement.emptySide) && plan.layout.some(d=>d.x!=null||d.y!=null))
       return {...plan,question:"Оставить общую раскладку или отдельные указания о положении предметов? Укажите один вариант."};
-    return {...plan, status: "ready"};
+    return {...plan, status: "ready", corrections: spelling.corrections};
   }
 }
 const compositionAgent = new LocalCompositionAgent();
