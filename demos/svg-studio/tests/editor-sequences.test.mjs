@@ -705,3 +705,32 @@ test("startup failures show a Russian instruction without raw browser diagnostic
   assert.equal(e.control("notice").textContent,"Не удалось загрузить предметы. Проверьте соединение и обновите страницу.");
   assert.equal(e.run("editorReady"),false);
 });
+
+
+test("touch keeps the active object inside its frame despite overlapping targets", () => {
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0]); add(library[1]); objects[0].x=400; objects[0].y=300; objects[1].x=400; objects[1].y=300; selected=objects[0].id;");
+  const [active, other] = e.state().objects;
+  canvas.onpointerdown(touch(1, other.id, 420, 310));
+  canvas.onpointermove(touch(1, other.id, 450, 330));
+  assert.equal(e.state().selected, active.id);
+  assert.equal(e.state().objects[0].x, 430);
+  assert.equal(e.state().objects[0].y, 320);
+  assert.deepEqual(e.state().objects[1], other);
+  canvas.listeners.pointerup(touch(1, other.id));
+  canvas.onpointerdown({...touch(2, other.id, 700, 300), isPrimary: true});
+  assert.equal(e.state().selected, other.id, "outside active frame can select another object");
+});
+
+test("touch ownership respects rotated scaled frames and desktop hit-testing", () => {
+  const e=editor(), canvas=e.control("canvas");
+  e.run("add(library[0]); add(library[1]); selected=objects[0].id; objects[0].x=400; objects[0].y=300; objects[0].rotation=45; objects[0].scale=0.5;");
+  const [active,other]=e.state().objects;
+  assert.equal(e.run("insideObjectFrame")(active,{x:480,y:300}),true);
+  assert.equal(e.run("insideObjectFrame")(active,{x:460,y:360}),false);
+  canvas.onpointerdown(touch(1,null,400,300));
+  assert.equal(e.state().selected,active.id,"transparent area inside active frame can drag");
+  canvas.listeners.pointerup(touch(1,null));
+  canvas.onpointerdown(pointer(2,other.id,400,300));
+  assert.equal(e.state().selected,other.id,"mouse retains direct selection");
+});
