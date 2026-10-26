@@ -230,7 +230,8 @@ function renderCanvas() {
           y: -124,
           width: 248,
           height: 248,
-          fill: "none",
+          fill: "transparent",
+          "pointer-events": "all",
           stroke: "#7775ed",
           "stroke-dasharray": "5 5",
           "data-selection": "true",
@@ -416,16 +417,67 @@ function moveObject(object, x, y) {
   object.y = boundCoordinate(y);
   render();
 }
-function finishDrag(e) {
-  if (!drag || e.pointerId !== drag.pointerId) return;
-  const pointerId = drag.pointerId;
-  drag = null;
+function releasePointer(pointerId) {
   if ($("canvas").hasPointerCapture(pointerId))
     $("canvas").releasePointerCapture(pointerId);
 }
+function stopGesture() {
+  if (!drag) return;
+  const ids = [...drag.pointers.keys()];
+  drag = null;
+  ids.forEach(releasePointer);
+}
+function pairGeometry(points) {
+  const [a, b] = [...points.values()];
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2,
+    distance: Math.hypot(b.x - a.x, b.y - a.y),
+    angle: Math.atan2(b.y - a.y, b.x - a.x) };
+}
+function beginPair() {
+  const geometry = pairGeometry(drag.pointers);
+  drag.pair = geometry.distance < 1 ? null : {
+    ...geometry, objectX: drag.o.x, objectY: drag.o.y,
+    rotation: drag.o.rotation, scale: drag.o.scale,
+    previousAngle: geometry.angle, delta: 0,
+  };
+}
+function finishDrag(e, eventName) {
+  if (!drag || !drag.pointers.has(e.pointerId)) return;
+  if (eventName !== "pointerup") {
+    stopGesture();
+    return;
+  }
+  drag.pointers.delete(e.pointerId);
+  if (!drag.pointers.size) {
+    stopGesture();
+    // The last pointer was removed from the map before stopping.
+    releasePointer(e.pointerId);
+    return;
+  }
+  const [pointerId, p] = [...drag.pointers][0];
+  drag.pointerId = pointerId;
+  drag.x = p.x - drag.o.x;
+  drag.y = p.y - drag.o.y;
+  drag.pair = null;
+  releasePointer(e.pointerId);
+}
 $("canvas").onpointerdown = (e) => {
-  // One gesture owns the object until it ends; a second finger must not move it.
-  if (drag || e.isPrimary === false || e.button !== 0) return;
+  if (e.button !== 0) return;
+  const type = e.pointerType || "mouse";
+  if (drag) {
+    // A second touch transforms the same object; another mouse/pen or third
+    // finger cannot take ownership. Start the gesture on the object itself.
+    if (drag.type !== "touch" || type !== "touch" || drag.pointers.size !== 1 ||
+        drag.pointers.has(e.pointerId)) return;
+    const p = point(e);
+    if (!p) return;
+    e.preventDefault();
+    drag.pointers.set(e.pointerId, p);
+    $("canvas").setPointerCapture(e.pointerId);
+    beginPair();
+    return;
+  }
+  if (e.isPrimary === false) return;
   const g = e.target.closest("[data-object]");
   const o = g && objects.find((object) => object.id === Number(g.dataset.object));
   const p = o && point(e);
@@ -434,22 +486,45 @@ $("canvas").onpointerdown = (e) => {
   $("canvas").focus({ preventScroll: true });
   if (o) {
     e.preventDefault();
-    drag = { o, pointerId: e.pointerId, x: p.x - o.x, y: p.y - o.y };
+    drag = { o, pointerId: e.pointerId, type, x: p.x - o.x, y: p.y - o.y,
+      pointers: new Map([[e.pointerId, p]]), pair: null };
     $("canvas").setPointerCapture(e.pointerId);
   }
   render();
 };
 $("canvas").onpointermove = (e) => {
-  if (!drag || e.pointerId !== drag.pointerId) return;
+  if (!drag || !drag.pointers.has(e.pointerId)) return;
   if (!objects.includes(drag.o)) {
-    finishDrag(e);
+    stopGesture();
     return;
   }
   const p = point(e);
-  if (p) moveObject(drag.o, p.x - drag.x, p.y - drag.y);
+  if (!p) return;
+  drag.pointers.set(e.pointerId, p);
+  if (drag.pointers.size === 1) {
+    moveObject(drag.o, p.x - drag.x, p.y - drag.y);
+    return;
+  }
+  if (!drag.pair) {
+    beginPair();
+    return;
+  }
+  const current = pairGeometry(drag.pointers), start = drag.pair;
+  if (current.distance < 1) return;
+  // Accumulate the shortest angle between events, avoiding a jump at ±180°.
+  start.delta += Math.atan2(Math.sin(current.angle - start.previousAngle),
+    Math.cos(current.angle - start.previousAngle));
+  start.previousAngle = current.angle;
+  const scale = Math.max(0.2, Math.min(3, start.scale * current.distance / start.distance));
+  const ratio = scale / start.scale;
+  const dx = (start.objectX - start.x) * ratio, dy = (start.objectY - start.y) * ratio;
+  drag.o.rotation = ((start.rotation + start.delta * 180 / Math.PI + 180) % 360 + 360) % 360 - 180;
+  drag.o.scale = scale;
+  moveObject(drag.o, current.x + dx * Math.cos(start.delta) - dy * Math.sin(start.delta),
+    current.y + dx * Math.sin(start.delta) + dy * Math.cos(start.delta));
 };
 for (const ev of ["pointerup", "pointercancel", "lostpointercapture"])
-  $("canvas").addEventListener(ev, finishDrag);
+  $("canvas").addEventListener(ev, (e) => finishDrag(e, ev));
 $("canvas").onkeydown = (e) => {
   // Scope keyboard movement to the focused canvas, never form fields.
   if (e.target !== $("canvas") || e.altKey || e.ctrlKey || e.metaKey || drag) return;
