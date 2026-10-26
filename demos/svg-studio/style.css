@@ -32,6 +32,8 @@ body {
     sans-serif;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  /* Keep page pan/pinch, but reserve double taps for editor actions. */
+  touch-action: manipulation;
 }
 button,
 input,
