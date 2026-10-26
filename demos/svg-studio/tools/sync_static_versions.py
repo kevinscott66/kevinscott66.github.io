@@ -8,9 +8,13 @@ FILES = ("style.css", "engine.js", "svg-safety.js", "app.js")
 
 
 def sync():
-    page = ROOT / "index.html"
+    for filename, resources in (("index.html", FILES), ("privacy.html", ("style.css",))):
+        sync_page(ROOT / filename, resources)
+
+
+def sync_page(page, resources):
     text = page.read_text()
-    for name in FILES:
+    for name in resources:
         version = sha256((ROOT / name).read_bytes()).hexdigest()[:12]
         text, count = re.subn(
             r'((?:href|src)=")' + re.escape(name) + r'(?:\?v=[a-zA-Z0-9]+)?(?=")',
