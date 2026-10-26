@@ -6,8 +6,27 @@ class LocalCompositionAgent {
     const empty = {mode: "clarify", assets: [], layout: [], unknown: []};
     if (typeof prompt !== "string" || prompt.length > 2000)
       return {...empty, question: "Сократите описание до 2000 символов."};
-    let plan = parseComposition(prompt, catalogue);
-    const text = normalize(prompt), words = intentWords(text);
+    const original = normalize(prompt);
+    const arrangement = {};
+    const modes = [
+      ["row", /(?:в (?:один )?ряд|по горизонтали)/g],
+      ["column", /(?:в столбик|по вертикали)/g],
+      ["grid", /(?:сеткой|в виде сетки)/g],
+      ["symmetric", /симметрично/g],
+      ["thirds", /по правилу третей/g],
+    ].filter(([,pattern]) => { pattern.lastIndex=0; return pattern.test(original); });
+    if (modes.length > 1) return {...empty,question:"Выберите один способ расположения: ряд, столбик, сетка, симметрия или правило третей."};
+    if (modes.length) arrangement.mode = modes[0][0];
+    const whitespacePattern = /(?:оставь|оставить) (?:свободное )?место для текста (справа|слева)/g;
+    const emptySides = [...original.matchAll(whitespacePattern)].map(match=>match[1]);
+    if (new Set(emptySides).size>1) return {...empty,question:"С какой стороны оставить место для текста — слева или справа?"};
+    if (emptySides.length) arrangement.emptySide=emptySides[0]==="справа"?"right":"left";
+    let text = original.replace(whitespacePattern, "");
+    for (const [,pattern] of modes) { pattern.lastIndex=0; text=text.replace(pattern,""); }
+    text=text.replace(/^[,;\s]+|[,;\s]+$/g,"");
+    let plan = parseComposition(text, catalogue);
+    const words = intentWords(text);
+    plan.arrangement = arrangement;
     const matches = componentMatcher(catalogue)(words);
     if (/(?:^|\s)-\d|\d[.,]\d/.test(text))
       return {...plan, question: "Количество предметов должно быть целым числом от 0 до 100."};
@@ -21,7 +40,7 @@ class LocalCompositionAgent {
       const omitted = new Set(excluded.flatMap(m => Array.from({length:m.length},(_,i)=>m.position+i)));
       const fallback = parseComposition(words.filter((_,i)=>!omitted.has(i)).join(" "),catalogue);
       const banned = new Set(excluded.map(m=>m.asset.id));
-      plan = {...fallback,assets:fallback.assets.filter(a=>!banned.has(a.id))};
+      plan = {...fallback,assets:fallback.assets.filter(a=>!banned.has(a.id)),arrangement};
     }
     plan.layout ??= plan.assets.map(() => ({}));
     if (matches.length === 1) {
@@ -67,6 +86,10 @@ class LocalCompositionAgent {
     }
     if (!plan.assets.length)
       return {...plan, question: "Какие предметы нужны? Например: два телефона и цветы в центре."};
+    if (arrangement.mode === "thirds" && plan.assets.length>4)
+      return {...plan,question:"Для этой раскладки по третям выберите не больше четырёх предметов."};
+    if ((arrangement.mode || arrangement.emptySide) && plan.layout.some(d=>d.x!=null||d.y!=null))
+      return {...plan,question:"Оставить общую раскладку или отдельные указания о положении предметов? Укажите один вариант."};
     return {...plan, status: "ready"};
   }
 }

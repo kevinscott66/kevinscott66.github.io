@@ -544,7 +544,7 @@ function composeFromPrompt() {
   }
   stopGesture();
   objects = [];
-  const positions = compositionPositions(plan.assets.length, w, h, plan.layout, plan.surface);
+  const positions = compositionPositions(plan.assets.length, w, h, plan.layout, plan.surface, plan.arrangement);
   plan.assets.forEach((asset, index) => add(asset, positions[index]));
   selected = objects.find((o) => o.role === "main")?.id;
   $("notice").textContent = plan.surface === "table"
