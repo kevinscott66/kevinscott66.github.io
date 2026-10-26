@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="robots" content="noindex,nofollow" />
     <title>Слойра — редактор иллюстраций</title>
-    <link rel="stylesheet" href="style.css?v=e1a5b84273de" />
+    <link rel="stylesheet" href="style.css?v=48ab170bceb1" />
   </head>
   <body>
     <header class="app-bar">
@@ -106,8 +106,11 @@
             <button id="shrink" aria-label="Уменьшить предмет">Меньше</button>
             <button id="grow" aria-label="Увеличить предмет">Больше</button>
             <button id="duplicate">Копия</button>
-            <button id="raise-object">Выше</button>
-            <button id="lower-object">Ниже</button>
+            <div class="layer-controls" role="group" aria-labelledby="layer-controls-label">
+              <span id="layer-controls-label">Слой</span>
+              <button id="raise-object" aria-label="На один слой вперёд" title="На один слой вперёд">Вперёд</button>
+              <button id="lower-object" aria-label="На один слой назад" title="На один слой назад">Назад</button>
+            </div>
             <button id="delete" class="delete-button">Удалить</button>
           </div>
           <details class="precise-tools">

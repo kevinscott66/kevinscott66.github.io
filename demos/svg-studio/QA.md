@@ -110,3 +110,6 @@ Securityscan dbdf0b99-1fb7-4af1-9ee5-f7784da366f8 завершённаimmutablef
 По повторному поручению пользователя выполнен третий и последний цикл текущей ограниченной серии. Editor reviewer:90независимых actualhandlerVM сценариев import/save/validate/reopen по3размерам,0/1/100объектам,границамкоординат/масштаба/угла,разным необязательнымпалитрам иextensionполям PASS; макссохранённыйфайл16031байт. UIreview выбранныхпредметов/рамок/слоёв PASS.
 
 Небольшой рефакторингcleanSVG: неизменённыйсписок36допустимыхэлементов собранвsvg-safety.js; удалён недостижимыйdenylist;2МБтекст проверяетсядоDOMParser,15000элементов после. Независимый securitydiffreview подтвердил идентичностьallowlist/loadorder/namespace/attributes.67Node/static8/regression6/diffPASS. Actualbrowser смешанныйactive.svg+bad.svg:1импортирован/1ошибка, active tags0/unsafe attrs0, реальноскачанныйSVG34 XMLpass, consoleclean. ГарантияаппаратныхiPhoneжестов/DoSнерасширялась.
+
+## Компактные подписи глубины
+Кнопки слоёв объединены в маленькую группу «Слой»: «Вперёд»/«Назад». Aria-label/title уточняют «На один слой…». IDs/обработчики неизменны. Браузер320/393px: обе подписи помещаются в прежние две ячейки,44pxцели сохранены. Staticversion/static8/diffPASS; JSнеизменён.
