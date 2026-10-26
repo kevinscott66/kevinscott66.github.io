@@ -23,7 +23,8 @@ function correctCompositionTypos(text, catalogue) {
   const commands = ["слева","справа","сверху","снизу","вверху","внизу","посередине","посредине",
     "центре","центру","бокам","краям","между","рядом","горизонтали","вертикали","столбик",
     "сеткой","симметрично","третей","диагонали","кольцом","кругу","оставь","оставить",
-    "свободное","место","текста","пожалуйста","столом","столе"];
+    "свободное","место","текста","пожалуйста","столом","столе",
+    "собери","сделай","добавь","поставь","размести"];
   const known = new Map();
   for(const asset of catalogue) for(const word of componentForms[asset.id] || [])
     known.set(normalize(word),{word:normalize(word),family:asset.id,canonical:normalize(word)===normalize(asset.name)});
