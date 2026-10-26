@@ -117,3 +117,5 @@ Additional agent constraints: two identical flanking items with an optional dist
 Prompt typo preprocessing is bounded to one edit over a local dictionary of active assets/forms and common commands/counts. Exact imported phrases, short words, numbers and explicit protected real words are not rewritten. Distinct candidate families clarify; corrections are surfaced via textContent. Numeric prefixes such as2телефона split only for known assets. This is limited typo tolerance, not general spell checking.
 
 Generated agent coverage is now5000cases:3300prior plus1700distinct new prompts (1000imported-name,250polite-command,300text-space,150theme/exclusion). The new batch checks uniqueness and exact counts. Exact valid imperative commands are protected from typo rewrites (поставь must not become оставь).
+
+Release refactor separates typo correction, arrangement extraction, scene exclusion and spatial relation phases into explicit helpers. Missing relationship anchors now clarify instead of silently ignoring the instruction; relation words inside exact imported names remain literal. 190 Node tests cover the 5000-combination set plus regressions.

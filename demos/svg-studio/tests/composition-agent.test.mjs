@@ -29,3 +29,11 @@ test('agent rejects oversized/invalid input and never evaluates prompt text',()=
  assert.ok(agent.plan('<script>alert(1)</script>',library).question);
  assert.equal(JSON.stringify(library),before);
 });
+
+test('unfinished relationships clarify while complete imported names remain literal',()=>{
+ const agent=new LocalCompositionAgent();
+ for(const prompt of ['лампа между','телефон выше','между книгой и лампой'])assert.ok(agent.plan(prompt,library).question,prompt);
+ const custom={id:'custom-cloud',name:'Книга над облаками'};
+ const result=agent.plan(custom.name,[...library,custom]);
+ assert.equal(result.question,undefined);assert.deepEqual(result.assets.map(a=>a.id),[custom.id]);
+});
