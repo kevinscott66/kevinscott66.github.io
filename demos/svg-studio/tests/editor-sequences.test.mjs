@@ -15,6 +15,7 @@ function editor() {
   const control = (id) => {
     if (!controls.has(id)) controls.set(id, {
       value: id === "scheme" ? "lavender" : "", textContent: "",
+      querySelector() { return null; }, querySelectorAll() { return []; },
       listeners: {}, capturedPointers: new Set(), focused: false,
       addEventListener(type, handler) { this.listeners[type] = handler; },
       getScreenCTM() { return { inverse: () => ({}) }; },
@@ -386,4 +387,145 @@ test("two-finger rotation can cross a full circle repeatedly without jumps", () 
   near(Math.atan2(Math.sin(difference),Math.cos(difference)),0);
   assert.ok(o.rotation>=-180&&o.rotation<=180);near(o.x,400);near(o.y,300);near(o.scale,1);
  }
+});
+
+test("deleting or replacing composition immediately ends captured gestures", async () => {
+  for (const operation of ["delete", "compose", "open"]) {
+    const e = editor(), canvas = e.control("canvas");
+    e.run("add(library[0])");
+    const id = e.state().selected;
+    canvas.onpointerdown(touch(1, id, 300, 300));
+    canvas.onpointerdown(touch(2, id, 500, 300));
+    if (operation === "delete") e.control("delete").onclick();
+    if (operation === "compose") {
+      e.control("prompt").value = "Книга, телефон";
+      e.control("compose").onclick();
+    }
+    if (operation === "open") {
+      await e.run("openProject")(e.event("project", {
+        size: 1000, text: async () => JSON.stringify(project("wallet")),
+      }));
+    }
+    assert.equal(canvas.capturedPointers.size, 0, operation);
+    assert.equal(e.run("drag"), null, operation);
+    const before = e.state();
+    canvas.onpointermove(touch(2, id, 900, 700));
+    assert.deepEqual(e.state(), before, "old move cannot change the new composition");
+  }
+});
+
+test("rejected compose and invalid project leave the current gesture intact", async () => {
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0])");
+  const id = e.state().selected;
+  canvas.onpointerdown(touch(1, id, 400, 300));
+  e.control("prompt").value = "Книга, дракон";
+  e.control("compose").onclick();
+  await e.run("openProject")(e.event("project", {
+    size: 3, text: async () => "bad",
+  }));
+  assert.equal(canvas.hasPointerCapture(1), true);
+  canvas.onpointermove(touch(1, id, 410, 320));
+  near(e.state().objects[0].x, 410);
+  near(e.state().objects[0].y, 320);
+});
+
+test("external transform controls cancel the old gesture baseline", () => {
+  for (const operation of ["rotation", "scale", "role", "size"]) {
+    const e = editor(), canvas = e.control("canvas");
+    e.run("add(library[0])");
+    const id = e.state().selected;
+    canvas.onpointerdown(touch(1, id, 300, 300));
+    canvas.onpointerdown(touch(2, id, 500, 300));
+    if (operation === "size") e.control("size").onchange({ target: { value: "1200 × 800" } });
+    else e.control(operation).oninput({ target: {
+      value: { rotation: "45", scale: "1.5", role: "background" }[operation],
+    } });
+    const before = e.state();
+    assert.equal(canvas.capturedPointers.size, 0, operation);
+    canvas.onpointermove(touch(2, id, 700, 600));
+    assert.deepEqual(e.state(), before, "old pinch cannot undo external edits");
+  }
+});
+
+test("owned pointer movement updates only its existing transform and suppresses native selection", () => {
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0])");
+  const id = e.state().selected, transforms = [];
+  const existingGroup = { setAttribute(name, value) { transforms.push([name, value]); } };
+  canvas.onpointerdown(touch(1, id, 400, 300));
+  canvas.querySelector = () => existingGroup;
+  const before = e.run("renderCalls");
+  const move = touch(1, id, 425, 315);
+  canvas.onpointermove(move);
+  assert.equal(move.prevented, true);
+  assert.equal(e.run("renderCalls"), before, "gesture does not replace the SVG subtree");
+  assert.deepEqual(transforms, [["transform", "translate(425 315) rotate(0) scale(1)"]]);
+  const unrelated = touch(8, id, 10, 10);
+  canvas.onpointermove(unrelated);
+  assert.equal(unrelated.prevented, undefined, "unowned input is left alone");
+  const context = { preventDefault() { this.prevented = true; } };
+  canvas.oncontextmenu(context);
+  assert.equal(context.prevented, true);
+});
+
+test("Delete and Backspace remove only canvas-focused selection and preserve form editing", () => {
+  for (const key of ["Delete", "Backspace"]) {
+    const e = editor(), canvas = e.control("canvas");
+    e.run("add(library[0])");
+    const event = (target = canvas, extra = {}) => ({ key, target,
+      preventDefault() { this.prevented = true; }, ...extra });
+    for (const input of [event(e.control("prompt")), event(canvas, { ctrlKey: true }), event(canvas, { metaKey: true })]) {
+      canvas.onkeydown(input);
+      assert.equal(input.prevented, undefined);
+      assert.equal(e.state().objects.length, 1);
+    }
+    const remove = event();
+    canvas.onkeydown(remove);
+    assert.equal(remove.prevented, true);
+    assert.equal(e.state().objects.length, 0);
+    assert.equal(e.state().selected, null);
+    const empty = event(); canvas.onkeydown(empty);
+    assert.equal(empty.prevented, undefined);
+  }
+});
+
+test("quick controls normalize rotation, bound scale and share copy/layer/delete state", () => {
+  const e = editor();
+  e.run("add(library[0], {rotation:179, scale:2.95}); add(library[1]); selected=objects[0].id");
+  e.control("turn-right").onclick(); near(e.state().objects[0].rotation, -166);
+  e.control("turn-left").onclick(); near(e.state().objects[0].rotation, 179);
+  for (let i = 0; i < 40; i++) e.control("grow").onclick();
+  near(e.state().objects[0].scale, 3);
+  for (let i = 0; i < 40; i++) e.control("shrink").onclick();
+  near(e.state().objects[0].scale, .2);
+  const original = e.state().objects[0];
+  e.control("raise-object").onclick();
+  assert.equal(e.state().objects.at(-1).id, original.id);
+  e.control("lower-object").onclick();
+  assert.equal(e.state().objects[0].id, original.id);
+  e.control("copy-object").onclick();
+  const copied = e.state().objects.at(-1);
+  assert.equal(e.state().selected, copied.id);
+  assert.equal(copied.asset, original.asset);
+  near(copied.rotation, original.rotation); near(copied.scale, original.scale);
+  e.control("remove-object").onclick();
+  assert.equal(e.state().objects.length, 2);
+  assert.ok(!e.state().objects.some(o => o.id === copied.id));
+});
+
+test("pointerdown preserves an already-selected rectangle as the native event target", () => {
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0])");
+  const id = e.state().selected;
+  let removals = 0, appends = 0;
+  const rectangle = { parentNode: { dataset: { object: String(id) } }, remove() { removals++; } };
+  const group = { querySelector: () => rectangle, append() { appends++; } };
+  canvas.querySelectorAll = () => [rectangle];
+  canvas.querySelector = () => group;
+  const before = e.run("renderCalls");
+  canvas.onpointerdown(touch(1, id, 400, 300));
+  assert.equal(e.run("renderCalls"), before);
+  assert.equal(removals, 0);
+  assert.equal(appends, 0);
 });

@@ -314,7 +314,10 @@ select {
   width: 100%;
   max-height: calc(100dvh - 390px);
   min-height: 0;
-  touch-action: pan-y pinch-zoom;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 #canvas [data-object] > svg,
 #canvas [data-selection] {
@@ -875,3 +878,10 @@ input[type="range"] {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Keep object actions beside the canvas, including on narrow screens. */
+.object-tools { margin: 0 0 16px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.object-tools strong { display: block; margin-bottom: 10px; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
+.quick-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.quick-actions button { flex: 1 0 auto; }
+.stage, .stage * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }

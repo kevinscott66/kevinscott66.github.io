@@ -132,12 +132,13 @@ function mixColorWithPaper(color, paper, paperWeight = 0.75) {
 function rewriteLocalReferences(value, ids, attributeName) {
   const isHref = attributeName === "href" || attributeName === "xlink:href";
   const directId = isHref && value.startsWith("#") ? ids.get(value.slice(1)) : null;
-  if (directId) return `#${directId}`;
-  return value.replace(
+  if (isHref) return directId ? `#${directId}` : null;
+  const rewritten = value.replace(
     /url\(\s*(['"]?)#(.*?)\1\s*\)/g,
     (reference, quote, id) =>
-      ids.has(id) ? `url(#${ids.get(id)})` : reference,
+      ids.has(id) ? `url(#${ids.get(id)})` : "",
   );
+  return rewritten === value ? value : rewritten.trim() || "none";
 }
 
 function cloneArtwork(asset, role, prefix) {
@@ -164,7 +165,8 @@ function cloneArtwork(asset, role, prefix) {
           if (slot) v = p[slot];
         }
       }
-      n.setAttribute(a.name, v);
+      if (v === null) n.removeAttribute(a.name);
+      else n.setAttribute(a.name, v);
     }
   return root;
 }
@@ -223,24 +225,26 @@ function renderCanvas() {
     svg.setAttribute("width", 240);
     svg.setAttribute("height", 240);
     g.append(svg);
-    if (o.id === selected)
-      g.append(
-        el("rect", {
-          x: -124,
-          y: -124,
-          width: 248,
-          height: 248,
-          fill: "transparent",
-          "pointer-events": "all",
-          stroke: "#7775ed",
-          "stroke-dasharray": "5 5",
-          "data-selection": "true",
-        }),
-      );
     canvas.append(g);
   }
+  renderCanvasSelection();
   $("empty").hidden = objects.length > 0;
   $("count").textContent = `Элементов: ${objects.length}`;
+}
+
+// Keep the pointer target alive throughout a gesture, including its selection
+// rectangle. Replacing the SVG subtree on pointerdown/move disrupts native touch.
+function renderCanvasSelection() {
+  const canvas = $("canvas");
+  canvas.querySelectorAll("[data-selection]").forEach((node) => {
+    if (node.parentNode?.dataset.object !== String(selected)) node.remove();
+  });
+  const group = selected == null ? null : canvas.querySelector(`[data-object="${selected}"]`);
+  if (group && !group.querySelector("[data-selection]")) group.append(el("rect", {
+    x: -124, y: -124, width: 248, height: 248,
+    fill: "transparent", "pointer-events": "all", stroke: "#7775ed",
+    "stroke-dasharray": "5 5", "data-selection": "true",
+  }));
 }
 
 function renderLayers() {
@@ -278,6 +282,13 @@ function renderSelection() {
     $(prop).disabled = !o;
     if (o) $(prop).value = o[prop];
   }
+  $("object-tools").hidden = !o;
+  $("tool-name").textContent = library.find((a) => a.id === o?.asset)?.name || "";
+  if (o) {
+    const index = objects.indexOf(o);
+    $("raise-object").disabled = index === objects.length - 1;
+    $("lower-object").disabled = index === 0;
+  }
   $("duplicate").disabled = !o;
   $("delete").disabled = !o;
   $("export").disabled = objects.length === 0;
@@ -309,11 +320,13 @@ for (const prop of ["rotation", "scale", "role"])
   $(prop).oninput = (e) => {
     const o = selectedObject();
     if (o) {
+      stopGesture();
       o[prop] = prop === "role" ? e.target.value : Number(e.target.value);
       render();
     }
   };
 $("delete").onclick = () => {
+  stopGesture();
   objects = objects.filter((o) => o.id !== selected);
   selected = null;
   render();
@@ -328,6 +341,7 @@ $("duplicate").onclick = () => {
   }
 };
 $("size").onchange = (e) => {
+  stopGesture();
   const oldW = w,
     oldH = h;
   [w, h] = e.target.value.split(" × ").map(Number);
@@ -396,6 +410,7 @@ function composeFromPrompt() {
       "Не удалось подобрать элементы. Опишите тему другими словами или перечислите элементы из библиотеки.";
     return;
   }
+  stopGesture();
   objects = [];
   const positions = compositionPositions(plan.assets.length, w, h);
   plan.assets.forEach((asset, index) => add(asset, positions[index]));
@@ -415,7 +430,10 @@ function point(e) {
 function moveObject(object, x, y) {
   object.x = boundCoordinate(x);
   object.y = boundCoordinate(y);
-  render();
+  const group = $("canvas").querySelector(`[data-object="${object.id}"]`);
+  if (group) group.setAttribute("transform",
+    `translate(${object.x} ${object.y}) rotate(${object.rotation}) scale(${object.scale})`);
+  renderSelection();
 }
 function releasePointer(pointerId) {
   if ($("canvas").hasPointerCapture(pointerId))
@@ -490,14 +508,17 @@ $("canvas").onpointerdown = (e) => {
       pointers: new Map([[e.pointerId, p]]), pair: null };
     $("canvas").setPointerCapture(e.pointerId);
   }
-  render();
+  renderCanvasSelection();
+  renderSelection();
 };
+$("canvas").oncontextmenu = (e) => e.preventDefault();
 $("canvas").onpointermove = (e) => {
   if (!drag || !drag.pointers.has(e.pointerId)) return;
   if (!objects.includes(drag.o)) {
     stopGesture();
     return;
   }
+  e.preventDefault();
   const p = point(e);
   if (!p) return;
   drag.pointers.set(e.pointerId, p);
@@ -528,10 +549,16 @@ for (const ev of ["pointerup", "pointercancel", "lostpointercapture"])
 $("canvas").onkeydown = (e) => {
   // Scope keyboard movement to the focused canvas, never form fields.
   if (e.target !== $("canvas") || e.altKey || e.ctrlKey || e.metaKey || drag) return;
+  const o = selectedObject();
+  if (!o) return;
+  if (e.key === "Delete" || e.key === "Backspace") {
+    e.preventDefault();
+    $("delete").onclick();
+    return;
+  }
   const movement = { ArrowLeft: [-1, 0], ArrowRight: [1, 0],
     ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
-  const o = selectedObject();
-  if (!movement || !o) return;
+  if (!movement) return;
   e.preventDefault();
   const step = e.shiftKey ? 10 : 1;
   moveObject(o, o.x + movement[0] * step, o.y + movement[1] * step);
@@ -648,6 +675,7 @@ async function openProject(e) {
     const p = JSON.parse(await file.text());
     if (token !== projectReadToken) return;
     validateProject(p, file.size);
+    stopGesture();
     w = p.w;
     h = p.h;
     objects = p.objects.map((o) => ({ ...o, id: ++uid }));
@@ -741,3 +769,19 @@ document.querySelectorAll("[data-example]").forEach((button) =>
     $("compose").click();
   }),
 );
+
+
+// Quick controls share the same actions and state as the full inspector.
+$("remove-object").onclick = () => $("delete").onclick();
+$("copy-object").onclick = () => { stopGesture(); $("duplicate").onclick(); };
+for (const [id, direction] of [["raise-object", 1], ["lower-object", -1]])
+  $(id).onclick = () => { const o = selectedObject(); if (o) { stopGesture(); moveLayer(o, direction); } };
+for (const [id, rotation, scale] of [["turn-left", -15, 0], ["turn-right", 15, 0], ["shrink", 0, -0.1], ["grow", 0, 0.1]])
+  $(id).onclick = () => {
+    const o = selectedObject();
+    if (!o) return;
+    stopGesture();
+    o.rotation = ((o.rotation + rotation + 180) % 360 + 360) % 360 - 180;
+    o.scale = Math.max(0.2, Math.min(3, Math.round((o.scale + scale) * 100) / 100));
+    render();
+  };

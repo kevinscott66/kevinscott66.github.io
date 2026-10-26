@@ -96,11 +96,22 @@ function componentMatcher(catalogue) {
     (componentForms[asset.id] || [asset.name]).map((phrase) => ({
       asset, catalogueIndex, tokens: intentWords(phrase),
     })).filter(({ tokens }) => tokens.length));
-  return (words) => phrases.flatMap(({ asset, catalogueIndex, tokens }) =>
-    words.flatMap((_, position) => tokens.every((token, offset) =>
-      words[position + offset] === token)
-      ? [{ asset, catalogueIndex, position, length: tokens.length }] : []))
-    .sort((a, b) => a.position - b.position || a.catalogueIndex - b.catalogueIndex);
+  return (words) => {
+    const candidates = phrases.flatMap(({ asset, catalogueIndex, tokens }) =>
+      words.flatMap((_, position) => tokens.every((token, offset) =>
+        words[position + offset] === token)
+        ? [{ asset, catalogueIndex, position, length: tokens.length }] : []))
+      .sort((a, b) => a.position - b.position || b.length - a.length ||
+        a.catalogueIndex - b.catalogueIndex);
+    // A complete imported name owns its words: «Красная книга» must not also
+    // insert the built-in book. Prefer the longest phrase at each position.
+    let end = 0;
+    return candidates.filter((match) => {
+      if (match.position < end) return false;
+      end = match.position + match.length;
+      return true;
+    });
+  };
 }
 
 function componentListParts(text, matchComponents) {
