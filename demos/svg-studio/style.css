@@ -110,6 +110,7 @@ a:focus-visible,
 }
 .brand {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 11px;
   min-height: 44px;
@@ -118,7 +119,9 @@ a:focus-visible,
 }
 .brand-wordmark {
   display: block;
+  flex: none;
   width: 142px;
+  min-width: 142px;
   height: 36px;
   overflow: visible;
 }
@@ -664,6 +667,11 @@ input[type="range"] {
   .brand {
     font-size: 20px;
     gap: 9px;
+  }
+  .brand-wordmark {
+    width: 156px;
+    min-width: 156px;
+    height: 40px;
   }
   .app-bar h1 {
     display: none;

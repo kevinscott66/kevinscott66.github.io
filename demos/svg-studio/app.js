@@ -628,7 +628,7 @@ $("files").onchange = importArtworkFiles;
 
 async function init() {
   try {
-    library = await (await fetch("assets/library.json")).json();
+    library = await (await fetch("assets/library.json", { cache: "no-cache" })).json();
     const paths = [
       ...new Set(
         library.flatMap((a) =>
@@ -638,7 +638,7 @@ async function init() {
     ];
     await Promise.all(
       paths.map(async (path) =>
-        cache.set(path, cleanSVG(await (await fetch(path)).text())),
+        cache.set(path, cleanSVG(await (await fetch(path, { cache: "no-cache" })).text())),
       ),
     );
     $("background").value = palette().backgroundLight;
