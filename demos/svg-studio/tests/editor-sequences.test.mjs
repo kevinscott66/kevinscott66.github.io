@@ -15,13 +15,23 @@ function editor() {
   const control = (id) => {
     if (!controls.has(id)) controls.set(id, {
       value: id === "scheme" ? "lavender" : "", textContent: "",
-      addEventListener() {},
+      listeners: {}, capturedPointers: new Set(), focused: false,
+      addEventListener(type, handler) { this.listeners[type] = handler; },
+      getScreenCTM() { return { inverse: () => ({}) }; },
+      focus() { this.focused = true; },
+      setPointerCapture(id) { this.capturedPointers.add(id); },
+      hasPointerCapture(id) { return this.capturedPointers.has(id); },
+      releasePointerCapture(id) { this.capturedPointers.delete(id); },
     });
     return controls.get(id);
   };
   const context = vm.createContext({
     document: { getElementById: control, querySelectorAll: () => [] },
     initialLibrary: library,
+    DOMPoint: class {
+      constructor(x, y) { this.x = x; this.y = y; }
+      matrixTransform() { return this; }
+    },
     renderCalls: 0, libraryRenderCalls: 0, downloads: [],
   });
   assert.equal(app.split("\ninit();").length, 2, "one explicit startup call");
@@ -210,4 +220,88 @@ test("actual compose handler preserves all named items and rejects unavailable o
   e.control("compose").onclick();
   assert.deepEqual(e.state(),before);
   assert.match(e.control("notice").textContent,/дракон/);
+});
+
+
+function pointer(id, objectId, x = 400, y = 300, overrides = {}) {
+  return {
+    pointerId: id, button: 0, isPrimary: true, clientX: x, clientY: y,
+    target: { closest: () => objectId == null ? null : { dataset: { object: String(objectId) } } },
+    preventDefault() { this.prevented = true; },
+    ...overrides,
+  };
+}
+
+test("drag belongs to one pointer and ignores unrelated touches and cancellations", () => {
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0]); add(library[1]);");
+  const [first, second] = e.state().objects;
+  canvas.onpointerdown(pointer(1, first.id));
+  assert.equal(canvas.focused, true);
+  assert.equal(canvas.hasPointerCapture(1), true);
+  canvas.onpointerdown(pointer(2, second.id, 500, 350, { isPrimary: false }));
+  canvas.onpointermove(pointer(2, second.id, 800, 600));
+  canvas.listeners.pointercancel(pointer(2, second.id));
+  assert.equal(e.state().selected, first.id);
+  assert.equal(e.state().objects[0].x, first.x);
+  canvas.onpointermove(pointer(1, first.id, 450, 325));
+  assert.equal(e.state().objects[0].x, first.x + 50);
+  assert.equal(e.state().objects[0].y, first.y + 25);
+  canvas.listeners.pointerup(pointer(1, first.id));
+  assert.equal(canvas.hasPointerCapture(1), false);
+  canvas.onpointermove(pointer(1, first.id, 900, 700));
+  assert.equal(e.state().objects[0].x, first.x + 50);
+});
+
+test("canceled/lost gestures stop moving; removed objects cannot be dragged", () => {
+  for (const event of ["pointercancel", "lostpointercapture"]) {
+    const e = editor(), canvas = e.control("canvas");
+    e.run("add(library[0])");
+    canvas.onpointerdown(pointer(7, e.state().selected));
+    canvas.listeners[event](pointer(7));
+    const before = e.state();
+    canvas.onpointermove(pointer(7, null, 500, 500));
+    assert.deepEqual(e.state(), before);
+    assert.equal(canvas.hasPointerCapture(7), false);
+  }
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0])");
+  canvas.onpointerdown(pointer(9, e.state().selected));
+  e.control("delete").onclick();
+  canvas.onpointermove(pointer(9, null, 500, 500));
+  assert.equal(canvas.hasPointerCapture(9), false);
+  assert.equal(e.state().objects.length, 0);
+});
+
+test("right-click and unavailable canvas geometry do not begin a drag", () => {
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0]); selected = null;");
+  const id = e.state().objects[0].id, before = e.state();
+  canvas.onpointerdown(pointer(1, id, 400, 300, { button: 2 }));
+  assert.deepEqual(e.state(), before);
+  canvas.getScreenCTM = () => null;
+  canvas.onpointerdown(pointer(1, id));
+  assert.deepEqual(e.state(), before);
+  assert.equal(canvas.capturedPointers.size, 0);
+});
+
+test("canvas arrow keys move the selected object, respect bounds and ignore form typing", () => {
+  const e = editor(), canvas = e.control("canvas");
+  e.run("add(library[0], {x:4999, y:100})");
+  const key = (value, extra = {}) => ({ key: value, target: canvas,
+    preventDefault() { this.prevented = true; }, ...extra });
+  const right = key("ArrowRight", { shiftKey: true });
+  canvas.onkeydown(right);
+  assert.equal(right.prevented, true);
+  assert.equal(e.state().objects[0].x, 5000);
+  canvas.onkeydown(key("ArrowUp"));
+  assert.equal(e.state().objects[0].y, 99);
+  const before = e.state();
+  for (const extra of [{ target: e.control("prompt") }, { ctrlKey: true }, { metaKey: true }, { altKey: true }])
+    canvas.onkeydown(key("ArrowLeft", extra));
+  assert.deepEqual(e.state(), before);
+  e.run("selected = null");
+  const noSelection = key("ArrowLeft");
+  canvas.onkeydown(noSelection);
+  assert.equal(noSelection.prevented, undefined);
 });

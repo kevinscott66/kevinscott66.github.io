@@ -7,7 +7,7 @@
       content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'"
     />
     <meta name="referrer" content="no-referrer" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="robots" content="noindex,nofollow" />
     <title>Сборка — SVG Studio</title>
     <link rel="stylesheet" href="style.css" />
@@ -80,6 +80,9 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 800 600"
               aria-label="Холст композиции"
+              aria-describedby="canvas-hint"
+              tabindex="0"
+              role="img"
             ></svg>
             <div id="empty">
               <svg viewBox="0 0 40 40" aria-hidden="true">
@@ -90,8 +93,8 @@
             </div>
           </div>
         </div>
-        <p class="canvas-hint">
-          Перетаскивайте элементы, чтобы изменить композицию
+        <p id="canvas-hint" class="canvas-hint">
+          Перемещайте элементы мышью, касанием или стрелками на клавиатуре
         </p>
         <section class="compose-section" aria-labelledby="compose-heading">
           <h2 id="compose-heading" class="sr-only">Опишите картинку</h2>
