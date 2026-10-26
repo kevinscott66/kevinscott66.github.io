@@ -9,6 +9,8 @@ class LocalCompositionAgent {
     let plan = parseComposition(prompt, catalogue);
     const text = normalize(prompt), words = intentWords(text);
     const matches = componentMatcher(catalogue)(words);
+    if (/(?:^|\s)-\d|\d[.,]\d/.test(text))
+      return {...plan, question: "Количество предметов должно быть целым числом от 0 до 100."};
     // A scene followed only by exclusions still has semantic intent:
     // «рабочее место без цветов» is not a request to create zero objects.
     const excluded = matches.filter((m,i) => {
