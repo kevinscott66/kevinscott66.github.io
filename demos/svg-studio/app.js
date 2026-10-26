@@ -928,7 +928,7 @@ async function init() {
   } catch (err) {
     editorReady = false;
     setEditorLoading(true);
-    $("notice").textContent = "Не удалось загрузить библиотеку: " + err.message;
+    $("notice").textContent = "Не удалось загрузить предметы. Проверьте соединение и обновите страницу.";
   }
 }
 init();
