@@ -761,3 +761,13 @@ test('compose applies a reserved text area and rejects conflicting global layout
  e.control('prompt').value='книга и лампа в ряд и в столбик';e.control('compose').onclick();
  assert.deepEqual(e.state(),result);assert.match(e.control('notice').textContent,/Выберите один способ/);
 });
+
+test('compose shows typo corrections as plain text and preserves state on ambiguity',()=>{
+ const e=editor();e.control('prompt').value='2телефона и цвты посеридине';e.control('compose').onclick();
+ const result=e.state();assert.deepEqual(result.objects.map(o=>o.asset),['phone','phone','plant']);
+ assert.equal(result.objects[2].x,result.w/2);assert.equal(result.objects[2].y,result.h/2);
+ assert.match(e.control('notice').textContent,/Исправлены опечатки/);
+ assert.match(e.control('notice').textContent,/цвты/);
+ e.control('prompt').value='лампа в центра';e.control('compose').onclick();
+ assert.deepEqual(e.state(),result);assert.match(e.control('notice').textContent,/Уточните слово/);
+});

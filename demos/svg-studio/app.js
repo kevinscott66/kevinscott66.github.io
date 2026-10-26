@@ -550,6 +550,10 @@ function composeFromPrompt() {
   $("notice").textContent = plan.surface === "table"
     ? "Предметы на столе. Цвет поверхности можно изменить в настройках фона."
     : "Готово. Можно передвинуть элементы и изменить цвета.";
+  if (plan.corrections?.length) {
+    const fixed = plan.corrections.map(c => `«${c.from}» → «${c.to}»`).join(", ");
+    $("notice").textContent = `Исправлены опечатки: ${fixed}. ` + $("notice").textContent;
+  }
   render();
 }
 $("compose").onclick = composeFromPrompt;
