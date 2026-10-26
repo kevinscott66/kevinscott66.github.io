@@ -869,7 +869,7 @@ input[type="range"] {
 .stage, .stage * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 
 .object-tools .selection-name { display: block; min-height: 0; margin-bottom: 12px; font-size: 14px; font-weight: 500; }
-.quick-actions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.quick-actions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; align-items: end; }
 .quick-actions button { min-width: 0; padding: 8px 6px; border-color: #44474c; background: #252629; }
 .quick-actions button:hover { background: #34363a; }
 .quick-actions .delete-button { color: #eab8ad; background: transparent; }
@@ -884,3 +884,6 @@ input[type="range"] {
   .quick-actions button { font-size: 12px; }
   .precise-fields { grid-template-columns: minmax(0, 1fr); gap: 8px; }
 }
+
+.layer-controls { grid-column: span 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 8px; min-width: 0; }
+.layer-controls > span { grid-column: 1 / -1; color: var(--muted); font-size: 10px; line-height: 1.2; }
