@@ -201,5 +201,45 @@
   {
     "prompt": "цветы перед телефоном",
     "question": true
+  },
+  {
+    "prompt": "Две книги и три монеты",
+    "ids": [
+      "book",
+      "book",
+      "coin",
+      "coin",
+      "coin"
+    ]
+  },
+  {
+    "prompt": "Пожалуйста, слева два телефона",
+    "ids": [
+      "phone",
+      "phone"
+    ]
+  },
+  {
+    "prompt": "Собери, пожалуйста, лампу и растение",
+    "ids": [
+      "lamp",
+      "plant"
+    ]
+  },
+  {
+    "prompt": "Двенадцать монет",
+    "count": 12
+  },
+  {
+    "prompt": "-2 телефона",
+    "question": true
+  },
+  {
+    "prompt": "1.5 телефона",
+    "question": true
+  },
+  {
+    "prompt": "2,5 книги",
+    "question": true
   }
 ]

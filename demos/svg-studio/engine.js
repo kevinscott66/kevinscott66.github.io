@@ -132,13 +132,15 @@ function componentListParts(text, matchComponents) {
       return item;
     });
     return [...parts, part.slice(start)];
-  }).map((part) => part.trim()).filter(Boolean);
+  }).map((part) => part.trim()).filter(part => part &&
+    !/^(?:пожалуйста|собери|сделай|добавь|поставь|размести)(?: пожалуйста)?$/.test(part));
 }
 
 const countWords = {
   один: 1, одна: 1, одно: 1, одну: 1, два: 2, две: 2, двумя: 2, двух: 2, пару: 2, пара: 2,
   три: 3, тремя: 3, трех: 3, четыре: 4, пять: 5, шесть: 6, семь: 7, восемь: 8, девять: 9, десять: 10,
-  ноль: 0,
+  ноль: 0, одиннадцать: 11, двенадцать: 12, тринадцать: 13, четырнадцать: 14,
+  пятнадцать: 15, шестнадцать: 16, семнадцать: 17, восемнадцать: 18, девятнадцать: 19, двадцать: 20,
 };
 function placementFromWords(words) {
   const text = words.join(" ");
@@ -165,10 +167,18 @@ function parseComposition(prompt, catalogue) {
     const unknown = parts.length > 1 ? parts.filter((part) =>
       matchComponents(intentWords(part)).length === 0) : [];
     const assets = [], layout = [], seen = new Set();
+    const tokens = [...text.matchAll(/[а-яa-z0-9]+/g)];
+    const boundaries = tokens.flatMap((token, index) => {
+      const punctuation = index && /[,;\n]/.test(text.slice(tokens[index-1].index + tokens[index-1][0].length, token.index));
+      const separator = token[0] === "и" && !matches.some(m => index >= m.position && index < m.position + m.length);
+      return separator ? [index + 1] : punctuation ? [index] : [];
+    });
     let tooMany = false;
     for (let index = 0; index < matches.length; index++) {
       const match = matches[index];
-      const before = words.slice(index ? matches[index - 1].position + matches[index - 1].length : 0, match.position);
+      const previousEnd = index ? matches[index - 1].position + matches[index - 1].length : 0;
+      const start = Math.max(previousEnd, ...boundaries.filter(b => b <= match.position));
+      const before = words.slice(start, match.position);
       // Counts belong to the immediately following noun, never a previous item.
       const amountWord = before.at(-1);
       const count = countWords[amountWord] ?? (/^\d+$/.test(amountWord || "") ? Number(amountWord) : null);
@@ -178,10 +188,10 @@ function parseComposition(prompt, catalogue) {
       if (count == null && seen.has(match.asset.id)) continue;
       seen.add(match.asset.id);
       const next = matches[index + 1];
-      const after = words.slice(match.position + match.length, next?.position ?? words.length);
-      // A comma/conjunction closes the previous object's instruction.
-      const tail = after.slice(0, after.indexOf("и") < 0 ? after.length : after.indexOf("и"));
-      const directive = placementFromWords(tail);
+      const end = Math.min(next?.position ?? words.length,
+        ...boundaries.filter(b => b > match.position + match.length));
+      const tail = words.slice(match.position + match.length, end);
+      const directive = placementFromWords([...before, ...tail]);
       const amount = count ?? 1;
       if (!Number.isSafeInteger(amount) || amount > 100 || assets.length + amount > 100) {
         tooMany = true;
@@ -247,14 +257,14 @@ function compositionPositions(count, width, height, directives = [], surface = n
       const d = directives[index];
       const columns = Math.ceil(Math.sqrt(indexes.length));
       const rows = Math.ceil(indexes.length / columns);
-      const spread = Math.min(width, height) * .22;
+      const spread = Math.min(width, height) * .38;
       const x = width * (d.x ?? .5) + ((offset % columns) - (columns - 1) / 2) * spread / columns;
       const y = height * (d.y ?? .5) + (Math.floor(offset / columns) - (rows - 1) / 2) * spread / rows;
       const nearest = [...available].sort((a,b) =>
         Math.hypot(positions[a].x-x, positions[a].y-y) - Math.hypot(positions[b].x-x, positions[b].y-y))[0];
       available.delete(nearest);
       result[index] = { ...positions[index], x, y,
-        scale: indexes.length > 1 ? clampObjectScale(Math.min(positions[index].scale, .65 / columns)) : positions[index].scale };
+        scale: indexes.length > 1 ? clampObjectScale(Math.min(positions[index].scale, .95 / Math.sqrt(indexes.length))) : positions[index].scale };
     });
   }
   // Preserve explicit anchors, fill all other objects from unoccupied layout slots.
