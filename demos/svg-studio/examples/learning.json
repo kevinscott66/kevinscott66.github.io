@@ -4,8 +4,8 @@
   "h": 800,
   "objects": [
     {
-      "id": 4,
-      "asset": "book",
+      "id": 22,
+      "asset": "lamp",
       "x": 300,
       "y": 455.99999999999994,
       "rotation": -5,
@@ -13,8 +13,8 @@
       "role": "main"
     },
     {
-      "id": 5,
-      "asset": "lamp",
+      "id": 23,
+      "asset": "book",
       "x": 600,
       "y": 368,
       "rotation": 7,
@@ -22,7 +22,7 @@
       "role": "main"
     },
     {
-      "id": 6,
+      "id": 24,
       "asset": "plant",
       "x": 900,
       "y": 455.99999999999994,

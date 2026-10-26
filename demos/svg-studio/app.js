@@ -385,35 +385,19 @@ async function importPalette(e) {
 $("palette").onchange = importPalette;
 $("search").oninput = renderLibrary;
 function composeFromPrompt() {
-  const result = chooseAssets($("prompt").value, library);
-  if (!result.length) {
+  const plan = planComposition($("prompt").value, library);
+  if (plan.unknown.length) {
+    $("notice").textContent = `Нет в библиотеке: ${plan.unknown.join(", ")}. Уточните список — текущая картинка сохранена.`;
+    return;
+  }
+  if (!plan.assets.length) {
     $("notice").textContent =
-      "Не нашёл подходящих объектов. Попробуйте «рост знаний», «музыкальная пауза» или названия из библиотеки.";
+      "Не удалось подобрать элементы. Опишите тему другими словами или перечислите элементы из библиотеки.";
     return;
   }
   objects = [];
-  const main = result.slice(0, 3);
-  main.forEach((a, i) =>
-    add(a, {
-      x: (w * (i + 1)) / (main.length + 1),
-      y: h * (i % 2 ? 0.46 : 0.57),
-      rotation: i % 2 ? 7 : -5,
-      scale: main.length === 1 ? 1.5 : 1.05,
-    }),
-  );
-  const backdrop = library.find(
-    (a) => a.id === "plant" && !main.some((x) => x.id === a.id),
-  );
-  if (backdrop) {
-    add(backdrop, {
-      role: "background",
-      x: w * 0.78,
-      y: h * 0.32,
-      scale: 0.9,
-      rotation: 10,
-    });
-    objects.unshift(objects.pop());
-  }
+  const positions = compositionPositions(plan.assets.length, w, h);
+  plan.assets.forEach((asset, index) => add(asset, positions[index]));
   selected = objects.find((o) => o.role === "main")?.id;
   $("notice").textContent =
     "Готово. Можно передвинуть элементы и изменить цвета.";
