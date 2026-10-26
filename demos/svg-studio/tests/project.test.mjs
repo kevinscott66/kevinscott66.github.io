@@ -12,6 +12,8 @@ const context = vm.createContext({});
 vm.runInContext(
   engine +
     `;const library=${JSON.stringify(library)};` +
+    // Load production limits together with the production validator.
+    app.slice(app.indexOf("const MAX_OBJECTS ="), app.indexOf("let editorReady =")) +
     app.slice(
       app.indexOf("function validateProject("),
       app.indexOf("async function openProject("),
@@ -43,15 +45,16 @@ test("invalid input does not bypass dimension or asset guards", () => {
     { ...valid, objects: [{ ...valid.objects[0], asset: "unknown" }] },
     { ...valid, objects: [{ ...valid.objects[0], scale: Infinity }] },
   ])
-    assert.throws(() => validate(p));
+    assert.throws(() => validate(p), /Неподдерживаемый проект|Некорректный объект/);
 });
 test("import cannot bypass background/color or own-scheme checks", () => {
-  assert.throws(() => validate({ ...valid, background: "#F9ECB0" }));
-  assert.throws(() => validate({ ...valid, scheme: "constructor" }));
+  assert.throws(() => validate({ ...valid, background: "#F9ECB0" }), /Этот цвет уже/);
+  assert.throws(() => validate({ ...valid, scheme: "constructor" }), /Некорректная палитра/);
   assert.throws(() =>
     validate({
       ...valid,
-      palette: { ...context.palettes, primary: "javascript:x" },
+      palette: { primary: "javascript:x" },
     }),
+    /Нужен цвет/,
   );
 });

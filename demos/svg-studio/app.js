@@ -8,6 +8,31 @@ let library = [],
   h = 600,
   cache = new Map(),
   customPalette = null;
+const MAX_OBJECTS = 100;
+const MAX_COORDINATE = 5000;
+const MAX_PROJECT_BYTES = 1000000;
+const MAX_PALETTE_BYTES = 64000;
+let editorReady = false;
+let projectReadToken = 0;
+let paletteReadToken = 0;
+
+function setEditorLoading(loading) {
+  document.querySelectorAll("button, input, select, textarea").forEach((control) => {
+    control.disabled = loading;
+  });
+}
+setEditorLoading(true);
+
+function boundCoordinate(value) {
+  return Math.max(-MAX_COORDINATE, Math.min(MAX_COORDINATE, value));
+}
+
+function canAddObject() {
+  if (objects.length < MAX_OBJECTS) return true;
+  $("notice").textContent = "На холсте уже 100 элементов. Удалите лишние перед добавлением.";
+  return false;
+}
+
 const el = (tag, attrs = {}) => {
   const n = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
@@ -104,8 +129,9 @@ function mixColorWithPaper(color, paper, paperWeight = 0.75) {
 
 // Figma IDs may contain whitespace or non-ASCII labels. Export instance IDs
 // remain portable, and every local fragment reference follows the same mapping.
-function rewriteLocalReferences(value, ids) {
-  const directId = value.startsWith("#") ? ids.get(value.slice(1)) : null;
+function rewriteLocalReferences(value, ids, attributeName) {
+  const isHref = attributeName === "href" || attributeName === "xlink:href";
+  const directId = isHref && value.startsWith("#") ? ids.get(value.slice(1)) : null;
   if (directId) return `#${directId}`;
   return value.replace(
     /url\(\s*(['"]?)#(.*?)\1\s*\)/g,
@@ -132,7 +158,7 @@ function cloneArtwork(asset, role, prefix) {
       let v = a.value;
       if (a.name === "id") v = ids.get(v) || v;
       else {
-        v = rewriteLocalReferences(v, ids);
+        v = rewriteLocalReferences(v, ids, a.name);
         if (["fill", "stroke", "stop-color"].includes(a.name)) {
           const slot = colorSlots[v.toLowerCase()];
           if (slot) v = p[slot];
@@ -143,6 +169,7 @@ function cloneArtwork(asset, role, prefix) {
   return root;
 }
 function add(asset, opts = {}) {
+  if (!canAddObject()) return null;
   const o = {
     id: ++uid,
     asset: asset.id,
@@ -153,6 +180,8 @@ function add(asset, opts = {}) {
     role: "main",
     ...opts,
   };
+  o.x = boundCoordinate(o.x);
+  o.y = boundCoordinate(o.y);
   objects.push(o);
   selected = o.id;
   return o;
@@ -240,6 +269,7 @@ function renderLayers() {
 }
 
 function renderSelection() {
+  if (!editorReady) return;
   const o = selectedObject();
   $("selection").textContent =
     library.find((a) => a.id === o?.asset)?.name || "Ничего не выбрано";
@@ -289,8 +319,9 @@ $("delete").onclick = () => {
 };
 $("duplicate").onclick = () => {
   const o = selectedObject();
-  if (o) {
-    objects.push({ ...o, id: ++uid, x: o.x + 25, y: o.y + 25 });
+  if (o && canAddObject()) {
+    objects.push({ ...o, id: ++uid,
+      x: boundCoordinate(o.x + 25), y: boundCoordinate(o.y + 25) });
     selected = uid;
     render();
   }
@@ -300,16 +331,17 @@ $("size").onchange = (e) => {
     oldH = h;
   [w, h] = e.target.value.split(" × ").map(Number);
   objects.forEach((o) => {
-    o.x = (o.x / oldW) * w;
-    o.y = (o.y / oldH) * h;
+    o.x = boundCoordinate((o.x / oldW) * w);
+    o.y = boundCoordinate((o.y / oldH) * h);
   });
+  renderLibrary();
   render();
 };
 $("background").oninput = () => {
   const p = palette();
   if (
-    [p.primary, p.secondary, p.ink].includes(
-      $("background").value.toLowerCase(),
+    [p.primary, p.secondary, p.ink].some(
+      (color) => color.toLowerCase() === $("background").value.toLowerCase(),
     )
   ) {
     $("notice").textContent =
@@ -319,6 +351,8 @@ $("background").oninput = () => {
   render();
 };
 $("scheme").onchange = () => {
+  paletteReadToken += 1;
+  projectReadToken += 1;
   customPalette = null;
   $("background").value = palette().backgroundLight;
   renderLibrary();
@@ -328,10 +362,16 @@ $("recolor").onclick = () => {
   renderLibrary();
   render();
 };
-$("palette").onchange = async (e) => {
+async function importPalette(e) {
+  const file = e.target.files[0];
+  e.target.value = "";
+  const token = ++paletteReadToken;
+  projectReadToken += 1;
+  if (!file) return;
   try {
-    if (!e.target.files[0]) return;
-    const p = JSON.parse(await e.target.files[0].text());
+    if (file.size > MAX_PALETTE_BYTES) throw Error("Файл цветов слишком большой");
+    const p = JSON.parse(await file.text());
+    if (token !== paletteReadToken) return;
     validatePalette(p);
     customPalette = p;
     $("background").value = p.backgroundLight;
@@ -339,9 +379,10 @@ $("palette").onchange = async (e) => {
     render();
     $("notice").textContent = "Цвета обновлены.";
   } catch (err) {
-    $("notice").textContent = err.message;
+    if (token === paletteReadToken) $("notice").textContent = err.message;
   }
-};
+}
+$("palette").onchange = importPalette;
 $("search").oninput = renderLibrary;
 function composeFromPrompt() {
   const result = chooseAssets($("prompt").value, library);
@@ -403,8 +444,8 @@ $("canvas").onpointerdown = (e) => {
 $("canvas").onpointermove = (e) => {
   if (drag) {
     const p = point(e);
-    drag.o.x = p.x - drag.x;
-    drag.o.y = p.y - drag.y;
+    drag.o.x = boundCoordinate(p.x - drag.x);
+    drag.o.y = boundCoordinate(p.y - drag.y);
     render();
   }
 };
@@ -462,14 +503,14 @@ function saveProject() {
 $("save").onclick = saveProject;
 
 function validateProject(p, fileSize) {
-  if (fileSize > 1000000) throw Error("Файл проекта слишком большой");
+  if (fileSize > MAX_PROJECT_BYTES) throw Error("Файл проекта слишком большой");
   if (
     !p ||
     typeof p !== "object" ||
     Array.isArray(p) ||
     p.version !== 1 ||
     !Array.isArray(p.objects) ||
-    p.objects.length > 100 ||
+    p.objects.length > MAX_OBJECTS ||
     ![
       [800, 600],
       [1200, 800],
@@ -483,8 +524,8 @@ function validateProject(p, fileSize) {
       !o ||
       typeof o !== "object" ||
       Array.isArray(o) ||
-      Math.abs(o.x) > 5000 ||
-      Math.abs(o.y) > 5000 ||
+      Math.abs(o.x) > MAX_COORDINATE ||
+      Math.abs(o.y) > MAX_COORDINATE ||
       Math.abs(o.rotation) > 360 ||
       !library.some((a) => a.id === o.asset) ||
       !["main", "background"].includes(o.role) ||
@@ -509,10 +550,16 @@ function validateProject(p, fileSize) {
 }
 
 async function openProject(e) {
+  const file = e.target.files[0];
+  e.target.value = "";
+  const token = ++projectReadToken;
+  paletteReadToken += 1;
+  if (!file) return;
   try {
-    if (!e.target.files[0]) return;
-    const p = JSON.parse(await e.target.files[0].text());
-    validateProject(p, e.target.files[0].size);
+    if (file.size > MAX_PROJECT_BYTES) throw Error("Файл проекта слишком большой");
+    const p = JSON.parse(await file.text());
+    if (token !== projectReadToken) return;
+    validateProject(p, file.size);
     w = p.w;
     h = p.h;
     objects = p.objects.map((o) => ({ ...o, id: ++uid }));
@@ -523,16 +570,19 @@ async function openProject(e) {
     selected = null;
     renderLibrary();
     render();
+    $("notice").textContent = "Картинка открыта.";
   } catch (err) {
-    $("notice").textContent = err.message;
+    if (token === projectReadToken) $("notice").textContent = err.message;
   }
 }
 $("project").onchange = openProject;
 
 async function importArtworkFiles(e) {
+  const files = [...e.target.files];
+  e.target.value = "";
   const errors = [];
   let imported = 0;
-  for (const file of e.target.files) {
+  for (const file of files) {
     try {
       if (file.size > 2000000) throw Error("SVG больше 2 МБ");
       const svg = cleanSVG(await file.text()),
@@ -579,6 +629,8 @@ async function init() {
       ),
     );
     $("background").value = palette().backgroundLight;
+    editorReady = true;
+    setEditorLoading(false);
     renderLibrary();
     render();
     $("prompt").value = "Рост знаний и новые идеи";
@@ -588,6 +640,8 @@ async function init() {
     $("notice").textContent =
       "Можно изменить описание или выбрать другой пример.";
   } catch (err) {
+    editorReady = false;
+    setEditorLoading(true);
     $("notice").textContent = "Не удалось загрузить библиотеку: " + err.message;
   }
 }
