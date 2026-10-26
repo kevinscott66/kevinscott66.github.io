@@ -504,12 +504,12 @@ test("quick controls normalize rotation, bound scale and share copy/layer/delete
   assert.equal(e.state().objects.at(-1).id, original.id);
   e.control("lower-object").onclick();
   assert.equal(e.state().objects[0].id, original.id);
-  e.control("copy-object").onclick();
+  e.control("duplicate").onclick();
   const copied = e.state().objects.at(-1);
   assert.equal(e.state().selected, copied.id);
   assert.equal(copied.asset, original.asset);
   near(copied.rotation, original.rotation); near(copied.scale, original.scale);
-  e.control("remove-object").onclick();
+  e.control("delete").onclick();
   assert.equal(e.state().objects.length, 2);
   assert.ok(!e.state().objects.some(o => o.id === copied.id));
 });

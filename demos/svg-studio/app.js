@@ -259,16 +259,6 @@ function renderLayers() {
       render();
     };
     row.append(name);
-    for (const [label, d] of [
-      ["↑", 1],
-      ["↓", -1],
-    ]) {
-      const b = document.createElement("button");
-      b.textContent = label;
-      b.title = d === 1 ? "На слой выше" : "На слой ниже";
-      b.onclick = () => moveLayer(o, d);
-      row.append(b);
-    }
     $("layers").append(row);
   });
 }
@@ -283,7 +273,6 @@ function renderSelection() {
     if (o) $(prop).value = o[prop];
   }
   $("object-tools").hidden = !o;
-  $("tool-name").textContent = library.find((a) => a.id === o?.asset)?.name || "";
   if (o) {
     const index = objects.indexOf(o);
     $("raise-object").disabled = index === objects.length - 1;
@@ -334,6 +323,7 @@ $("delete").onclick = () => {
 $("duplicate").onclick = () => {
   const o = selectedObject();
   if (o && canAddObject()) {
+    stopGesture();
     objects.push({ ...o, id: ++uid,
       x: boundCoordinate(o.x + 25), y: boundCoordinate(o.y + 25) });
     selected = uid;
@@ -779,8 +769,6 @@ document.querySelectorAll("[data-example]").forEach((button) =>
 
 
 // Quick controls share the same actions and state as the full inspector.
-$("remove-object").onclick = () => $("delete").onclick();
-$("copy-object").onclick = () => { stopGesture(); $("duplicate").onclick(); };
 for (const [id, direction] of [["raise-object", 1], ["lower-object", -1]])
   $(id).onclick = () => { const o = selectedObject(); if (o) { stopGesture(); moveLayer(o, direction); } };
 for (const [id, rotation, scale] of [["turn-left", -15, 0], ["turn-right", 15, 0], ["shrink", 0, -0.1], ["grow", 0, 0.1]])

@@ -83,3 +83,6 @@
 Project: learning.json открывается; malformed JSON, HTML/script вместоJSON, >1MB и asset HTML payload отклоняются без изменения3объектов. Palette: valid7colors применяется и перекрашивает пути, malformed/missing/colliding/javascript-color отклоняются безпотери состояния. Сохранён реальныйJSON с custompalette, после другойкомпозиции повторнооткрыт:3объекта и фон#cceedd восстановлены. Console clean.
 
 Локально исправлены технические англоязычные JSON parser errors: общий parseImportedJSON выдаёт русское сообщение без содержимого файла.61Node+8static+6regression PASS; локальныйброузер подтвердил сообщение. Проверки payloads не являются доказательством безопасности против любых DoS/всехбраузеров.
+
+## Удаление повторяющихся контролов
+Кнопки копии/удаления и управление слоями оставлены в единственной панели подхолстом. Роль и точныеползунки перенесены в раскрывающуюся «Точную настройку». Справа толькоцвета и списокпредметов длявыбора, бездублирующих стрелок. Удалён неиспользуемый CSS object-actions/object-section.61Node/static8/regression6 PASS; браузерrole→copy→delete→layerselect, ровно1delete/1copy, consoleclean;393px визуальныйPASS.

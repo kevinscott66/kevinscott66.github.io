@@ -500,17 +500,6 @@ input[type="range"] {
   margin: 0;
   cursor: pointer;
 }
-.object-actions {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 6px;
-  margin-top: 20px;
-}
-.object-actions button {
-  font-size: 10px;
-  padding: 7px 8px;
-  min-height: 44px;
-}
 .delete-button {
   background: transparent;
   color: #eab8ad;
@@ -646,15 +635,8 @@ input[type="range"] {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .inspector-panel .object-section {
-    border-top: 0;
-    border-left: 1px solid var(--line);
-  }
   .layers-section {
     grid-column: 1 / -1;
-  }
-  .object-actions {
-    grid-template-columns: 1fr;
   }
 }
 /* Phones and small tablets: canvas, library, then full-width editing controls.
@@ -834,17 +816,6 @@ input[type="range"] {
   .inspector-panel {
     grid-template-columns: minmax(0, 1fr);
   }
-  .inspector-panel .object-section {
-    border-left: 0;
-    border-top: 1px solid var(--line);
-  }
-  .object-actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .object-actions button {
-    font-size: 12px;
-  }
 }
 /* Short desktop windows and landscape screens must scroll instead of clipping
    the canvas or prompt below a fixed-height workspace. */
@@ -880,8 +851,22 @@ input[type="range"] {
 }
 
 /* Keep object actions beside the canvas, including on narrow screens. */
-.object-tools { margin: 0 0 16px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
-.object-tools strong { display: block; margin-bottom: 10px; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
-.quick-actions { display: flex; flex-wrap: wrap; gap: 6px; }
-.quick-actions button { flex: 1 0 auto; }
+.object-tools { margin: 0 0 16px; padding: 14px; border: 1px solid #35373a; border-radius: 12px; background: var(--panel); }
 .stage, .stage * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+.object-tools .selection-name { display: block; min-height: 0; margin-bottom: 12px; font-size: 14px; font-weight: 500; }
+.quick-actions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.quick-actions button { min-width: 0; padding: 8px 6px; border-color: #44474c; background: #252629; }
+.quick-actions button:hover { background: #34363a; }
+.quick-actions .delete-button { color: #eab8ad; background: transparent; }
+.precise-tools { margin-top: 10px; border-top: 1px solid var(--line); }
+.precise-tools summary { min-height: 44px; display: flex; align-items: center; color: var(--muted); font-size: 12px; gap: 8px; }
+.precise-tools summary::before { content: "+"; font-size: 18px; font-weight: 400; }
+.precise-tools[open] summary::before { content: "−"; }
+.precise-tools summary::-webkit-details-marker { display: none; }
+.precise-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.precise-fields .field { margin: 0 0 6px; }
+@media (max-width: 479px) {
+  .quick-actions button { font-size: 12px; }
+  .precise-fields { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+}
