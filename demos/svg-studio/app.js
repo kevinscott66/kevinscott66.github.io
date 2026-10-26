@@ -643,6 +643,15 @@ function finishDrag(e, eventName) {
   drag.pair = null;
   releasePointer(e.pointerId);
 }
+// A touch inside the active frame belongs to that object, even where another
+// illustration overlaps it. Desktop users retain direct hit-testing.
+function insideObjectFrame(object, p) {
+  const angle = -object.rotation * Math.PI / 180;
+  const dx = p.x - object.x, dy = p.y - object.y;
+  const x = (dx * Math.cos(angle) - dy * Math.sin(angle)) / object.scale;
+  const y = (dx * Math.sin(angle) + dy * Math.cos(angle)) / object.scale;
+  return Math.abs(x) <= FRAME_HALF_SIZE && Math.abs(y) <= FRAME_HALF_SIZE;
+}
 $("canvas").onpointerdown = (e) => {
   if (e.button !== 0 || layerDrag) return;
   const type = e.pointerType || "mouse";
@@ -661,9 +670,11 @@ $("canvas").onpointerdown = (e) => {
   }
   if (e.isPrimary === false) return;
   const g = e.target.closest("[data-object]");
-  const o = g && objects.find((object) => object.id === Number(g.dataset.object));
-  const p = o && point(e);
-  if (o && !p) return;
+  let o = g && objects.find((object) => object.id === Number(g.dataset.object));
+  const p = point(e);
+  if (!p) return;
+  const active = selectedObject();
+  if (type === "touch" && active && insideObjectFrame(active, p)) o = active;
   selected = o?.id ?? null;
   $("canvas").focus({ preventScroll: true });
   if (o) {
