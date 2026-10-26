@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "w": 800,
+  "h": 600,
+  "objects": [
+    {
+      "id": 8,
+      "asset": "plant",
+      "x": 624,
+      "y": 192,
+      "rotation": 10,
+      "scale": 0.9,
+      "role": "background"
+    },
+    {
+      "id": 7,
+      "asset": "headphones",
+      "x": 400,
+      "y": 341.99999999999994,
+      "rotation": -5,
+      "scale": 1.5,
+      "role": "main"
+    }
+  ],
+  "scheme": "lavender",
+  "palette": null,
+  "background": "#d7cdf5"
+}

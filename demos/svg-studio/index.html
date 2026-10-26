@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Сборка — SVG Studio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <b>сборка<span> ТЕСТОВОЕ · DOBROPALM</span></b
+      ><label
+        >Размер
+        <select id="size">
+          <option>800 × 600</option>
+          <option>1200 × 800</option>
+          <option>600 × 600</option>
+        </select></label
+      ><button id="export">Скачать SVG ↗</button>
+    </header>
+    <main>
+      <aside>
+        <small>SVG КОНСТРУКТОР</small>
+        <h1>Из деталей —<br />в историю.</h1>
+        <p>Исходные элементы Figma. Два размера, главные и фоновые варианты.</p>
+        <small>01 / АВТОКОМПОЗИЦИЯ</small
+        ><label class="sr-only" for="prompt"
+          >Метафора или названия объектов</label
+        ><textarea
+          id="prompt"
+          placeholder="Метафора или названия объектов"
+        ></textarea
+        ><button id="compose">Собрать композицию</button>
+        <p id="notice" role="status">Загрузка исходной библиотеки…</p>
+        <div class="examples">
+          <button data-example="Рост знаний и новые идеи">Рост знаний</button
+          ><button data-example="Музыка и отдых">Музыка</button
+          ><button data-example="Деньги и порядок в документах">Финансы</button>
+        </div>
+        <small>02 / ЭЛЕМЕНТЫ</small>
+        <label class="upload"
+          >＋ Добавить SVG<input
+            id="files"
+            type="file"
+            accept=".svg"
+            multiple /></label
+        ><input
+          id="search"
+          aria-label="Поиск по библиотеке"
+          placeholder="Поиск по библиотеке"
+        />
+        <div id="library"></div>
+      </aside>
+      <section>
+        <div class="toolbar">
+          <span id="count">0 объектов</span
+          ><label
+            >Фон <input id="background" type="color" value="#f5f1e9" /></label
+          ><label
+            >Схема
+            <select id="scheme">
+              <option value="lavender">Лаванда</option>
+              <option value="peach">Персик</option>
+              <option value="aqua">Аквамарин</option>
+            </select></label
+          ><button id="recolor">Применить</button
+          ><button id="save">Сохранить проект</button
+          ><label
+            >Открыть проект<input
+              id="project"
+              type="file"
+              accept=".json" /></label
+          ><label
+            >Палитра JSON<input id="palette" type="file" accept=".json"
+          /></label>
+        </div>
+        <div class="stage">
+          <div class="watermark" aria-hidden="true">DOBROPALM · ТЕСТОВОЕ</div>
+          <svg
+            id="canvas"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 800 600"
+            aria-label="Холст композиции"
+          ></svg>
+          <div id="empty">
+            Ваш следующий сюжет<br /><small
+              >Добавьте элементы из библиотеки</small
+            >
+          </div>
+        </div>
+        <footer>
+          Перетаскивайте объект на холсте · Выделите объект для настройки
+        </footer>
+      </section>
+      <aside class="properties">
+        <small>03 / ОБЪЕКТ И СЛОИ</small>
+        <h2 id="selection">Ничего не выбрано</h2>
+        <label
+          >Роль
+          <select id="role">
+            <option value="main">Главный объект</option>
+            <option value="background">Фоновый объект</option>
+          </select></label
+        ><label
+          >Поворот<input
+            id="rotation"
+            type="range"
+            min="-180"
+            max="180"
+            value="0" /></label
+        ><label
+          >Масштаб<input
+            id="scale"
+            type="range"
+            min="0.2"
+            max="3"
+            step="0.05"
+            value="1" /></label
+        ><button id="duplicate">Дублировать</button
+        ><button id="delete">Удалить</button>
+        <div id="layers"></div>
+        <p>Вверх в списке — ближе к зрителю. Стрелки меняют порядок слоёв.</p>
+      </aside>
+    </main>
+    <script src="engine.js"></script>
+    <script src="app.js?v=3"></script>
+  </body>
+</html>

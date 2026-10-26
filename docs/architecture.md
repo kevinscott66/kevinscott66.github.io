@@ -59,3 +59,11 @@ The Russian homepage PDF links serve the 11-slide Gamma presentation “Алек
 Both language presentations use the Viora home screenshot (390×844) instead of the full player. The English deck retains the six-project structure and the credited decorative photos.
 
 Project slides link to the five public repositories and, where available, the VahtaHoz app, AirChat web app, KOM17 Telegram bot and DeLabs website. No repository URL is invented for DeLabs; Agent and Viora have no public application endpoint in the presentation. Links are exported as PDF annotations.
+
+## Isolated SVG test demo (26 October 2026)
+
+`/demos/svg-studio/` is an isolated, noindex browser application for the Snapbuild selection task. Portfolio pages, navigation and shared stylesheet are unchanged. Unlike the content pages, this route uses local runtime JavaScript for the SVG editor; it introduces no build system, package dependency, backend, analytics or third-party API.
+
+The demo uses 40 supplied vector files: ten objects, S/L, main/background. The source artwork is employer-provided test material and excluded from the portfolio MIT licence (`ASSET-NOTICE.md`). Preview overlays identify the demo and watermark it; editable SVG export remains clean. Assets necessarily download to the browser and are not protected against copying. Input files stay client-side. A CSP restricts resources to the same origin and disables object embedding; the importer removes active/external SVG content and limits input size. This is not a publicly supported upload service.
+
+Meaning matching is deterministic via the documented tag dictionary, with editable layouts and three source palettes. No LLM key or generation endpoint is used. `README.md` in the route documents assumptions, limitations, local start, examples and checks. The route is intentionally omitted from sitemap and homepage navigation; noindex is an indexing preference, not access control.

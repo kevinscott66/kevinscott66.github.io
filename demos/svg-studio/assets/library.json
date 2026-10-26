@@ -1,0 +1,224 @@
+[
+  {
+    "id": "book",
+    "name": "Книга",
+    "tags": [
+      "обучение",
+      "знания",
+      "образование",
+      "читать",
+      "развитие",
+      "учеба",
+      "учёба",
+      "исследование"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-10.svg",
+        "background": "assets/S-19.svg"
+      },
+      "L": {
+        "main": "assets/L-12.svg",
+        "background": "assets/L-13.svg"
+      }
+    }
+  },
+  {
+    "id": "phone",
+    "name": "Телефон",
+    "tags": [
+      "связь",
+      "общение",
+      "технологии",
+      "сообщение",
+      "приложение",
+      "цифровой",
+      "онлайн"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-11.svg",
+        "background": "assets/S-20.svg"
+      },
+      "L": {
+        "main": "assets/L-14.svg",
+        "background": "assets/L-15.svg"
+      }
+    }
+  },
+  {
+    "id": "puzzle",
+    "name": "Пазлы",
+    "tags": [
+      "команда",
+      "решение",
+      "задача",
+      "сотрудничество",
+      "вместе",
+      "связь",
+      "стратегия"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-12.svg",
+        "background": "assets/S-21.svg"
+      },
+      "L": {
+        "main": "assets/L-05.svg",
+        "background": "assets/L-06.svg"
+      }
+    }
+  },
+  {
+    "id": "coin",
+    "name": "Монета",
+    "tags": [
+      "деньги",
+      "финансы",
+      "инвестиции",
+      "доход",
+      "накопление",
+      "бюджет",
+      "оплата"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-13.svg",
+        "background": "assets/S-22.svg"
+      },
+      "L": {
+        "main": "assets/L-26.svg",
+        "background": "assets/L-27.svg"
+      }
+    }
+  },
+  {
+    "id": "headphones",
+    "name": "Наушники",
+    "tags": ["музыка", "звук", "слушать", "отдых", "подкаст", "концентрация"],
+    "variants": {
+      "S": {
+        "main": "assets/S-14.svg",
+        "background": "assets/S-23.svg"
+      },
+      "L": {
+        "main": "assets/L-16.svg",
+        "background": "assets/L-17.svg"
+      }
+    }
+  },
+  {
+    "id": "lamp",
+    "name": "Лампа",
+    "tags": [
+      "идея",
+      "свет",
+      "вдохновение",
+      "работа",
+      "фокус",
+      "творчество",
+      "открытие"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-15.svg",
+        "background": "assets/S-24.svg"
+      },
+      "L": {
+        "main": "assets/L-18.svg",
+        "background": "assets/L-19.svg"
+      }
+    }
+  },
+  {
+    "id": "plant",
+    "name": "Растение",
+    "tags": [
+      "рост",
+      "жизнь",
+      "природа",
+      "развитие",
+      "забота",
+      "экология",
+      "цветок"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-02.svg",
+        "background": "assets/S-03.svg"
+      },
+      "L": {
+        "main": "assets/L-36.svg",
+        "background": "assets/L-37.svg"
+      }
+    }
+  },
+  {
+    "id": "folder",
+    "name": "Папка",
+    "tags": [
+      "порядок",
+      "документы",
+      "бизнес",
+      "организация",
+      "работа",
+      "архив",
+      "проект"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-16.svg",
+        "background": "assets/S-25.svg"
+      },
+      "L": {
+        "main": "assets/L-24.svg",
+        "background": "assets/L-25.svg"
+      }
+    }
+  },
+  {
+    "id": "pen",
+    "name": "Ручка",
+    "tags": [
+      "писать",
+      "творчество",
+      "план",
+      "подпись",
+      "заметка",
+      "учеба",
+      "учёба"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-17.svg",
+        "background": "assets/S-26.svg"
+      },
+      "L": {
+        "main": "assets/L-22.svg",
+        "background": "assets/L-23.svg"
+      }
+    }
+  },
+  {
+    "id": "wallet",
+    "name": "Кошелёк",
+    "tags": [
+      "деньги",
+      "финансы",
+      "накопление",
+      "безопасность",
+      "покупка",
+      "бюджет"
+    ],
+    "variants": {
+      "S": {
+        "main": "assets/S-18.svg",
+        "background": "assets/S-27.svg"
+      },
+      "L": {
+        "main": "assets/L-20.svg",
+        "background": "assets/L-21.svg"
+      }
+    }
+  }
+]
