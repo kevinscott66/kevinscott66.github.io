@@ -305,3 +305,85 @@ test("canvas arrow keys move the selected object, respect bounds and ignore form
   canvas.onkeydown(noSelection);
   assert.equal(noSelection.prevented, undefined);
 });
+
+const touch = (id, objectId, x, y, extra = {}) => pointer(id, objectId, x, y,
+  { pointerType: "touch", isPrimary: id === 1, ...extra });
+const near = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-8, `${actual} ≠ ${expected}`);
+
+test("two touches rotate, pinch and translate the same object around their midpoint", () => {
+  const e=editor(), canvas=e.control("canvas");
+  e.run("add(library[0])"); const id=e.state().selected;
+  canvas.onpointerdown(touch(1,id,300,300));
+  canvas.onpointerdown(touch(2,id,500,300));
+  assert.ok(canvas.hasPointerCapture(1)&&canvas.hasPointerCapture(2));
+  canvas.onpointermove(touch(1,id,400,200));
+  canvas.onpointermove(touch(2,id,400,400));
+  let o=e.state().objects[0];near(o.rotation,90);near(o.scale,1);near(o.x,400);near(o.y,300);
+  canvas.onpointermove(touch(1,id,400,100));
+  canvas.onpointermove(touch(2,id,400,500));
+  o=e.state().objects[0];near(o.rotation,90);near(o.scale,2);near(o.x,400);near(o.y,300);
+  canvas.onpointerdown(touch(3,id,900,900));
+  assert.equal(canvas.hasPointerCapture(3),false);
+  const before=e.state();canvas.onpointermove(touch(3,id,100,100));
+  canvas.listeners.pointercancel(touch(3,id));assert.deepEqual(e.state(),before);
+});
+
+test("lifting either finger resumes one-finger movement without a jump", () => {
+  for(const lifted of [1,2]) {
+    const e=editor(),canvas=e.control("canvas");e.run("add(library[0])");const id=e.state().selected;
+    canvas.onpointerdown(touch(1,id,300,300));canvas.onpointerdown(touch(2,id,500,300));
+    canvas.onpointermove(touch(1,id,400,200));canvas.onpointermove(touch(2,id,400,400));
+    const before=e.state().objects[0];canvas.listeners.pointerup(touch(lifted,id));
+    const remaining=lifted===1?2:1,y=remaining===1?200:400;
+    canvas.onpointermove(touch(remaining,id,410,y+15));
+    const after=e.state().objects[0];near(after.x,before.x+10);near(after.y,before.y+15);
+    near(after.rotation,before.rotation);near(after.scale,before.scale);
+    canvas.listeners.pointerup(touch(remaining,id));assert.equal(canvas.capturedPointers.size,0);
+  }
+});
+
+test("touch cancellation or object deletion releases both captured fingers", () => {
+ for(const ending of ['pointercancel','lostpointercapture','delete']) {
+  const e=editor(),canvas=e.control("canvas");e.run("add(library[0])");const id=e.state().selected;
+  canvas.onpointerdown(touch(1,id,300,300));canvas.onpointerdown(touch(2,id,500,300));
+  if(ending==='delete'){e.control('delete').onclick();canvas.onpointermove(touch(1,id,310,300));}
+  else canvas.listeners[ending](touch(2,id));
+  assert.equal(canvas.capturedPointers.size,0);
+  const before=e.state();canvas.onpointermove(touch(1,id,100,500));assert.deepEqual(e.state(),before);
+ }
+});
+
+test("angle crossing and pinch limits remain finite and can be saved and reopened", async () => {
+ const e=editor(),canvas=e.control('canvas');e.run('add(library[0])');const id=e.state().selected;
+ const endpoint=degrees=>({x:400+100*Math.cos(degrees*Math.PI/180),y:300+100*Math.sin(degrees*Math.PI/180)});
+ const p=endpoint(179);canvas.onpointerdown(touch(1,id,400,300));canvas.onpointerdown(touch(2,id,p.x,p.y));
+ for(const angle of [-179,-170]){const q=endpoint(angle);canvas.onpointermove(touch(2,id,q.x,q.y));}
+ near(e.state().objects[0].rotation,11);
+ canvas.onpointermove(touch(2,id,10000,300));assert.equal(e.state().objects[0].scale,3);
+ canvas.onpointermove(touch(2,id,402,300));assert.equal(e.state().objects[0].scale,.2);
+ canvas.listeners.pointerup(touch(1,id));canvas.listeners.pointerup(touch(2,id));
+ e.control('save').onclick();const saved=JSON.parse(e.run('downloads.at(-1).text'));
+ e.run('validateProject')(saved,1000);
+ const file=deferredFile();const opened=e.run('openProject')(e.event('project',file));file.resolve(JSON.stringify(saved));await opened;
+ const reopened=e.state().objects[0];near(reopened.rotation,saved.objects[0].rotation);near(reopened.scale,saved.objects[0].scale);
+});
+
+test("coincident initial touches do not create NaN or jump on gesture start", () => {
+ const e=editor(),canvas=e.control('canvas');e.run('add(library[0])');const id=e.state().selected;
+ canvas.onpointerdown(touch(1,id,400,300));canvas.onpointerdown(touch(2,id,400,300));
+ const before=e.state();canvas.onpointermove(touch(2,id,400,300));assert.deepEqual(e.state(),before);
+ canvas.onpointermove(touch(2,id,500,300));assert.deepEqual(e.state(),before);
+ canvas.onpointermove(touch(2,id,500,400));assert.ok(Number.isFinite(e.state().objects[0].rotation));
+});
+
+test("two-finger rotation can cross a full circle repeatedly without jumps", () => {
+ const e=editor(),canvas=e.control('canvas');e.run('add(library[0])');const id=e.state().selected;
+ canvas.onpointerdown(touch(1,id,400,300));canvas.onpointerdown(touch(2,id,500,300));
+ for(let angle=45;angle<=720;angle+=45) {
+  const r=angle*Math.PI/180;
+  canvas.onpointermove(touch(2,id,400+100*Math.cos(r),300+100*Math.sin(r)));
+  const o=e.state().objects[0];const difference=(o.rotation-angle)*Math.PI/180;
+  near(Math.atan2(Math.sin(difference),Math.cos(difference)),0);
+  assert.ok(o.rotation>=-180&&o.rotation<=180);near(o.x,400);near(o.y,300);near(o.scale,1);
+ }
+});
