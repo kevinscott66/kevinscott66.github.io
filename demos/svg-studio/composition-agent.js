@@ -14,8 +14,10 @@ class LocalCompositionAgent {
       ["grid", /(?:сеткой|в виде сетки)/g],
       ["symmetric", /симметрично/g],
       ["thirds", /по правилу третей/g],
+      ["circle", /(?:по кругу|кольцом)/g],
+      ["diagonal", /по диагонали/g],
     ].filter(([,pattern]) => { pattern.lastIndex=0; return pattern.test(original); });
-    if (modes.length > 1) return {...empty,question:"Выберите один способ расположения: ряд, столбик, сетка, симметрия или правило третей."};
+    if (modes.length > 1) return {...empty,question:"Выберите один способ расположения, например: в ряд, по кругу или сеткой."};
     if (modes.length) arrangement.mode = modes[0][0];
     const whitespacePattern = /(?:оставь|оставить) (?:свободное )?место для текста (справа|слева)/g;
     const emptySides = [...original.matchAll(whitespacePattern)].map(match=>match[1]);
@@ -55,7 +57,14 @@ class LocalCompositionAgent {
     if (words.some(word => ["перед", "позади", "сзади"].includes(word)) ||
         (words.includes("за") && !plan.surface))
       return {...plan, question: "Уточните расположение: слева, справа, выше, ниже или между двумя предметами. Порядок наложения можно изменить в списке «Предметы»."};
-    const relation = text.match(/(?:слева от|справа от|выше|ниже|между)/);
+    const sideIndexes = plan.layout.map((d,i)=>d.sides?i:-1).filter(i=>i>=0);
+    if (sideIndexes.length) {
+      if (sideIndexes.length !== 2 || plan.assets[sideIndexes[0]].id !== plan.assets[sideIndexes[1]].id)
+        return {...plan,question:"Для расположения по бокам укажите два одинаковых предмета, например: два телефона по бокам."};
+      plan.layout[sideIndexes[0]]={x:.2,y:.5};
+      plan.layout[sideIndexes[1]]={x:.8,y:.5};
+    }
+    const relation = text.match(/(?:слева от|справа от|рядом с|выше|ниже|между|над |под )/);
     if (relation && matches.length >= 2) {
       const tokens = [...text.matchAll(/[а-яa-z0-9]+/g)];
       const before = matches.filter(m => tokens[m.position].index < relation.index).at(-1);
@@ -71,10 +80,15 @@ class LocalCompositionAgent {
           plan.layout[targets[0]] = {x:.2,y:.5};
           plan.layout[targets[1]] = {x:.8,y:.5};
         } else if (subject >= 0 && targets.length === 1) {
-          const horizontal = relation[0].includes("от");
-          const first = ["слева от", "выше"].includes(relation[0]) ? .25 : .75;
+          const relationName=relation[0].trim();
+          const horizontal = relationName.includes("от") || relationName === "рядом с";
+          const first = relationName === "рядом с" ? .3 : ["слева от", "выше", "над"].includes(relationName) ? .25 : .75;
           plan.layout[subject] = horizontal ? {x:first,y:.5} : {x:.5,y:first};
           plan.layout[targets[0]] = horizontal ? {x:1-first,y:.5} : {x:.5,y:1-first};
+          if(relationName === "рядом с") {
+            plan.layout[subject].scale=.9;
+            plan.layout[targets[0]].scale=.9;
+          }
         } else return {...plan, question: "Уточните, какие два предмета нужно расположить друг относительно друга."};
       }
     }

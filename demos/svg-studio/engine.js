@@ -153,6 +153,7 @@ function placementFromWords(words) {
     result.x ??= .5;
     result.y ??= .5;
   }
+  if (/по бокам|по краям/.test(text)) result.sides = true;
   return result;
 }
 
@@ -192,7 +193,8 @@ function parseComposition(prompt, catalogue) {
         ...boundaries.filter(b => b > match.position + match.length));
       const tail = words.slice(match.position + match.length, end);
       const directive = placementFromWords([...before, ...tail]);
-      const amount = count ?? 1;
+      const pluralSides = /^(телефоны|смартфоны|книги|монеты|лампы|папки|ручки|кошельки|растения|цветы|пазлы)$/.test(words[match.position]);
+      const amount = count ?? (directive.sides && pluralSides ? 2 : 1);
       if (!Number.isSafeInteger(amount) || amount > 100 || assets.length + amount > 100) {
         tooMany = true;
         continue;
@@ -264,7 +266,7 @@ function compositionPositions(count, width, height, directives = [], surface = n
         Math.hypot(positions[a].x-x, positions[a].y-y) - Math.hypot(positions[b].x-x, positions[b].y-y))[0];
       available.delete(nearest);
       result[index] = { ...positions[index], x, y,
-        scale: indexes.length > 1 ? clampObjectScale(Math.min(positions[index].scale, .95 / Math.sqrt(indexes.length))) : positions[index].scale };
+        scale: d.scale != null ? clampObjectScale(Math.min(positions[index].scale,d.scale)) : indexes.length > 1 ? clampObjectScale(Math.min(positions[index].scale, .95 / Math.sqrt(indexes.length))) : positions[index].scale };
     });
   }
   // Preserve explicit anchors, fill all other objects from unoccupied layout slots.
@@ -292,6 +294,14 @@ function arrangeComposition(positions, width, height, arrangement) {
       const columns=Math.ceil(Math.sqrt(count*width/height)),rows=Math.ceil(count/columns);
       p.x=width*((index%columns)+1)/(columns+1);p.y=height*(Math.floor(index/columns)+1)/(rows+1);p.rotation=0;
       p.scale=clampObjectScale(Math.min(p.scale,width*.8/(columns*240),height*.8/(rows*240)));
+    } else if(mode==="circle") {
+      const angle=-Math.PI/2+2*Math.PI*index/count;
+      p.x=width*.5+Math.cos(angle)*width*.28;p.y=height*.5+Math.sin(angle)*height*.28;p.rotation=0;
+      p.scale=clampObjectScale(Math.min(p.scale,Math.min(width,height)*.65/(240*Math.max(2,count/2))));
+    } else if(mode==="diagonal") {
+      p.x=width*(.2+.6*(count===1?.5:index/(count-1)));
+      p.y=height*(.2+.6*(count===1?.5:index/(count-1)));p.rotation=0;
+      p.scale=clampObjectScale(Math.min(p.scale,Math.min(width,height)*.7/(240*Math.max(1,count/2))));
     } else if(mode==="thirds") {
       p.x=width*(index%2?2/3:1/3);p.y=height*(index<2?1/3:2/3);p.rotation=0;
       p.scale=clampObjectScale(Math.min(p.scale,width/720,height/720));
