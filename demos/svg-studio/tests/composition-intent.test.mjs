@@ -35,3 +35,34 @@ test('meaning scenarios select only existing relevant objects',()=>{
  ]) {const result=planComposition(prompt,lib);assert.equal(result.mode,'meaning');assert.ok(result.assets.some(a=>a.id===wanted),prompt);assert.ok(result.assets.every(a=>lib.includes(a)));}
  for(const prompt of ['', 'zxqv123', 'непонятная абракадабра'])assert.deepEqual(ids(prompt),[]);
 });
+
+test('explicit list recognizes common instrumental and prepositional forms', () => {
+ assert.deepEqual(ids('книгами, телефонами, пазлом, монетами, наушниках, лампе, растениями, папками, ручками, кошельке'),
+  ['book','phone','puzzle','coin','headphones','lamp','plant','folder','pen','wallet']);
+});
+
+test('imported multiword names match as complete phrases in input order', () => {
+ const imported = {id:'custom-1', name:'Красная звезда'};
+ const catalogue = [...lib, imported];
+ const plan = planComposition('Красная звезда, телефон, книга', catalogue);
+ assert.deepEqual(plan.assets.map(a=>a.id), ['custom-1','phone','book']);
+ assert.deepEqual(plan.unknown, []);
+ assert.deepEqual(planComposition('Красная, телефон', catalogue).assets.map(a=>a.id), ['phone']);
+ assert.deepEqual(planComposition('Красная, телефон', catalogue).unknown, ['красная']);
+});
+
+test('conjunction within an imported name is not an unknown list item', () => {
+ const imported = {id:'custom-2', name:'Солнце и луна'};
+ const catalogue = [...lib, imported];
+ const plan = planComposition('Книга и Солнце и луна и дракон', catalogue);
+ assert.deepEqual(plan.assets.map(a=>a.id), ['book','custom-2']);
+ assert.deepEqual(plan.unknown, ['дракон']);
+});
+
+test('unknown entries survive mixed separators and repeated names without library mutation', () => {
+ const original = JSON.stringify(lib);
+ const plan = planComposition('Кошелёк; ДРАКОН\nкнига и ракета, кошелёк', lib);
+ assert.deepEqual(plan.assets.map(a=>a.id), ['wallet','book']);
+ assert.deepEqual(plan.unknown, ['дракон','ракета']);
+ assert.equal(JSON.stringify(lib), original);
+});

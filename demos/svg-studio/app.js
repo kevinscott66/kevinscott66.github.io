@@ -407,34 +407,60 @@ $("compose").onclick = composeFromPrompt;
 
 let drag = null;
 function point(e) {
-  return new DOMPoint(e.clientX, e.clientY).matrixTransform(
-    $("canvas").getScreenCTM().inverse(),
-  );
+  const matrix = $("canvas").getScreenCTM();
+  if (!matrix) return null;
+  return new DOMPoint(e.clientX, e.clientY).matrixTransform(matrix.inverse());
+}
+function moveObject(object, x, y) {
+  object.x = boundCoordinate(x);
+  object.y = boundCoordinate(y);
+  render();
+}
+function finishDrag(e) {
+  if (!drag || e.pointerId !== drag.pointerId) return;
+  const pointerId = drag.pointerId;
+  drag = null;
+  if ($("canvas").hasPointerCapture(pointerId))
+    $("canvas").releasePointerCapture(pointerId);
 }
 $("canvas").onpointerdown = (e) => {
+  // One gesture owns the object until it ends; a second finger must not move it.
+  if (drag || e.isPrimary === false || e.button !== 0) return;
   const g = e.target.closest("[data-object]");
-  if (!g) {
-    selected = null;
-    render();
-    return;
+  const o = g && objects.find((object) => object.id === Number(g.dataset.object));
+  const p = o && point(e);
+  if (o && !p) return;
+  selected = o?.id ?? null;
+  $("canvas").focus({ preventScroll: true });
+  if (o) {
+    e.preventDefault();
+    drag = { o, pointerId: e.pointerId, x: p.x - o.x, y: p.y - o.y };
+    $("canvas").setPointerCapture(e.pointerId);
   }
-  selected = Number(g.dataset.object);
-  const o = selectedObject(),
-    p = point(e);
-  drag = { o, x: p.x - o.x, y: p.y - o.y };
-  $("canvas").setPointerCapture(e.pointerId);
   render();
 };
 $("canvas").onpointermove = (e) => {
-  if (drag) {
-    const p = point(e);
-    drag.o.x = boundCoordinate(p.x - drag.x);
-    drag.o.y = boundCoordinate(p.y - drag.y);
-    render();
+  if (!drag || e.pointerId !== drag.pointerId) return;
+  if (!objects.includes(drag.o)) {
+    finishDrag(e);
+    return;
   }
+  const p = point(e);
+  if (p) moveObject(drag.o, p.x - drag.x, p.y - drag.y);
 };
 for (const ev of ["pointerup", "pointercancel", "lostpointercapture"])
-  $("canvas").addEventListener(ev, () => (drag = null));
+  $("canvas").addEventListener(ev, finishDrag);
+$("canvas").onkeydown = (e) => {
+  // Scope keyboard movement to the focused canvas, never form fields.
+  if (e.target !== $("canvas") || e.altKey || e.ctrlKey || e.metaKey || drag) return;
+  const movement = { ArrowLeft: [-1, 0], ArrowRight: [1, 0],
+    ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+  const o = selectedObject();
+  if (!movement || !o) return;
+  e.preventDefault();
+  const step = e.shiftKey ? 10 : 1;
+  moveObject(o, o.x + movement[0] * step, o.y + movement[1] * step);
+};
 function download(text, type, name) {
   const url = URL.createObjectURL(new Blob([text], { type })),
     a = document.createElement("a");
@@ -447,6 +473,9 @@ function exportComposition() {
   const svg = $("canvas").cloneNode(true);
   svg.removeAttribute("id");
   svg.removeAttribute("aria-label");
+  svg.removeAttribute("aria-describedby");
+  svg.removeAttribute("tabindex");
+  svg.removeAttribute("role");
   svg.removeAttribute("style");
   svg.setAttribute("width", w);
   svg.setAttribute("height", h);

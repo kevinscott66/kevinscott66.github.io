@@ -63,16 +63,16 @@ function validatePalette(palette) {
 // Word boundaries avoid the old three-letter collisions (e.g. «лампа»/«лампочка»
 // is explicit, whereas an unrelated word sharing three letters is not).
 const componentForms = {
-  book: ["книга", "книги", "книгу", "книгой", "книг", "книжка", "книжки"],
-  phone: ["телефон", "телефона", "телефоны", "телефоном", "смартфон", "смартфоны"],
-  puzzle: ["пазл", "пазлы", "пазлов", "пазла", "пазлами"],
-  coin: ["монета", "монеты", "монету", "монет", "монетой"],
-  headphones: ["наушники", "наушников", "наушниками"],
-  lamp: ["лампа", "лампы", "лампу", "лампой", "лампочка", "лампочки"],
-  plant: ["растение", "растения", "растений", "растением", "цветок", "цветы", "цветами"],
-  folder: ["папка", "папки", "папку", "папкой", "папок"],
-  pen: ["ручка", "ручки", "ручку", "ручкой", "ручек"],
-  wallet: ["кошелек", "кошелька", "кошельки", "кошельком", "кошельков"],
+  book: ["книга", "книги", "книгу", "книгой", "книг", "книжка", "книжки", "книгам", "книгами", "книгах", "книге"],
+  phone: ["телефон", "телефона", "телефоны", "телефоном", "смартфон", "смартфоны", "телефону", "телефоне", "телефонов", "телефонами", "смартфона", "смартфоном"],
+  puzzle: ["пазл", "пазлы", "пазлов", "пазла", "пазлами", "пазлу", "пазлом", "пазлах"],
+  coin: ["монета", "монеты", "монету", "монет", "монетой", "монете", "монетами", "монетах"],
+  headphones: ["наушники", "наушников", "наушниками", "наушникам", "наушниках"],
+  lamp: ["лампа", "лампы", "лампу", "лампой", "лампочка", "лампочки", "лампе", "лампами", "лампах"],
+  plant: ["растение", "растения", "растений", "растением", "цветок", "цветы", "цветами", "растению", "растениями", "цветка", "цветком"],
+  folder: ["папка", "папки", "папку", "папкой", "папок", "папке", "папками", "папках"],
+  pen: ["ручка", "ручки", "ручку", "ручкой", "ручек", "ручке", "ручками", "ручках"],
+  wallet: ["кошелек", "кошелька", "кошельки", "кошельком", "кошельков", "кошельку", "кошельке", "кошельками", "кошельках"],
 };
 const meaningRules = [
   { terms: ["преград", "препятств", "преодол", "трудност", "вызов", "мечт", "цели", "цель"], ids: ["puzzle", "plant", "lamp"] },
@@ -87,24 +87,50 @@ const meaningRules = [
   { terms: ["рост", "развит", "будущ", "новый старт", "начало", "жизн", "забот", "природ", "эколог"], ids: ["plant", "book", "lamp"] },
 ];
 
+const intentWords = (text) => normalize(text).match(/[а-яa-z0-9]+/g) || [];
+
+// Index whole token sequences, including names of user-imported SVGs. Keeping
+// spans lets list parsing distinguish its «и» separator from «и» inside a name.
+function componentMatcher(catalogue) {
+  const phrases = catalogue.flatMap((asset, catalogueIndex) =>
+    (componentForms[asset.id] || [asset.name]).map((phrase) => ({
+      asset, catalogueIndex, tokens: intentWords(phrase),
+    })).filter(({ tokens }) => tokens.length));
+  return (words) => phrases.flatMap(({ asset, catalogueIndex, tokens }) =>
+    words.flatMap((_, position) => tokens.every((token, offset) =>
+      words[position + offset] === token)
+      ? [{ asset, catalogueIndex, position, length: tokens.length }] : []))
+    .sort((a, b) => a.position - b.position || a.catalogueIndex - b.catalogueIndex);
+}
+
+function componentListParts(text, matchComponents) {
+  // Commas, semicolons and newlines always delimit items. A conjunction may be
+  // part of an imported illustration's name, so split only outside its span.
+  return text.split(/[,;\n]+/).flatMap((part) => {
+    const tokens = [...part.matchAll(/[а-яa-z0-9]+/g)];
+    const matches = matchComponents(tokens.map(([word]) => word));
+    const separators = tokens.filter(([word], index) => word === "и" &&
+      !matches.some(({ position, length }) => index >= position && index < position + length));
+    let start = 0;
+    const parts = separators.map((separator) => {
+      const item = part.slice(start, separator.index);
+      start = separator.index + separator[0].length;
+      return item;
+    });
+    return [...parts, part.slice(start)];
+  }).map((part) => part.trim()).filter(Boolean);
+}
+
 function planComposition(prompt, catalogue) {
   const text = normalize(prompt);
-  const words = text.match(/[а-яa-z0-9]+/g) || [];
-  const named = [];
-  words.forEach((word) => {
-    catalogue.forEach((asset) => {
-      const forms = componentForms[asset.id] || [normalize(asset.name)];
-      if (forms.includes(word) && !named.includes(asset)) named.push(asset);
-    });
-  });
+  const words = intentWords(text);
+  const matchComponents = componentMatcher(catalogue);
+  const named = [...new Set(matchComponents(words).map(({ asset }) => asset))];
   if (named.length) {
     // In a delimited list, every component must resolve; never silently omit one.
-    const parts = text.split(/[,;\n]+|\s+и\s+/).filter((part) => part.trim());
-    const unknown = parts.length > 1 ? parts.filter((part) => {
-      const tokens = part.match(/[а-яa-z0-9]+/g) || [];
-      return !named.some((asset) => tokens.some((token) =>
-        (componentForms[asset.id] || [normalize(asset.name)]).includes(token)));
-    }).map((part) => part.trim()) : [];
+    const parts = componentListParts(text, matchComponents);
+    const unknown = parts.length > 1 ? parts.filter((part) =>
+      matchComponents(intentWords(part)).length === 0) : [];
     return { mode: "components", assets: named, unknown };
   }
   const scores = new Map();
