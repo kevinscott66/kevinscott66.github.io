@@ -70,13 +70,15 @@ const componentForms = {
   coin: ["монета", "монеты", "монету", "монет", "монетой", "монете", "монетами", "монетах"],
   headphones: ["наушники", "наушников", "наушниками", "наушникам", "наушниках"],
   lamp: ["лампа", "лампы", "лампу", "лампой", "лампочка", "лампочки", "лампе", "лампами", "лампах"],
-  plant: ["растение", "растения", "растений", "растением", "цветок", "цветы", "цветами", "растению", "растениями", "цветка", "цветком"],
+  plant: ["растение", "растения", "растений", "растением", "цветок", "цветы", "цветами", "растению", "растениями", "цветка", "цветком", "цветов", "цветочки", "букет", "букета", "букеты", "тюльпаны", "тюльпанов"],
   folder: ["папка", "папки", "папку", "папкой", "папок", "папке", "папками", "папках"],
   pen: ["ручка", "ручки", "ручку", "ручкой", "ручек", "ручке", "ручками", "ручках"],
   wallet: ["кошелек", "кошелька", "кошельки", "кошельком", "кошельков", "кошельку", "кошельке", "кошельками", "кошельках"],
 };
 const meaningRules = [
   { terms: ["преград", "препятств", "преодол", "трудност", "вызов", "мечт", "цели", "цель"], ids: ["puzzle", "plant", "lamp"] },
+  { terms: ["за столом", "на столе", "рабочее место", "рабочий стол", "рабочего стола", "на рабочем столе", "на письменном столе", "на полке", "кабинет", "готовлюсь к экзамену"], ids: ["lamp", "book", "plant"] },
+  { terms: ["чтени", "читаю", "читает", "библиотек"], ids: ["book", "lamp", "plant"] },
   { terms: ["знани", "обуч", "учить", "учим", "учеб", "образован", "исследован", "позна", "мудрост"], ids: ["book", "lamp", "plant"] },
   { terms: ["иде", "вдохнов", "озарен", "творче", "изобрет", "инновац"], ids: ["lamp", "pen", "puzzle"] },
   { terms: ["команд", "сотруднич", "вместе", "единств", "партнер", "объедин"], ids: ["puzzle", "phone", "plant"] },
@@ -133,17 +135,64 @@ function componentListParts(text, matchComponents) {
   }).map((part) => part.trim()).filter(Boolean);
 }
 
+const countWords = {
+  один: 1, одна: 1, одно: 1, одну: 1, два: 2, две: 2, пару: 2, пара: 2,
+  три: 3, четыре: 4, пять: 5, шесть: 6, семь: 7, восемь: 8, девять: 9, десять: 10,
+  ноль: 0,
+};
+function placementFromWords(words) {
+  const text = words.join(" ");
+  const result = {};
+  if (/слева|слева от|левом|левый/.test(text)) result.x = .2;
+  if (/справа|правом|правый/.test(text)) result.x = .8;
+  if (/сверху|вверху|верхнем|верхний/.test(text)) result.y = .25;
+  if (/снизу|внизу|нижнем|нижний/.test(text)) result.y = .75;
+  if (/посередине|посредине|по середине|по центру|в центре/.test(text)) {
+    result.x ??= .5;
+    result.y ??= .5;
+  }
+  return result;
+}
+
 function planComposition(prompt, catalogue) {
   const text = normalize(prompt);
   const words = intentWords(text);
   const matchComponents = componentMatcher(catalogue);
-  const named = [...new Set(matchComponents(words).map(({ asset }) => asset))];
-  if (named.length) {
-    // In a delimited list, every component must resolve; never silently omit one.
+  const matches = matchComponents(words);
+  const surface = /(?:за столом|на (?:рабочем |письменном )?столе|рабочий стол|рабочего стола)/.test(text) ? "table" : null;
+  if (matches.length) {
     const parts = componentListParts(text, matchComponents);
     const unknown = parts.length > 1 ? parts.filter((part) =>
       matchComponents(intentWords(part)).length === 0) : [];
-    return { mode: "components", assets: named, unknown };
+    const assets = [], layout = [], seen = new Set();
+    let tooMany = false;
+    for (let index = 0; index < matches.length; index++) {
+      const match = matches[index];
+      const before = words.slice(index ? matches[index - 1].position + matches[index - 1].length : 0, match.position);
+      // Counts belong to the immediately following noun, never a previous item.
+      const amountWord = before.at(-1);
+      const count = countWords[amountWord] ?? (/^\d+$/.test(amountWord || "") ? Number(amountWord) : null);
+      const negated = before.at(-1) === "без" || before.at(-1) === "не" ||
+        before.slice(-2).includes("без") || before.slice(-2).includes("не");
+      if (negated || count === 0) continue;
+      if (count == null && seen.has(match.asset.id)) continue;
+      seen.add(match.asset.id);
+      const next = matches[index + 1];
+      const after = words.slice(match.position + match.length, next?.position ?? words.length);
+      // A comma/conjunction closes the previous object's instruction.
+      const tail = after.slice(0, after.indexOf("и") < 0 ? after.length : after.indexOf("и"));
+      const directive = placementFromWords(tail);
+      const amount = count ?? 1;
+      if (!Number.isSafeInteger(amount) || amount > 100 || assets.length + amount > 100) {
+        tooMany = true;
+        continue;
+      }
+      for (let copy = 0; copy < amount; copy++) {
+        assets.push(match.asset);
+        layout.push(directive);
+      }
+    }
+    return { mode: "components", assets, layout, unknown, tooMany, surface };
   }
   const scores = new Map();
   meaningRules.forEach((rule) => {
@@ -157,7 +206,7 @@ function planComposition(prompt, catalogue) {
     .filter((match) => match.score > 0)
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .slice(0, 3).map((match) => match.asset);
-  return { mode: "meaning", assets, unknown: [] };
+  return { mode: "meaning", assets, unknown: [], surface };
 }
 
 // Automatic layout, touch gestures and buttons share portable transform bounds.
@@ -170,19 +219,52 @@ function normalizeObjectRotation(value) {
 
 // A row/grid keeps longer explicit lists inside the canvas instead of overlapping
 // ten full-sized illustrations in the former three-item layout.
-function compositionPositions(count, width, height) {
+function compositionPositions(count, width, height, directives = [], surface = null) {
   const columns = count <= 3 ? count : Math.ceil(Math.sqrt(count * width / height));
   const rows = Math.ceil(count / columns);
   const scale = count === 1 ? 1.5 : count <= 3 ? 1.05 : clampObjectScale(Math.min(1, 2.4 / columns, 1.8 / rows));
-  return Array.from({ length: count }, (_, index) => {
+  const positions = Array.from({ length: count }, (_, index) => {
     const row = Math.floor(index / columns);
     const inRow = Math.min(columns, count - row * columns);
     return {
       x: width * ((index % columns) + 1) / (inRow + 1),
-      y: rows === 1 ? height * (index % 2 ? 0.46 : 0.57) : height * (row + 1) / (rows + 1),
-      rotation: index % 2 ? 7 : -5, scale,
+      y: rows === 1 ? height * (surface === "table" ? .56 : index % 2 ? .46 : .57) : height * (row + 1) / (rows + 1),
+      rotation: surface === "table" ? 0 : index % 2 ? 7 : -5,
+      scale: surface === "table" ? clampObjectScale(Math.min(scale, width / (columns * 320))) : scale,
     };
   });
+  const available = new Set(positions.map((_, i) => i));
+  const result = new Array(count);
+  const groups = new Map();
+  directives.forEach((d, i) => {
+    if (i >= count || (d.x == null && d.y == null)) return;
+    const key = `${d.x ?? .5},${d.y ?? .5}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(i);
+  });
+  for (const indexes of groups.values()) {
+    indexes.forEach((index, offset) => {
+      const d = directives[index];
+      const columns = Math.ceil(Math.sqrt(indexes.length));
+      const rows = Math.ceil(indexes.length / columns);
+      const spread = Math.min(width, height) * .22;
+      const x = width * (d.x ?? .5) + ((offset % columns) - (columns - 1) / 2) * spread / columns;
+      const y = height * (d.y ?? .5) + (Math.floor(offset / columns) - (rows - 1) / 2) * spread / rows;
+      const nearest = [...available].sort((a,b) =>
+        Math.hypot(positions[a].x-x, positions[a].y-y) - Math.hypot(positions[b].x-x, positions[b].y-y))[0];
+      available.delete(nearest);
+      result[index] = { ...positions[index], x, y,
+        scale: indexes.length > 1 ? clampObjectScale(Math.min(positions[index].scale, .65 / columns)) : positions[index].scale };
+    });
+  }
+  // Preserve explicit anchors, fill all other objects from unoccupied layout slots.
+  for (let index = 0; index < count; index++) {
+    if (result[index]) continue;
+    const slot = available.values().next().value;
+    available.delete(slot);
+    result[index] = positions[slot];
+  }
+  return result;
 }
 
 function chooseAssets(prompt, catalogue) {

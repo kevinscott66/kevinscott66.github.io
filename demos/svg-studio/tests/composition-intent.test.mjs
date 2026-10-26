@@ -85,3 +85,68 @@ test('longest imported name owns a conjunction and nested catalogue names', () =
  assert.deepEqual(plan.assets.map(a=>a.id), ['custom-long','coin']);
  assert.deepEqual(plan.unknown, ['дракон']);
 });
+
+test('quantities accept digits, Russian numbers and flower synonyms', () => {
+ for (const prompt of ['2 телефона и цветы по середине', 'два телефона и букет посередине', 'пара телефонов и тюльпаны в центре']) {
+  const plan=planComposition(prompt,lib);
+  assert.deepEqual(plan.assets.map(a=>a.id),['phone','phone','plant']);
+  assert.deepEqual(plan.unknown,[]);
+  assert.deepEqual(plan.layout[2],{x:.5,y:.5});
+  const positions=compositionPositions(3,800,600,plan.layout);
+  assert.equal(positions[2].x,400);assert.equal(positions[2].y,300);
+  assert.equal(new Set(positions.map(p=>p.x)).size,3);
+ }
+ assert.deepEqual(ids('три книги, две лампы и один кошелёк'),['book','book','book','lamp','lamp','wallet']);
+ assert.deepEqual(ids('10 монет'),Array(10).fill('coin'));
+});
+test('positional instructions apply to their noun rather than its neighbour',()=>{
+ const plan=planComposition('книга слева, телефон справа и цветы в центре',lib);
+ const positions=compositionPositions(3,1200,800,plan.layout);
+ assert.equal(positions[0].x,240);assert.equal(positions[1].x,960);
+ assert.equal(positions[2].x,600);assert.equal(positions[2].y,400);
+ const vertical=planComposition('лампа сверху и монета снизу',lib);
+ const p=compositionPositions(2,600,600,vertical.layout);
+ assert.equal(p[0].y,150);assert.equal(p[1].y,450);
+});
+test('negated objects and zero counts do not appear, limits are checked before expansion',()=>{
+ assert.deepEqual(ids('два телефона и без цветов'),['phone','phone']);
+ assert.deepEqual(ids('книга, не телефон'),['book']);
+ assert.deepEqual(ids('0 монет и лампа'),['lamp']);
+ for(const prompt of ['101 телефон','999999999999999999999 телефон','100 телефонов и книга']) {
+  const plan=planComposition(prompt,lib);assert.equal(plan.tooMany,true);assert.ok(plan.assets.length<=100);
+ }
+ assert.deepEqual(planComposition('два телефона и дракон',lib).unknown,['дракон']);
+});
+test('several objects in one requested region are separated and remain in bounds',()=>{
+ for(const [w,h] of [[800,600],[1200,800],[600,600]]) {
+  const plan=planComposition('четыре монеты в центре',lib);
+  const positions=compositionPositions(plan.assets.length,w,h,plan.layout);
+  assert.equal(new Set(positions.map(p=>`${p.x},${p.y}`)).size,4);
+  assert.ok(positions.every(p=>p.x>0&&p.x<w&&p.y>0&&p.y<h&&p.scale>=.2));
+ }
+});
+
+test('desk context uses the background as a surface without adding artwork',()=>{
+ const scene=planComposition('За столом',lib);
+ assert.deepEqual(scene.assets.map(a=>a.id),['lamp','book','plant']);
+ assert.equal(scene.surface,'table');
+ const explicit=planComposition('лампа и цветы на столе',lib);
+ assert.deepEqual(explicit.assets.map(a=>a.id),['lamp','plant']);
+ assert.equal(explicit.surface,'table');
+ const positions=compositionPositions(explicit.assets.length,800,600,explicit.layout,explicit.surface);
+ assert.equal(positions[0].y,positions[1].y);
+ assert.ok(positions.every(p=>p.rotation===0));
+ assert.deepEqual(planComposition('Чтение вечером',lib).assets.map(a=>a.id),['book','lamp','plant']);
+});
+
+
+test('table surface keeps explicit centre instruction and respects all canvas sizes',()=>{
+ const plan=planComposition('два телефона и цветы по середине на рабочем столе',lib);
+ assert.equal(plan.surface,'table');
+ for(const [w,h] of [[800,600],[1200,800],[600,600]]) {
+  const positions=compositionPositions(plan.assets.length,w,h,plan.layout,plan.surface);
+  assert.equal(positions[2].x,w/2);assert.equal(positions[2].y,h/2);
+  assert.ok(positions.every(p=>p.rotation===0));
+  assert.equal(new Set(positions.map(p=>`${p.x},${p.y}`)).size,3);
+ }
+});

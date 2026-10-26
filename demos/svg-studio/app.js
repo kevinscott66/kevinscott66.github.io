@@ -534,17 +534,18 @@ function composeFromPrompt() {
       "Не удалось подобрать элементы. Опишите тему другими словами или перечислите элементы из библиотеки.";
     return;
   }
-  if (plan.assets.length > MAX_OBJECTS) {
+  if (plan.tooMany || plan.assets.length > MAX_OBJECTS) {
     $("notice").textContent = "В описании больше 100 элементов. Сократите список — текущая картинка сохранена.";
     return;
   }
   stopGesture();
   objects = [];
-  const positions = compositionPositions(plan.assets.length, w, h);
+  const positions = compositionPositions(plan.assets.length, w, h, plan.layout, plan.surface);
   plan.assets.forEach((asset, index) => add(asset, positions[index]));
   selected = objects.find((o) => o.role === "main")?.id;
-  $("notice").textContent =
-    "Готово. Можно передвинуть элементы и изменить цвета.";
+  $("notice").textContent = plan.surface === "table"
+    ? "Предметы на столе. Цвет поверхности можно изменить в настройках фона."
+    : "Готово. Можно передвинуть элементы и изменить цвета.";
   render();
 }
 $("compose").onclick = composeFromPrompt;

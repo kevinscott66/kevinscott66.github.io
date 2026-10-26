@@ -734,3 +734,12 @@ test("touch ownership respects rotated scaled frames and desktop hit-testing", (
   canvas.onpointerdown(pointer(2,other.id,400,300));
   assert.equal(e.state().selected,other.id,"mouse retains direct selection");
 });
+
+test('compose executes quantities and centre placement without extra decorations',()=>{
+ const e=editor();e.control('prompt').value='2 телефона и цветы по середине';
+ e.control('compose').onclick();
+ const result=e.state();assert.deepEqual(result.objects.map(o=>o.asset),['phone','phone','plant']);
+ assert.equal(result.objects[2].x,result.w/2);assert.equal(result.objects[2].y,result.h/2);
+ const before=e.state();e.control('prompt').value='101 телефон';e.control('compose').onclick();
+ assert.deepEqual(e.state(),before,'oversized request keeps current composition');
+});
