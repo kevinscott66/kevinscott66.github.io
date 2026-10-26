@@ -14,6 +14,7 @@ class PublicationChecks(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         shutil.copytree(ROOT / 'assets', self.root / 'assets')
+        shutil.copytree(ROOT / 'demos', self.root / 'demos')
         shutil.copyfile(ROOT / 'sitemap.xml', self.root / 'sitemap.xml')
         for path in page_paths():
             target = self.root / path.relative_to(ROOT)

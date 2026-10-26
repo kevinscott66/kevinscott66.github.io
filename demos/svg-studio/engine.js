@@ -1,3 +1,4 @@
+/* Слойра — © 2026 Павлович Александр Кириллович / dobropalm. Code: MIT. Artwork: ASSET-NOTICE.md. */
 const palettes = {
   lavender: {
     backgroundLight: "#d7cdf5",

@@ -1,3 +1,4 @@
+/* Слойра — © 2026 Павлович Александр Кириллович / dobropalm. Code: MIT. Artwork: ASSET-NOTICE.md. */
 const $ = (id) => document.getElementById(id),
   NS = "http://www.w3.org/2000/svg";
 let library = [],
