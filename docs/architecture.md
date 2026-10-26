@@ -87,3 +87,5 @@ SVG Studio версионирует CSS/JS по хешу содержимого 
 Редактор SVG поддерживает жест из двух touch Pointer Events: карта двух pointerId, исходная пара/поза объекта и накопленный угол, нормализация угла, ограниченный scale и координаты. При отпускании пальца состояние переносится в одиночный drag; системная отмена освобождает весь жест. Multi-touch тестируется через настоящие обработчики в NodeVM, аппаратная проверка отдельно.
 
 Падающая тень монеты вынесена в единую SVG-группу opacity0.24 позади корпуса; подложка покрывает только боковую грань, чтобы не создавать белый слой под полупрозрачной тенью. Генератор в tools/repair_coin_opacity.py сохраняет набор атрибутов исходных путей, меняя только группировку/порядок тени.
+
+Imported SVG-editor JSON is projected onto the supported schema after validation: object fields and seven palette keys only. Unknown extension metadata is discarded so a valid compact input cannot inflate beyond the project-size limit when saved with indentation. Layer selection updates selection visuals without rebuilding list buttons, preserving keyboard focus.

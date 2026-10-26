@@ -258,7 +258,8 @@ function renderLayers() {
     name.onclick = () => {
       stopGesture();
       selected = o.id;
-      render();
+      renderCanvasSelection();
+      renderSelection();
     };
     row.append(name);
     $("layers").append(row);
@@ -369,6 +370,9 @@ $("recolor").onclick = () => {
   renderLibrary();
   render();
 };
+function importedPalette(p) {
+  return p ? Object.fromEntries(paletteColorKeys.map((key) => [key, p[key]])) : null;
+}
 function parseImportedJSON(text) {
   try {
     return JSON.parse(text);
@@ -387,7 +391,7 @@ async function importPalette(e) {
     const p = parseImportedJSON(await file.text());
     if (token !== paletteReadToken) return;
     validatePalette(p);
-    customPalette = p;
+    customPalette = importedPalette(p);
     $("background").value = p.backgroundLight;
     renderLibrary();
     render();
@@ -681,8 +685,10 @@ async function openProject(e) {
     stopGesture();
     w = p.w;
     h = p.h;
-    objects = p.objects.map((o) => ({ ...o, id: ++uid }));
-    customPalette = p.palette;
+    objects = p.objects.map(({ asset, x, y, rotation, scale, role }) => ({
+      asset, x, y, rotation, scale, role, id: ++uid,
+    }));
+    customPalette = importedPalette(p.palette);
     $("scheme").value = p.scheme;
     $("size").value = `${w} × ${h}`;
     $("background").value = p.background;
