@@ -47,7 +47,7 @@ function cleanSVG(text) {
     d.documentElement.localName !== "svg" ||
     d.documentElement.namespaceURI !== NS
   )
-    throw Error("Некорректный SVG");
+    throw Error("Не удалось прочитать SVG. Проверьте файл.");
   const root = d.documentElement;
   if (root.querySelectorAll("*").length > 15000)
     throw Error("SVG слишком большой");
@@ -530,16 +530,16 @@ function composeFromPrompt() {
     return;
   }
   if (plan.unknown.length) {
-    $("notice").textContent = `Нет в библиотеке: ${plan.unknown.join(", ")}. Уточните список — текущая картинка сохранена.`;
+    $("notice").textContent = `Нет в библиотеке: ${plan.unknown.join(", ")}. Проверьте названия. Картинка пока не изменилась.`;
     return;
   }
   if (!plan.assets.length) {
     $("notice").textContent =
-      "Не удалось подобрать элементы. Опишите тему другими словами или перечислите элементы из библиотеки.";
+      "Не получилось подобрать предметы. Попробуйте другое описание или названия из библиотеки.";
     return;
   }
   if (plan.tooMany || plan.assets.length > MAX_OBJECTS) {
-    $("notice").textContent = "В описании больше 100 элементов. Сократите список — текущая картинка сохранена.";
+    $("notice").textContent = "В описании больше 100 элементов. Сократите список. Картинка пока не изменилась.";
     return;
   }
   stopGesture();
@@ -548,8 +548,8 @@ function composeFromPrompt() {
   plan.assets.forEach((asset, index) => add(asset, positions[index]));
   selected = objects.find((o) => o.role === "main")?.id;
   $("notice").textContent = plan.surface === "table"
-    ? "Предметы на столе. Цвет поверхности можно изменить в настройках фона."
-    : "Готово. Можно передвинуть элементы и изменить цвета.";
+    ? "Готово. Цвет стола можно изменить в разделе «Цвета»."
+    : "Готово. Предметы можно двигать, а цвета — менять.";
   if (plan.corrections?.length) {
     const fixed = plan.corrections.map(c => `«${c.from}» → «${c.to}»`).join(", ");
     $("notice").textContent = `Исправлены опечатки: ${fixed}. ` + $("notice").textContent;
@@ -782,7 +782,7 @@ $("export").onclick = exportComposition;
 function saveProject() {
   if (objects.some((o) => o.asset.startsWith("custom-"))) {
     $("notice").textContent =
-      "Сохранение проекта доступно для встроенной библиотеки. Свою композицию можно скачать в SVG.";
+      "Проект с загруженными SVG пока нельзя сохранить. Нажмите «Скачать», чтобы получить картинку в SVG.";
     return;
   }
   download(
@@ -820,7 +820,7 @@ function validateProject(p, fileSize) {
       [600, 600],
     ].some(([width, height]) => p.w === width && p.h === height)
   )
-    throw Error("Неподдерживаемый проект");
+    throw Error("Не удалось открыть проект. Выберите JSON-файл, сохранённый в Слойре.");
   if (p.palette) validatePalette(p.palette);
   for (const o of p.objects)
     if (
@@ -836,13 +836,13 @@ function validateProject(p, fileSize) {
       o.scale < 0.2 ||
       o.scale > 3
     )
-      throw Error("Некорректный объект");
+      throw Error("В проекте есть предмет с недопустимыми параметрами.");
   if (
     !Object.hasOwn(palettes, p.scheme) ||
     typeof p.background !== "string" ||
     !/^#[\da-f]{6}$/i.test(p.background)
   )
-    throw Error("Некорректная палитра");
+    throw Error("Не удалось прочитать цвета проекта.");
   const projectPalette = p.palette || palettes[p.scheme];
   if (
     [projectPalette.primary, projectPalette.secondary, projectPalette.ink].some(
@@ -876,7 +876,7 @@ async function openProject(e) {
     selected = null;
     renderLibrary();
     render();
-    $("notice").textContent = "Картинка открыта.";
+    $("notice").textContent = "Проект открыт.";
   } catch (err) {
     if (token === projectReadToken) $("notice").textContent = err.message;
   }
@@ -912,7 +912,7 @@ async function importArtworkFiles(e) {
   renderLibrary();
   if (errors.length) {
     $("notice").textContent =
-      `Импортировано: ${imported}. ${errors.join("; ")}`;
+      `Добавлено файлов: ${imported}. ${errors.join("; ")}`;
   } else if (imported) {
     $("notice").textContent = "Элементы добавлены в библиотеку.";
   }

@@ -45,11 +45,11 @@ test("invalid input does not bypass dimension or asset guards", () => {
     { ...valid, objects: [{ ...valid.objects[0], asset: "unknown" }] },
     { ...valid, objects: [{ ...valid.objects[0], scale: Infinity }] },
   ])
-    assert.throws(() => validate(p), /Неподдерживаемый проект|Некорректный объект/);
+    assert.throws(() => validate(p), /Не удалось открыть проект|недопустимыми параметрами/);
 });
 test("import cannot bypass background/color or own-scheme checks", () => {
   assert.throws(() => validate({ ...valid, background: "#F9ECB0" }), /Этот цвет уже/);
-  assert.throws(() => validate({ ...valid, scheme: "constructor" }), /Некорректная палитра/);
+  assert.throws(() => validate({ ...valid, scheme: "constructor" }), /Не удалось прочитать цвета проекта/);
   assert.throws(() =>
     validate({
       ...valid,

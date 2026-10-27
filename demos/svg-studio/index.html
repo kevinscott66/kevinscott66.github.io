@@ -37,7 +37,7 @@
       </div>
     </header>
     <main class="workspace">
-      <aside class="library-panel" aria-label="Библиотека и сборка">
+      <aside class="library-panel" aria-label="Библиотека предметов">
         <section
           class="panel-section assets-section"
           aria-labelledby="library-heading"
@@ -55,10 +55,10 @@
             <label for="files">Добавить SVG</label
             ><input id="files" type="file" accept=".svg" multiple /><label
               for="project"
-              >Открыть сохранённую картинку</label
+              >Открыть проект (JSON)</label
             ><input id="project" type="file" accept=".json" /><label
               for="palette"
-              >Загрузить свои цвета (JSON)</label
+              >Загрузить палитру (JSON)</label
             ><input id="palette" type="file" accept=".json" />
           </div>
         </details>
@@ -97,7 +97,7 @@
           </div>
         </div>
         <p id="canvas-hint" class="canvas-hint">
-          За угол рамки — размер, за верхнюю ручку — поворот
+          Тяните за угол, чтобы изменить размер. За верхнюю ручку — чтобы повернуть.
         </p>
         <div id="object-tools" class="object-tools" aria-label="Действия с предметом" hidden>
           <strong id="selection" class="selection-name"></strong>
@@ -188,7 +188,7 @@
           aria-labelledby="layers-heading"
         >
           <h2 id="layers-heading">Предметы</h2>
-          <p class="layer-hint">Перетащите предмет выше, чтобы он был перед другими</p>
+          <p class="layer-hint">Предметы вверху списка перекрывают те, что ниже.</p>
           <div id="layers"></div>
         </section>
       </aside>
@@ -206,7 +206,7 @@
     </footer>
     <script src="engine.js?v=2aeb58268cfc"></script>
     <script src="svg-safety.js?v=f37fae4e3e5f"></script>
-    <script src="composition-agent.js?v=5c4e3c1b97d1"></script>
-    <script src="app.js?v=8cc99af3e6b2"></script>
+    <script src="composition-agent.js?v=27c22bac9a66"></script>
+    <script src="app.js?v=197b8afb19c7"></script>
   </body>
 </html>

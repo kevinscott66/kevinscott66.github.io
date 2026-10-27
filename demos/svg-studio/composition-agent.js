@@ -378,7 +378,7 @@ class LocalCompositionAgent {
       return {
         ...plan,
         question:
-          "Какие предметы нужны? Например: два телефона и цветы в центре.",
+          "Какие предметы добавить? Например: книга и лампа на столе.",
       };
     if (arrangement.mode === "thirds" && plan.assets.length > 4)
       return {
@@ -393,7 +393,7 @@ class LocalCompositionAgent {
       return {
         ...plan,
         question:
-          "Оставить общую раскладку или отдельные указания о положении предметов? Укажите один вариант.",
+          "Выберите что-то одно: общее расположение (например, в ряд) или положение каждого предмета.",
       };
     return { ...plan, status: "ready", corrections: spelling.corrections };
   }

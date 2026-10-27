@@ -99,7 +99,7 @@ test("project read captures its File even if input files later change", async ()
   file.resolve(JSON.stringify(project()));
   await pending;
   assert.equal(e.state().objects[0].asset, "book");
-  assert.equal(e.control("notice").textContent, "Картинка открыта.", "successful open clears previous error");
+  assert.equal(e.control("notice").textContent, "Проект открыт.", "successful open clears previous error");
 });
 
 test("oversized files are rejected before text is read; invalid JSON preserves state", async () => {
@@ -208,7 +208,7 @@ test("unknown/empty prompts and canceled file dialogs preserve composition", asy
     e.control("prompt").value = prompt;
     e.run("composeFromPrompt()");
     assert.deepEqual(e.state(), before);
-    assert.match(e.control("notice").textContent, /Какие предметы нужны/);
+    assert.match(e.control("notice").textContent, /Какие предметы добавить/);
   }
   await e.run("openProject")(e.event("project", null));
   await e.run("importPalette")(e.event("palette", null));
@@ -573,7 +573,7 @@ test("over-limit composition plans preserve the current picture and gesture atom
   e.control("compose").onclick();
   assert.deepEqual(e.state(), before);
   assert.equal(canvas.hasPointerCapture(1), true, "rejected plan preserves the gesture");
-  assert.match(e.control("notice").textContent, /100.*текущая картинка сохранена/);
+  assert.match(e.control("notice").textContent, /100.*Картинка пока не изменилась/);
   canvas.onpointermove(touch(1, id, 410, 320));
   near(e.state().objects[0].x, 410);
   near(e.state().objects[0].y, 320);
@@ -591,7 +591,7 @@ test("large ignored project metadata cannot make the saved project impossible to
   assert.ok(Buffer.byteLength(JSON.stringify(input, null, 2)) > 1000000,
     "preserving ignored metadata would make pretty-printed output exceed the limit");
   await e.run("openProject")(e.event("project", { size: inputBytes, text: async () => text }));
-  assert.equal(e.control("notice").textContent, "Картинка открыта.");
+  assert.equal(e.control("notice").textContent, "Проект открыт.");
   assert.deepEqual(Object.keys(e.state().objects[0]).sort(),
     ["asset", "x", "y", "rotation", "scale", "role", "id"].sort());
   assert.equal(Object.hasOwn(e.state().customPalette, "unused"), false);
@@ -601,7 +601,7 @@ test("large ignored project metadata cannot make the saved project impossible to
   assert.ok(savedBytes < 1000000);
   e.run("objects = []; customPalette = null");
   await e.run("openProject")(e.event("project", { size: savedBytes, text: async () => savedText }));
-  assert.equal(e.control("notice").textContent, "Картинка открыта.");
+  assert.equal(e.control("notice").textContent, "Проект открыт.");
   const withoutIds = (objects) => objects.map(({ id, ...object }) => object);
   assert.deepEqual(withoutIds(e.state().objects), withoutIds(before.objects));
   assert.deepEqual(e.state().customPalette, before.customPalette);
@@ -623,7 +623,7 @@ test("palette-file imports retain only supported colors in state and saved outpu
   await e.run("openProject")(e.event("project", {
     size: Buffer.byteLength(savedText), text: async () => savedText,
   }));
-  assert.equal(e.control("notice").textContent, "Картинка открыта.");
+  assert.equal(e.control("notice").textContent, "Проект открыт.");
   assert.deepEqual(e.state().customPalette, supported);
 });
 
