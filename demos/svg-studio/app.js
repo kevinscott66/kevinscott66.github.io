@@ -939,7 +939,7 @@ async function init() {
     setEditorLoading(false);
     renderLibrary();
     render();
-    $("prompt").value = "Рост знаний и новые идеи";
+    $("prompt").value = "Книга и лампа на столе";
     $("compose").click();
     selected = null;
     render();
