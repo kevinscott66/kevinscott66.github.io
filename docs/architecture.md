@@ -119,3 +119,7 @@ Prompt typo preprocessing is bounded to one edit over a local dictionary of acti
 Generated agent coverage is now5000cases:3300prior plus1700distinct new prompts (1000imported-name,250polite-command,300text-space,150theme/exclusion). The new batch checks uniqueness and exact counts. Exact valid imperative commands are protected from typo rewrites (поставь must not become оставь).
 
 Release refactor separates typo correction, arrangement extraction, scene exclusion and spatial relation phases into explicit helpers. Missing relationship anchors now clarify instead of silently ignoring the instruction; relation words inside exact imported names remain literal. 190 Node tests cover the 5000-combination set plus regressions.
+
+## Vedomost portfolio entry
+
+EN/RU home pages list Vedomost as an AI-assisted test project, linking to https://github.com/kevinscott66/vedomost. The screenshot contains fictional students and payments. No backend is deployed in the static portfolio; the source README provides local setup. The ledger is evaluation-only source-available code, not covered by the portfolio repository's MIT license. The screenshot is used with the owner's permission.
