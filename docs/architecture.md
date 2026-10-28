@@ -4,6 +4,10 @@ The website is a static GitHub Pages tree. There is no application backend or bu
 
 The `/demos/vedomost/` link is served by a separate Cloudflare Worker route. It has no static app copy in this repository. Its deployment and runtime are owned by [the Vedomost source repository](https://github.com/kevinscott66/vedomost/blob/main/docs/cloud-deployment.md). The offline link checker lists this exact externally hosted path; other internal paths still require a local file.
 
+## Commit attribution
+
+Use `kevinscott66 <156429557+kevinscott66@users.noreply.github.com>` as the author for new commits. The owner also uses the profile display name Alexander Pavlovich. Merge pull requests with rebase to retain the original author; GitHub squash may replace it with the display name. Keep the existing branch protection and attribution checks.
+
 ## Publishing
 
 `main` is served through the existing custom domain. Run `python3 tools/check_site.py`, check both languages at desktop/mobile widths, verify the PDFs visually and confirm media playback before publishing. Check GitHub Actions and the public HTTPS response after deployment. Stylesheet URLs include `?v=` followed by the first 12 characters of the CSS SHA-256; run `python3 tools/sync_assets.py` to update all eight references when CSS changes. The static checker enforces this to avoid new HTML using cached, incompatible image styles.
