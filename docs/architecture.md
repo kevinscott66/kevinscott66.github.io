@@ -2,6 +2,8 @@
 
 The website is a static GitHub Pages tree. There is no application backend or build step. English routes are rooted at `/`; Russian equivalents use `/ru/`. Each of the three cases has its own directory and `index.html`. Shared CSS is in `assets/site.css`; no JavaScript is required for content, navigation or language switching.
 
+The `/demos/vedomost/` link is served by a separate Cloudflare Worker route. It has no static app copy in this repository. Its deployment and runtime are owned by [the Vedomost source repository](https://github.com/kevinscott66/vedomost/blob/main/docs/cloud-deployment.md). The offline link checker lists this exact externally hosted path; other internal paths still require a local file.
+
 ## Publishing
 
 `main` is served through the existing custom domain. Run `python3 tools/check_site.py`, check both languages at desktop/mobile widths, verify the PDFs visually and confirm media playback before publishing. Check GitHub Actions and the public HTTPS response after deployment. Stylesheet URLs include `?v=` followed by the first 12 characters of the CSS SHA-256; run `python3 tools/sync_assets.py` to update all eight references when CSS changes. The static checker enforces this to avoid new HTML using cached, incompatible image styles.

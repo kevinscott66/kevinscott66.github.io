@@ -7,6 +7,9 @@ import xml.etree.ElementTree as ET
 from site_common import ROOT, ORIGIN, page_paths, route, stylesheet_url
 
 
+# Served by an independently deployed Cloudflare Worker, not by this static tree.
+HOSTED_ROUTES = frozenset({"/demos/vedomost/"})
+
 def require(condition, message):
     if not condition:
         raise ValueError(message)
@@ -95,6 +98,8 @@ def check_site(root=ROOT):
             if u.netloc and u.netloc != urlsplit(ORIGIN).netloc:
                 continue
             if u.scheme and u.scheme not in ('http', 'https'):
+                continue
+            if u.path in HOSTED_ROUTES and not u.fragment:
                 continue
             target = (root / unquote(u.path.lstrip('/'))) if u.path.startswith('/') else (path.parent / unquote(u.path))
             if not u.path:
