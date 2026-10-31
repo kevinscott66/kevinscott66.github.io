@@ -1,0 +1,14 @@
+.text-kit summary { cursor:pointer; min-height:32px; }
+.text-kit button { font:600 13px/1.5 Manrope,sans-serif; cursor:pointer; border:1px solid #dbc4d0; color:#65374f; background:#fff; border-radius:12px; padding:10px 12px; min-height:44px; }
+.text-tones button[aria-pressed=true] { border-color:#994f71; background:#f6e7ee; }
+.text-kit button:focus-visible { outline:3px solid #ad577f; outline-offset:3px; }
+.kit-hint { font-size:12px; line-height:1.6; color:#826d77; margin:8px 0 12px; }
+.kit-status { font-size:12px; line-height:1.6; margin:8px 0 0; }
+.kit-status:empty { display:none; }
+.kit-status button { border:0; background:transparent; text-decoration:underline; padding:4px 8px; }
+.text-kit { margin:-4px 0 18px; }
+.text-kit summary { font-size:12px; color:#884866; font-weight:600; }
+.text-tones { display:flex; gap:6px; flex-wrap:wrap; }
+.text-tones button { padding:7px 10px; }
+.text-options { display:grid; gap:6px; margin-top:8px; }
+.text-options button { text-align:left; font-weight:400; }

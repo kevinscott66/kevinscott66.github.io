@@ -1,0 +1,8 @@
+.draft-bar { position:fixed; z-index:55; top:max(16px,env(safe-area-inset-top)); left:50%; transform:translateX(-50%); box-sizing:border-box; width:calc(100% - 32px); max-width:460px; padding:20px; border:1px solid #e2cdd7; border-radius:22px; background:#fffafc; box-shadow:0 12px 44px #573b4826; color:#684655; font:13px/1.6 Manrope,sans-serif; }
+.draft-bar strong { display:block; color:#573b48; font-size:16px; }
+.draft-bar p { margin:5px 0 0; }
+.draft-bar[hidden],.draft-offer[hidden] { display:none; }
+.draft-offer { display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin-top:10px; }
+.draft-offer button { font:600 13px/1.5 Manrope,sans-serif; border:0; border-radius:100px; background:#a94d73; color:#fff; padding:11px 18px; min-height:44px; cursor:pointer; }
+.draft-offer .secondary { background:#f1e6eb; color:#704558; }
+.draft-offer button:focus-visible { outline:3px solid #b15483; outline-offset:3px; }
