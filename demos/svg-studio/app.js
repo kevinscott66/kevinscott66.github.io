@@ -74,8 +74,7 @@ function cleanSVG(text) {
 function palette() {
   return customPalette || palettes[$("scheme").value];
 }
-function artwork(asset, role = "main") {
-  const size = w >= 1000 ? "L" : "S";
+function artwork(asset, role = "main", size = "S") {
   return cache.get(asset.variants[size]?.[role] || asset.variants.S.main);
 }
 const colorSlots = {
@@ -117,8 +116,8 @@ function rewriteLocalReferences(value, ids, attributeName) {
   return rewritten === value ? value : rewritten.trim() || "none";
 }
 
-function cloneArtwork(asset, role, prefix) {
-  const root = artwork(asset, role).cloneNode(true),
+function cloneArtwork(asset, role, prefix, size = "S") {
+  const root = artwork(asset, role, size).cloneNode(true),
     ids = new Map(),
     p = {
       ...palette(),
@@ -157,6 +156,7 @@ function add(asset, opts = {}) {
     rotation: 0,
     scale: 1,
     role: "main",
+    artworkSize: "S",
     ...opts,
   };
   o.x = boundCoordinate(o.x);
@@ -196,11 +196,12 @@ function renderCanvas() {
         "data-object": o.id,
         transform: `translate(${o.x} ${o.y}) rotate(${o.rotation}) scale(${o.scale})`,
       }),
-      svg = cloneArtwork(a, o.role, `o${o.id}-`);
-    svg.setAttribute("x", -120);
-    svg.setAttribute("y", -120);
-    svg.setAttribute("width", 240);
-    svg.setAttribute("height", 240);
+      svg = cloneArtwork(a, o.role, `o${o.id}-`, o.artworkSize || "S");
+    const { width, height } = objectGeometry(o);
+    svg.setAttribute("x", -width / 2);
+    svg.setAttribute("y", -height / 2);
+    svg.setAttribute("width", width);
+    svg.setAttribute("height", height);
     g.append(svg);
     canvas.append(g);
   }
@@ -209,7 +210,21 @@ function renderCanvas() {
   $("count").textContent = `Элементов: ${objects.length}`;
 }
 
-const FRAME_HALF_SIZE = 124;
+// Imported drawings use their own scale; they must never resize the built-in library.
+function objectGeometry(object) {
+  const asset = library.find(asset => asset.id === object.asset);
+  const root = asset && artwork(asset, object.role, object.artworkSize || "S");
+  if (!root || object.legacySizing) return { width: 240, height: 240, halfWidth: 124, halfHeight: 124 };
+  const box = root.getAttribute("viewBox").split(/[ ,]+/).map(Number);
+  const reference = asset.id.startsWith("custom-") ? Math.max(box[2], box[3]) : Math.max(1,
+    ...library.filter(item => !item.id.startsWith("custom-")).map(item => {
+      const bounds = artwork(item, "main", "L").getAttribute("viewBox").split(/[ ,]+/).map(Number);
+      return Math.max(bounds[2], bounds[3]);
+    }));
+  const width = box[2] * 240 / reference, height = box[3] * 240 / reference;
+  return { width, height, halfWidth: width / 2 + 4, halfHeight: height / 2 + 4 };
+}
+
 const HANDLE_HIT_RADIUS = 22;
 const HANDLE_KNOB_RADIUS = 6;
 const ROTATION_HANDLE_GAP = 36;
@@ -220,14 +235,15 @@ const RESIZE_CORNERS = {
 function createSelectionOverlay(group) {
   const overlay = el("g", { "data-selection": "true", "data-object": selected,
     transform: group.getAttribute("transform") });
+  const { halfWidth, halfHeight } = objectGeometry(selectedObject());
   const line = { stroke: "#d9ff53", "vector-effect": "non-scaling-stroke",
     "pointer-events": "none" };
-  overlay.append(el("rect", { ...line, x: -FRAME_HALF_SIZE, y: -FRAME_HALF_SIZE,
-    width: FRAME_HALF_SIZE * 2, height: FRAME_HALF_SIZE * 2, fill: "none" }));
+  overlay.append(el("rect", { ...line, x: -halfWidth, y: -halfHeight,
+    width: halfWidth * 2, height: halfHeight * 2, fill: "none" }));
   overlay.append(el("path", { ...line, "data-stem": "true" }));
   const positions = Object.entries(RESIZE_CORNERS).map(([name, [x, y]]) =>
-    [name, x * FRAME_HALF_SIZE, y * FRAME_HALF_SIZE]);
-  positions.push(["rotate", 0, -FRAME_HALF_SIZE]);
+    [name, x * halfWidth, y * halfHeight]);
+  positions.push(["rotate", 0, -halfHeight]);
   for (const [name, x, y] of positions) {
     const handle = el("g", { "data-transform": name,
       transform: `translate(${x} ${y})`, "class": `transform-handle handle-${name}` });
@@ -258,9 +274,10 @@ function updateHandleSizes() {
   const unit = w / Math.max(1, width) / o.scale;
   $("canvas").querySelectorAll("[data-hit]").forEach(n => n.setAttribute("r", HANDLE_HIT_RADIUS * unit));
   $("canvas").querySelectorAll("[data-knob]").forEach(n => n.setAttribute("r", HANDLE_KNOB_RADIUS * unit));
-  const rotationY = -FRAME_HALF_SIZE - ROTATION_HANDLE_GAP * unit;
+  const { halfHeight } = objectGeometry(o);
+  const rotationY = -halfHeight - ROTATION_HANDLE_GAP * unit;
   $("canvas").querySelectorAll(".handle-rotate").forEach(n => n.setAttribute("transform", `translate(0 ${rotationY})`));
-  $("canvas").querySelectorAll("[data-stem]").forEach(n => n.setAttribute("d", `M0 ${-FRAME_HALF_SIZE}V${rotationY}`));
+  $("canvas").querySelectorAll("[data-stem]").forEach(n => n.setAttribute("d", `M0 ${-halfHeight}V${rotationY}`));
 
 }
 
@@ -392,9 +409,9 @@ function renderSelection() {
   const o = selectedObject();
   $("selection").textContent =
     library.find((a) => a.id === o?.asset)?.name || "Ничего не выбрано";
-  for (const prop of ["rotation", "scale", "role"]) {
+  for (const prop of ["rotation", "scale", "role", "artworkSize"]) {
     $(prop).disabled = !o;
-    if (o) $(prop).value = o[prop];
+    if (o) $(prop).value = o[prop] ?? "S";
   }
   $("object-tools").hidden = !o;
   if (o) {
@@ -429,12 +446,13 @@ function moveLayer(object, direction) {
   render();
 }
 
-for (const prop of ["rotation", "scale", "role"])
+for (const prop of ["rotation", "scale", "role", "artworkSize"])
   $(prop).oninput = (e) => {
     const o = selectedObject();
     if (o) {
       stopGesture();
-      o[prop] = prop === "role" ? e.target.value : Number(e.target.value);
+      if (prop === "artworkSize") delete o.legacySizing;
+      o[prop] = ["role", "artworkSize"].includes(prop) ? e.target.value : Number(e.target.value);
       render();
     }
   };
@@ -550,6 +568,7 @@ function composeFromPrompt() {
   $("notice").textContent = plan.surface === "table"
     ? "Готово. Цвет стола можно изменить в разделе «Цвета»."
     : "Готово. Предметы можно двигать, а цвета — менять.";
+  $("notice").textContent += ` Подобраны: ${plan.assets.map(a => a.name).join(", ")}. Подбор выполняется по названиям и словарю тем; произвольный смысл текста не распознаётся.`;
   if (plan.corrections?.length) {
     const fixed = plan.corrections.map(c => `«${c.from}» → «${c.to}»`).join(", ");
     $("notice").textContent = `Исправлены опечатки: ${fixed}. ` + $("notice").textContent;
@@ -602,8 +621,9 @@ function createHandleGesture(object, point, mode) {
   const corner = RESIZE_CORNERS[mode];
   if (!corner) return null;
   const angle = object.rotation * Math.PI / 180;
-  const x = corner[0] * FRAME_HALF_SIZE * object.scale;
-  const y = corner[1] * FRAME_HALF_SIZE * object.scale;
+  const { halfWidth, halfHeight } = objectGeometry(object);
+  const x = corner[0] * halfWidth * object.scale;
+  const y = corner[1] * halfHeight * object.scale;
   const vx = x * Math.cos(angle) - y * Math.sin(angle);
   const vy = x * Math.sin(angle) + y * Math.cos(angle);
   return { mode, start: point, scale: object.scale,
@@ -659,7 +679,8 @@ function insideObjectFrame(object, p) {
   const dx = p.x - object.x, dy = p.y - object.y;
   const x = (dx * Math.cos(angle) - dy * Math.sin(angle)) / object.scale;
   const y = (dx * Math.sin(angle) + dy * Math.cos(angle)) / object.scale;
-  return Math.abs(x) <= FRAME_HALF_SIZE && Math.abs(y) <= FRAME_HALF_SIZE;
+  const { halfWidth, halfHeight } = objectGeometry(object);
+  return Math.abs(x) <= halfWidth && Math.abs(y) <= halfHeight;
 }
 $("canvas").onpointerdown = (e) => {
   if (e.button !== 0 || layerDrag) return;
@@ -832,6 +853,8 @@ function validateProject(p, fileSize) {
       Math.abs(o.rotation) > 360 ||
       !library.some((a) => a.id === o.asset) ||
       !["main", "background"].includes(o.role) ||
+      (o.legacySizing != null && typeof o.legacySizing !== "boolean") ||
+      (o.artworkSize != null && !["S", "L"].includes(o.artworkSize)) ||
       ![o.x, o.y, o.rotation, o.scale].every(Number.isFinite) ||
       o.scale < 0.2 ||
       o.scale > 3
@@ -866,8 +889,9 @@ async function openProject(e) {
     stopGesture();
     w = p.w;
     h = p.h;
-    objects = p.objects.map(({ asset, x, y, rotation, scale, role }) => ({
-      asset, x, y, rotation, scale, role, id: ++uid,
+    objects = p.objects.map(({ asset, x, y, rotation, scale, role, artworkSize, legacySizing }) => ({
+      asset, x, y, rotation, scale, role, artworkSize: artworkSize || (p.w >= 1000 ? "L" : "S"),
+      ...(!artworkSize || legacySizing ? { legacySizing: true } : {}), id: ++uid,
     }));
     customPalette = importedPalette(p.palette);
     $("scheme").value = p.scheme;
@@ -894,6 +918,18 @@ async function importArtworkFiles(e) {
       const svg = cleanSVG(await file.text()),
         id = `custom-${++uid}`,
         key = `custom/${id}`;
+      // A viewport is required by the shared geometry and export path. SVGs
+      // without viewBox may still provide an absolute width and height.
+      const bounds = (svg.getAttribute("viewBox") || "").trim().split(/[ ,]+/).map(Number);
+      if (bounds.length !== 4 || !bounds.every(Number.isFinite) || bounds[2] <= 0 || bounds[3] <= 0) {
+        const dimensions = ["width", "height"].map(name => {
+          const value = svg.getAttribute(name) || "";
+          return /^\d+(?:\.\d+)?(?:px)?$/.test(value) ? parseFloat(value) : NaN;
+        });
+        if (!dimensions.every(value => Number.isFinite(value) && value > 0))
+          throw Error("Укажите корректный viewBox или ширину и высоту SVG в пикселях.");
+        svg.setAttribute("viewBox", `0 0 ${dimensions.join(" ")}`);
+      }
       cache.set(key, svg);
       library.push({
         id,
@@ -941,10 +977,8 @@ async function init() {
     render();
     $("prompt").value = "Книга и лампа на столе";
     $("compose").click();
-    selected = null;
     render();
-    $("notice").textContent =
-      "Можно изменить описание или выбрать другой пример.";
+
   } catch (err) {
     editorReady = false;
     setEditorLoading(true);

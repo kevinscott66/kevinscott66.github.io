@@ -67,3 +67,7 @@ test("maximum-size automatic layout remains a reopenable project", () => {
   assert.equal(p.objects.length, 100);
   assert.doesNotThrow(() => validate(p));
 });
+
+test("unknown artwork size is rejected", () => {
+ assert.throws(() => validate({...valid, objects:[{...valid.objects[0], artworkSize:"XL"}]}), /недопустимыми/);
+});

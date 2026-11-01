@@ -241,7 +241,7 @@ function compositionPositions(count, width, height, directives = [], surface = n
     return {
       x: width * ((index % columns) + 1) / (inRow + 1),
       y: rows === 1 ? height * (surface === "table" ? .56 : index % 2 ? .46 : .57) : height * (row + 1) / (rows + 1),
-      rotation: surface === "table" ? 0 : index % 2 ? 7 : -5,
+      rotation: 0,
       scale: surface === "table" ? clampObjectScale(Math.min(scale, width / (columns * 320))) : scale,
     };
   });
