@@ -10,8 +10,14 @@
     <meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="robots" content="noindex,nofollow" />
-    <title>Слойра — редактор иллюстраций</title>
-    <link rel="stylesheet" href="style.css?v=f4304535b101" />
+    <title>Слойра — конструктор SVG-иллюстраций</title>
+    <meta name="description" content="Демонстрационный редактор: соберите композицию из готовых SVG-предметов по названиям или темам из словаря, настройте варианты, цвета и скачайте SVG." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content="Слойра — конструктор SVG-иллюстраций" />
+    <meta property="og:description" content="Демонстрация редактора готовых SVG-предметов: подбор по словарю, ручная настройка композиции и векторный экспорт." />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="style.css?v=6019ead11371" />
   </head>
   <body>
     <header class="app-bar">
@@ -28,11 +34,11 @@
           <path class="brand-accent" d="M96 2Q101 7 106 2" fill="none" stroke-width="3.6" stroke-linecap="round" />
         </svg>
       </a>
-      <h1>Иллюстрация</h1>
+      <h1>Конструктор иллюстраций</h1>
       <div class="document-actions">
-        <button id="save" class="bar-button">Сохранить</button
-        ><button id="export" class="primary export-button">
-          Скачать <span aria-hidden="true">↗</span>
+        <button id="save" class="bar-button" title="Сохранить проект JSON для продолжения работы">Сохранить проект</button
+        ><button id="export" class="primary export-button" title="Скачать иллюстрацию в SVG">
+          Скачать SVG <span aria-hidden="true">↗</span>
         </button>
       </div>
     </header>
@@ -97,52 +103,15 @@
           </div>
         </div>
         <p id="canvas-hint" class="canvas-hint">
-          Тяните за угол, чтобы изменить размер. За верхнюю ручку — чтобы повернуть.
+          Выберите предмет на холсте или в списке. Угол рамки меняет масштаб, верхняя ручка — поворот.
         </p>
-        <div id="object-tools" class="object-tools" aria-label="Действия с предметом" hidden>
-          <strong id="selection" class="selection-name"></strong>
-          <div class="quick-actions">
-            <button id="duplicate">Копия</button>
-            <div class="layer-controls" role="group" aria-labelledby="layer-controls-label">
-              <span id="layer-controls-label">Слой</span>
-              <button id="raise-object" aria-label="На один слой вперёд" title="На один слой вперёд">Вперёд</button>
-              <button id="lower-object" aria-label="На один слой назад" title="На один слой назад">Назад</button>
-            </div>
-            <button id="delete" class="delete-button">Удалить</button>
-          </div>
-          <details class="precise-tools">
-            <summary>Точная настройка</summary>
-            <div class="precise-fields">
-          <label class="field" for="role"
-            >Вид<select id="role">
-              <option value="main">Основной</option>
-              <option value="background">Фоновый</option>
-            </select></label
-          ><label class="field range-field" for="rotation"
-            >Поворот<input
-              id="rotation"
-              type="range"
-              min="-180"
-              max="180"
-              value="0" /></label
-          ><label class="field range-field" for="scale"
-            >Масштаб<input
-              id="scale"
-              type="range"
-              min="0.2"
-              max="3"
-              step="0.05"
-              value="1"
-          /></label>
-            </div>
-          </details>
-        </div>
         <section class="compose-section" aria-labelledby="compose-heading">
           <h2 id="compose-heading" class="sr-only">Опишите картинку</h2>
           <label class="sr-only" for="prompt">Описание картинки</label>
           <div class="prompt-row">
             <textarea
               id="prompt"
+              aria-describedby="prompt-help"
               placeholder="Например: лампа слева, книга справа"
               rows="2"
             ></textarea>
@@ -160,9 +129,50 @@
           <p id="notice" role="status" aria-live="polite">
             Загружаем элементы…
           </p>
+          <p id="prompt-help" class="compose-help">Подбор по словарю: «обучение» — книга и лампа, «музыка» — наушники. Для точного результата укажите предметы и расположение. Незнакомую тему редактор попросит уточнить.</p>
         </section>
       </section>
-      <aside class="inspector-panel" aria-label="Цвета и предметы">
+      <aside class="inspector-panel" aria-label="Настройки выбранного предмета, цвета и слои">
+        <div id="object-tools" class="object-tools panel-section" aria-label="Действия с предметом" hidden>
+          <strong id="selection" class="selection-name"></strong>
+          <div class="quick-actions">
+            <button id="duplicate">Копия</button>
+            <div class="layer-controls" role="group" aria-labelledby="layer-controls-label">
+              <span id="layer-controls-label">Слой</span>
+              <button id="raise-object" aria-label="На один слой вперёд" title="На один слой вперёд">Вперёд</button>
+              <button id="lower-object" aria-label="На один слой назад" title="На один слой назад">Назад</button>
+            </div>
+            <button id="delete" class="delete-button">Удалить</button>
+          </div>
+          <details class="precise-tools" open>
+            <summary>Вариант и размер предмета</summary>
+            <div class="precise-fields">
+          <label class="field" for="role"
+            >Вариант рисунка<select id="role" aria-describedby="variant-help">
+              <option value="main">Главный</option>
+              <option value="background">Фоновый</option>
+            </select></label
+          ><label class="field" for="artworkSize">Размер исходника<select id="artworkSize" aria-describedby="variant-help"><option value="S">S — малый</option><option value="L">L — большой</option></select></label><label class="field range-field" for="rotation"
+            >Поворот<input
+              id="rotation"
+              type="range"
+              min="-180"
+              max="180"
+              value="0" /></label
+          ><label class="field range-field" for="scale"
+            >Масштаб<input
+              id="scale"
+              type="range"
+              min="0.2"
+              max="3"
+              step="0.05"
+              value="1"
+          /></label>
+            </div>
+            <p id="variant-help" class="control-help">Главный и фоновый — варианты рисунка, а не порядок слоёв. S/L выбирает исходный SVG; масштаб меняется отдельно. Пропорции сохраняются.</p>
+          </details>
+        </div>
+
         <section
           class="panel-section palette-section"
           aria-labelledby="palette-heading"
@@ -204,9 +214,9 @@
         <a href="privacy.html#illustrations" target="_blank" rel="noopener">Права на иллюстрации<span class="sr-only"> (в новой вкладке)</span></a>
       </nav>
     </footer>
-    <script src="engine.js?v=2aeb58268cfc"></script>
+    <script src="engine.js?v=6e2e44a852f5"></script>
     <script src="svg-safety.js?v=f37fae4e3e5f"></script>
     <script src="composition-agent.js?v=27c22bac9a66"></script>
-    <script src="app.js?v=197b8afb19c7"></script>
+    <script src="app.js?v=6e7401c43ef2"></script>
   </body>
 </html>

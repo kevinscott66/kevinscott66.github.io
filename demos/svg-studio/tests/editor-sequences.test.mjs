@@ -41,7 +41,7 @@ function editor() {
   });
   assert.equal(app.split("\ninit();").length, 2, "one explicit startup call");
   vm.runInContext(engine + "\n" + app.replace("\ninit();", "\n// startup suppressed by test") + `
-    library = initialLibrary;
+    library = JSON.parse(JSON.stringify(initialLibrary));
     editorReady = true;
     $("background").value = palette().backgroundLight;
     render = () => renderCalls++;
@@ -593,7 +593,7 @@ test("large ignored project metadata cannot make the saved project impossible to
   await e.run("openProject")(e.event("project", { size: inputBytes, text: async () => text }));
   assert.equal(e.control("notice").textContent, "Проект открыт.");
   assert.deepEqual(Object.keys(e.state().objects[0]).sort(),
-    ["asset", "x", "y", "rotation", "scale", "role", "id"].sort());
+    ["asset", "x", "y", "rotation", "scale", "role", "id", "artworkSize", "legacySizing"].sort());
   assert.equal(Object.hasOwn(e.state().customPalette, "unused"), false);
   const before = e.state();
   e.control("save").onclick();
@@ -770,4 +770,69 @@ test('compose shows typo corrections as plain text and preserves state on ambigu
  assert.match(e.control('notice').textContent,/цвты/);
  e.control('prompt').value='лампа в центра';e.control('compose').onclick();
  assert.deepEqual(e.state(),result);assert.match(e.control('notice').textContent,/Уточните слово/);
+});
+
+ test("reviewer object size survives canvas changes and save/open", async () => {
+ const e = editor(); e.control("prompt").value = "Книга и телефон"; e.run("composeFromPrompt()");
+ assert.ok(e.state().objects.every(o => o.rotation === 0));
+ e.control("artworkSize").oninput({target:{value:"L"}});
+ e.control("role").oninput({target:{value:"background"}});
+ const chosen=e.state().objects.find(o=>o.id===e.state().selected);
+ assert.equal(chosen.artworkSize,"L");
+ e.control("size").onchange({target:{value:"1200 × 800"}});
+ assert.equal(e.state().objects.find(o=>o.id===chosen.id).artworkSize,"L");
+ e.run("saveProject()"); const saved=JSON.parse(e.run("downloads[0].text"));
+ await e.run("openProject")(e.event("project",{size:1000,text:async()=>JSON.stringify(saved)}));
+ assert.equal(e.state().objects.find(o=>o.asset===chosen.asset).artworkSize,"L");
+ });
+
+
+test("authored geometry uses rectangular selection and remains stable after custom imports", () => {
+  const e = editor();
+  e.run(`
+    for (const asset of library) for (const variants of Object.values(asset.variants))
+      for (const path of Object.values(variants)) cache.set(path, {getAttribute: () => "0 0 1000 500"});
+    add(library[0]);
+  `);
+  const geometry = () => JSON.parse(e.run("JSON.stringify(objectGeometry(objects[0]))"));
+  assert.deepEqual(geometry(), {width:240, height:120, halfWidth:124, halfHeight:64});
+  assert.equal(e.run("insideObjectFrame(objects[0], {x:400,y:370})"), false);
+  const start=e.run("createHandleGesture(objects[0], {x:524,y:364}, 'se')");
+  e.run("transformFromHandle")(e.run("objects[0]"), start, {x:772,y:492});
+  near(e.state().objects[0].scale, 2);
+  near(e.state().objects[0].x, 524); near(e.state().objects[0].y, 364);
+  e.run(`cache.set("huge", {getAttribute: () => "0 0 100000 100000"});
+    library.push({id:"custom-999", variants:{S:{main:"huge"},L:{main:"huge"}}});`);
+  assert.deepEqual(geometry(), {width:240, height:120, halfWidth:124, halfHeight:64});
+  assert.equal(e.run("objectGeometry({asset:'custom-999',role:'main',artworkSize:'S'}).width"), 240);
+});
+
+test("legacy project keeps its original square viewport and freezes the saved S/L choice", async () => {
+  for (const width of [800,1200]) {
+    const e=editor(), input=project(); input.w=width; input.h=width===1200?800:600;
+    await e.run("openProject")(e.event("project", {size:1000,text:async()=>JSON.stringify(input)}));
+    assert.equal(e.state().objects[0].artworkSize,width===1200?'L':'S');
+    assert.equal(e.state().objects[0].legacySizing,true);
+    e.run("saveProject()"); const saved=e.run("downloads.at(-1).text");
+    await e.run("openProject")(e.event("project", {size:1000,text:async()=>saved}));
+    assert.equal(e.state().objects[0].legacySizing,true);
+    e.run("selected=objects[0].id");
+    e.control("artworkSize").oninput({target:{value:"S"}});
+    assert.equal(e.state().objects[0].legacySizing,undefined);
+  }
+});
+
+test("import derives a missing SVG viewport from pixels and rejects unusable geometry", async () => {
+  const e=editor();
+  e.run(`cleanSVG = text => {
+    const attributes = JSON.parse(text);
+    return {getAttribute:name => attributes[name] ?? null,
+      setAttribute:(name,value) => attributes[name]=value};
+  }`);
+  for (const attributes of [{width:'640px',height:'320'}, {width:'100%',height:'100%'}, {viewBox:'0 0 0 20'}]) {
+    await e.run("importArtworkFiles")({target:{files:[{name:'drawing.svg',size:100,text:async()=>JSON.stringify(attributes)}]}});
+  }
+  assert.equal(e.run("library.filter(a=>a.id.startsWith('custom-')).length"),1);
+  assert.equal(e.run("artwork(library.at(-1)).getAttribute('viewBox')"),'0 0 640 320');
+  assert.match(e.control('notice').textContent,/корректный viewBox/);
 });
