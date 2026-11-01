@@ -27,12 +27,14 @@ python3 -m http.server 8000 --bind 127.0.0.1
 # Open http://127.0.0.1:8000 and /ru/
 ```
 
-No build, framework, package installation or runtime JavaScript is required. Fonts are loaded from Google Fonts with system fallbacks.
+The homepages and editorial case studies need no build, framework, package installation or runtime JavaScript. Interactive demos have their own runtime and checks. Fonts use Google Fonts with system fallbacks.
 
 ## Structure
 
 - `index.html`, `ru/index.html`: homepages.
 - `case-studies/`, `ru/case-studies/`: Agent, AirChat and KOM17.
+- `demos/svg-studio/`: interactive SVG editor; its own README, artwork terms and JavaScript checks apply.
+- `/demos/vedomost/`: externally hosted Cloudflare application; canonical runtime and deployment live in the [Vedomost repository](https://github.com/kevinscott66/vedomost).
 - `assets/site.css`: shared responsive styles.
 - `assets/media/`: screenshots, architecture image, videos and WebVTT captions.
 - `assets/`: bilingual PDF profiles and Open Graph images.
