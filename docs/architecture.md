@@ -22,7 +22,7 @@ CSS uses readable blocks and explicit `portrait` image classes. Shared full-fram
 
 Project repositories own implementation facts. Portfolio case studies summarize them and link to reviewed source revisions. Biography and personal responsibility come from the owner, not commit volume. Public snapshot dates must not be presented as the beginning of all development. Keep outcome claims distinct from planned improvements and unmeasured business metrics.
 
-The owner directs product logic, architecture and final outcomes; AI tools are used in code development. KOM17 is the owner's own product, first built as a monolith and later modularized. Do not describe it as an inherited system. Omit unfinished transport features from promotional copy until implementation is verified.
+The owner defines requirements, chooses interfaces, decomposes tasks and checks scenarios with AI. Codex/Claude Code perform substantial implementation. The homepage must describe a beginner seeking paid junior tasks with review; project stacks are not claims of independent professional proficiency or commercial experience. KOM17 is the owner's own product, first built as a monolith and later modularized. Do not describe it as an inherited system. Omit unfinished transport features from promotional copy until implementation is verified.
 
 ## Media provenance
 

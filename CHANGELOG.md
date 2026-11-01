@@ -62,3 +62,7 @@ Updated five project descriptions, dated DeLabs figures, source links and the Va
 ## 2026-09-23 - Agent portfolio update
 
 Updated the Agent project description to distinguish native/browser features and development-branch office work.
+
+## 2026-11-01 — Career presentation clarity
+
+Clarified beginner AI-assisted contribution and junior-role goals in both languages. Aligned Sloyra attribution with its README, replaced stale Vedomost test counts with scenario evidence, and scoped the no-JavaScript README statement to editorial pages. Interactive demos retain their own runtime and terms.
