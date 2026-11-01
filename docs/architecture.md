@@ -129,3 +129,7 @@ Release refactor separates typo correction, arrangement extraction, scene exclus
 ## Vedomost portfolio entry
 
 EN/RU home pages list Vedomost as an AI-assisted test project, linking to https://github.com/kevinscott66/vedomost. The screenshot contains fictional students and payments. No backend is deployed in the static portfolio; the source README provides local setup. The ledger is evaluation-only source-available code, not covered by the portfolio repository's MIT license. The screenshot is used with the owner's permission.
+
+## Vedomost preview refresh (1 November 2026)
+
+The bilingual homepage uses assets/media/vedomost-current.jpg, an unedited full-page capture of the public fictional-data demo at /demos/vedomost/, Russian light theme, November2026. It shows current navigation including the operation log. The source image and light-theme screenshot in the Vedomost README are identical; no actual student records or payment activity were changed. Historical images remain for old references.
