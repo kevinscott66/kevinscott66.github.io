@@ -1006,3 +1006,6 @@ code {
 }
 
 .project-media img.editor-preview { aspect-ratio: 16 / 9; height: auto; object-fit: contain; }
+
+/* Preserve the full UI in current Vedomost and DeLabs project captures. */
+.project-media img.project-ui-preview { aspect-ratio: auto; height: auto; object-fit: contain; }

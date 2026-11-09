@@ -130,6 +130,17 @@ Release refactor separates typo correction, arrangement extraction, scene exclus
 
 EN/RU home pages list Vedomost as an AI-assisted test project, linking to https://github.com/kevinscott66/vedomost. The screenshot contains fictional students and payments. No backend is deployed in the static portfolio; the source README provides local setup. The ledger is evaluation-only source-available code, not covered by the portfolio repository's MIT license. The screenshot is used with the owner's permission.
 
-## Vedomost preview refresh (1 November 2026)
+## Historical Vedomost preview (1 November 2026)
 
-The bilingual homepage uses assets/media/vedomost-current.jpg, an unedited full-page capture of the public fictional-data demo at /demos/vedomost/, Russian light theme, November2026. It shows current navigation including the operation log. The source image and light-theme screenshot in the Vedomost README are identical; no actual student records or payment activity were changed. Historical images remain for old references.
+The November1 refresh used assets/media/vedomost-current.jpg, a full-page capture of the public fictional-data demo in Russian light theme, including the operation log. That image matched the light-theme capture in the Vedomost README. It is retained as a historical asset; the current homepage capture is described below.
+
+
+## Current project previews — 9 November 2026
+
+The EN/RU project cards use fresh browser captures, not reconstructed interfaces:
+- `assets/media/vedomost-current-20261109.jpg`: full public `/demos/vedomost/` page, Russian light theme,1440×1075. The demo explicitly labels its fictional student records; no student or payment was added/edited. Only the display theme was switched for the capture. This replaces the previous November1 preview in the cards; the historical screenshot/README is retained.
+- `assets/media/delabs-current-20261109.jpg`: current `https://delabs.space/` masthead and complete lead section,1280×915. Captured from the public page with its original content and theme, without changing data. The old `delabs.webp` catalog capture is retained for historical references.
+
+The project images use the scoped `project-ui-preview` CSS class with intrinsic aspect ratio and `object-fit: contain`; fixed-ratio cropping still applies to unrelated cards.
+
+The DeLabs walkthrough remains a recording of the preceding interface. Both languages label it as an archive; its original poster is retained so the poster accurately represents the video. Fresh card images have distinct filenames to avoid serving an older cached image under the same URL.
