@@ -1,3 +1,4 @@
+import { SceneBoundary } from "./components/SceneBoundary.jsx";
 import { About } from "./components/About.jsx";
 import { Evidence } from "./components/Evidence.jsx";
 import { ProjectGallery } from "./components/ProjectGallery.jsx";
@@ -94,15 +95,17 @@ export function App({ initialLang = "en" }) {
           className={`journey ${!ready || simple || failed ? "simple" : ""}`}
         >
           {ready && !simple && !failed && (
-            <Suspense
-              fallback={
-                <div className="scene-loading" role="status">
-                  {ru ? "Подготавливаю 3D…" : "Preparing 3D…"}
-                </div>
-              }
-            >
-              <Scene still={false} onFailure={fail} />
-            </Suspense>
+            <SceneBoundary onFailure={fail}>
+              <Suspense
+                fallback={
+                  <div className="scene-loading" role="status">
+                    {ru ? "Подготавливаю 3D…" : "Preparing 3D…"}
+                  </div>
+                }
+              >
+                <Scene still={false} onFailure={fail} />
+              </Suspense>
+            </SceneBoundary>
           )}
           <section className="hero" id="top">
             <div className="hero-art-fallback" aria-hidden="true">

@@ -62,7 +62,7 @@ export default function Mac() {
   async function loadMacHistory(showLoading = true) {
     setError(null);
     if (showLoading) setLoading(true);
-    
+
     try {
       // Fetch all MAC_RUN_CLAUDE actions from history
       const { actions } = await api.actions({
@@ -144,7 +144,7 @@ export default function Mac() {
     try {
       return new Date(ts).toLocaleString("ru-RU", {
         day: "2-digit",
-        month: "2-digit", 
+        month: "2-digit",
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
@@ -264,7 +264,7 @@ export default function Mac() {
             <h3>Активные сессии</h3>
 
             {sessions.filter(s => s.status === "running").map(session => (
-              <div 
+              <div
                 key={session.id}
                 className={`mac-session-card ${selectedSession === session.id ? 'selected' : ''}`}
                 {...selectProps(session.id)}
@@ -296,7 +296,7 @@ export default function Mac() {
                     {getStatusBadge(session.status)}
                   </div>
                 </div>
-                
+
               </div>
             ))}
 
@@ -346,7 +346,7 @@ export default function Mac() {
           {/* History */}
           <div className="mac-history">
             <h3>История запусков</h3>
-            
+
             {sessions.filter(s => s.status !== "running").map(session => (
               <div
                 key={session.id}
