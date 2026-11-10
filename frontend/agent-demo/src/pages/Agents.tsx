@@ -485,7 +485,7 @@ export default function Agents() {
                     <div style={{ marginTop: 6, fontSize: 12, color: "#666" }}>
                       <div>Токены: {budget.usedTokens.toLocaleString()}</div>
                       {budget.limit && (
-                        <div style={{ 
+                        <div style={{
                           marginTop: 2,
                           color: pct >= 90 ? "#e74c3c" : pct >= 70 ? "#f39c12" : "#27ae60"
                         }}>
@@ -549,7 +549,7 @@ export default function Agents() {
                 ({selected.key})
               </span>
             </h2>
-            
+
             <h3 style={{ fontSize: 14, marginTop: 16, marginBottom: 8 }}>Последние действия</h3>
             {(() => {
               const actions = recentActions[selected.key] || [];

@@ -105,7 +105,7 @@ export type AutonomyMode = "locked" | "manual" | "semi_auto" | "auto";
 
 export const AUTONOMY_MODES: AutonomyMode[] = [
   "locked",
-  "manual", 
+  "manual",
   "semi_auto",
   "auto",
 ];

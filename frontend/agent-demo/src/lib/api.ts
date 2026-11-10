@@ -207,7 +207,7 @@ export const api = {
         updatedBy: string;
       }[];
     }>("/api/budget-settings"),
-    
+
   // `null` очищает override (сервер: "positive number or null"). Тип был
   // `number`, из-за чего «убрать лимит» из UI не выражалось вовсе.
   updateBudget: (body: {

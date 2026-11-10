@@ -58,7 +58,7 @@ export function getAgentStatusIndicator(agent: AgentInfo): {
   if (agent.paused) {
     return { status: "idle", color: "#888", tooltip: "Агент приостановлен" };
   }
-  
+
   if (agent.status === "running") {
     const health = agent.health;
     if (!health || !health.alive) {
@@ -69,7 +69,7 @@ export function getAgentStatusIndicator(agent: AgentInfo): {
     }
     return { status: "online", color: "#2ecc71", tooltip: "Агент работает нормально" };
   }
-  
+
   return { status: "error", color: "#e74c3c", tooltip: `Статус: ${agent.status}` };
 }
 
@@ -319,8 +319,8 @@ export default function Dashboard({ onNav }: Props) {
     <div>
       <ErrorBox message={err} onRetry={() => load()} />
       <div className="stat-grid">
-        <div 
-          className="stat-card" 
+        <div
+          className="stat-card"
           onClick={() => onNav("tasks")}
           role="button"
           aria-label={`Задачи в очереди: ${tasksPending ?? "неизвестно"}, перейти к списку задач`}
@@ -334,8 +334,8 @@ export default function Dashboard({ onNav }: Props) {
           <div className="label">Задачи в очереди</div>
           <div className="value">{tasksPending ?? "—"}</div>
         </div>
-        <div 
-          className="stat-card" 
+        <div
+          className="stat-card"
           onClick={() => onNav("approvals")}
           role="button"
           aria-label={`Ждут согласования: ${approvalsPending ?? "неизвестно"}, перейти к согласованиям`}
@@ -345,8 +345,8 @@ export default function Dashboard({ onNav }: Props) {
           <div className="label">Ждут согласования</div>
           <div className="value">{approvalsPending ?? "—"}</div>
         </div>
-        <div 
-          className="stat-card" 
+        <div
+          className="stat-card"
           onClick={() => onNav("logs")}
           role="button"
           aria-label={`Действий за сегодня: ${actionsToday ?? "неизвестно"}, перейти к логам`}
@@ -356,8 +356,8 @@ export default function Dashboard({ onNav }: Props) {
           <div className="label">Действий за сегодня</div>
           <div className="value">{actionsToday ?? "—"}</div>
         </div>
-        <div 
-          className="stat-card" 
+        <div
+          className="stat-card"
           onClick={() => onNav("agents")}
           role="button"
           aria-label={`Агенты онлайн: ${online} из ${agents.length}, перейти к списку агентов`}
@@ -391,13 +391,13 @@ export default function Dashboard({ onNav }: Props) {
           {agents.map((agent) => {
             const indicator = getAgentStatusIndicator(agent);
             return (
-              <div 
-                key={agent.key} 
+              <div
+                key={agent.key}
                 className="agent-status-card"
                 title={indicator.tooltip}
               >
                 <div className="agent-indicator">
-                  <div 
+                  <div
                     className="status-lamp"
                     style={{ backgroundColor: indicator.color }}
                     aria-label={indicator.tooltip}
@@ -419,17 +419,17 @@ export default function Dashboard({ onNav }: Props) {
       <div className="section-title">
         Режим автономности
         {canChangeAutonomy && (
-          <select 
-            value={autonomyMode || 'locked'} 
+          <select
+            value={autonomyMode || 'locked'}
             onChange={(e) => handleAutonomyChange(e.currentTarget.value as AutonomyMode)}
             className="autonomy-selector"
             aria-label="Изменить режим автономности"
           >
             {AUTONOMY_MODES.map(mode => (
               <option key={mode} value={mode}>
-                {mode === 'locked' ? 'Заблокирован' : 
+                {mode === 'locked' ? 'Заблокирован' :
                  mode === 'manual' ? 'Ручной' :
-                 mode === 'semi_auto' ? 'Полуавтомат' : 
+                 mode === 'semi_auto' ? 'Полуавтомат' :
                  mode === 'auto' ? 'Автомат' : mode}
               </option>
             ))}
@@ -439,9 +439,9 @@ export default function Dashboard({ onNav }: Props) {
       {!canChangeAutonomy && (
         <div className="autonomy-display">
           Текущий режим: <strong>
-            {autonomyMode === 'locked' ? 'Заблокирован' : 
+            {autonomyMode === 'locked' ? 'Заблокирован' :
              autonomyMode === 'manual' ? 'Ручной' :
-             autonomyMode === 'semi_auto' ? 'Полуавтомат' : 
+             autonomyMode === 'semi_auto' ? 'Полуавтомат' :
              autonomyMode === 'auto' ? 'Автомат' : autonomyMode || 'Неизвестно'}
           </strong>
         </div>
@@ -477,7 +477,7 @@ export default function Dashboard({ onNav }: Props) {
                   {hasLimit ? `  (${(b.pct as number).toFixed(0)}%)` : ""}
                 </span>
               </div>
-              <div 
+              <div
                 className="budget-bar"
                 role="progressbar"
                 aria-valuemin={0}

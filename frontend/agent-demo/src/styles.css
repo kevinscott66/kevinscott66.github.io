@@ -371,22 +371,22 @@ textarea {
     80%  { opacity: 1; }
     100% { opacity: 0; }
   }
-  
+
   @keyframes shimmer {
     /* Disable shimmer animation for reduced motion */
     0%, 100% { background-position: 0 0; }
   }
-  
+
   @keyframes spin {
     /* Disable spinning animation for reduced motion */
     to { transform: rotate(0deg); }
   }
-  
+
   /* Reduce transition durations */
   .budget-fill {
     transition: width 0.1s ease;
   }
-  
+
   * {
     animation-duration: 0.01s !important;
     animation-iteration-count: 1 !important;
@@ -732,17 +732,17 @@ button:focus:not(:focus-visible) { outline: none; }
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
   }
-  
+
   .mac-sessions {
     grid-column: 1;
     grid-row: 1;
   }
-  
+
   .mac-output {
     grid-column: 2;
     grid-row: 1;
   }
-  
+
   .mac-history {
     grid-column: 1 / -1;
     grid-row: 2;
