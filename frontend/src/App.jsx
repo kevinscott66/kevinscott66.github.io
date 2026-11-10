@@ -110,7 +110,12 @@ export function App({ initialLang = "en" }) {
           )}
           <section className="hero" id="top">
             <div className="hero-art-fallback" aria-hidden="true">
-              <ImageAsset src="/assets/media/agent-dashboard.jpg" alt="Agent" />
+              <ImageAsset
+                src="/assets/media/agent-dashboard.jpg"
+                alt="Agent"
+                loading="lazy"
+                sizes="220px"
+              />
             </div>
             <div className="hero-copy">
               <h1>

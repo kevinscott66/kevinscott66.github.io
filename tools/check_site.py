@@ -46,6 +46,11 @@ class Page(HTMLParser):
         if tag == 'a' and 'language' in a.get('class', '').split():
             self.switch = a.get('href')
         if tag == 'img':
+            for candidate in a.get('srcset', '').split(','):
+                if candidate.strip():
+                    parts = candidate.split()
+                    require(len(parts) == 2 and parts[1].endswith('w') and parts[1][:-1].isdigit(), f'{self.path}: invalid image srcset')
+                    self.links.append(parts[0])
             require(a.get('alt'), f'{self.path}: image without alt')
             require(all(a.get(k, '').isdigit() and int(a[k]) > 0 for k in ('width', 'height')),
                     f'{self.path}: image without intrinsic dimensions')

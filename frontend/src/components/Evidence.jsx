@@ -1,3 +1,4 @@
+import optimized from "../optimized-images.json";
 import { Out } from "./Out.jsx";
 export function Evidence({ lang, ru }) {
   return (
@@ -49,7 +50,11 @@ export function Evidence({ lang, ru }) {
               : "A recording of the previous interface. The current version is linked in the project gallery above."}
           </p>
         </div>
-        <video controls preload="none" poster="/assets/media/delabs-walkthrough.png">
+        <video
+          controls
+          preload="none"
+          poster={optimized["/assets/media/delabs-walkthrough.png"].src}
+        >
           <source src="/assets/media/delabs-walkthrough.mp4" type="video/mp4" />
           <track
             kind="captions"

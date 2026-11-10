@@ -47,6 +47,7 @@ export function ProjectGallery({ lang, ru, filter, setFilter }) {
                 <div className="other-image">
                   <ImageAsset
                     src={"/assets/media/" + p.image}
+                    sizes="(max-width: 390px) 88vw, (max-width: 1100px) 41vw, 28vw"
                     alt={p.name}
                     loading="lazy"
                   />

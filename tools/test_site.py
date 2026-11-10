@@ -45,6 +45,16 @@ class PublicationChecks(unittest.TestCase):
             sync(self.root)
         self.assertEqual((self.root / 'index.html').read_text(), before)
 
+    def test_missing_responsive_image_variant_fails(self):
+        import re
+        content = (self.root / 'index.html').read_text()
+        image = re.search(r'srcSet="([^"]+)"', content) or re.search(r'srcset="([^"]+)"', content)
+        self.assertIsNotNone(image)
+        smallest = image[1].split(',')[0].split()[0]
+        (self.root / smallest.lstrip('/')).unlink()
+        with self.assertRaisesRegex(ValueError, 'missing asset'):
+            check_site(self.root)
+
     def test_missing_client_bundle_fails(self):
         import json
         manifest = json.loads((self.root / 'assets/coreverse/.vite/manifest.json').read_text())
