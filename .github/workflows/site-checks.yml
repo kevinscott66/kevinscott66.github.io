@@ -13,3 +13,14 @@ jobs:
         run: python3 tools/check_site.py
       - name: Test publication safeguards
         run: python3 tools/test_site.py
+      - name: Install frontend build dependencies
+        working-directory: frontend
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify camera and local demo lifecycle
+        working-directory: frontend
+        run: npm test
+      - name: Verify committed homepage build
+        working-directory: frontend
+        run: |
+          npm run build
+          git diff --exit-code -- ../index.html ../ru/index.html ../assets/coreverse

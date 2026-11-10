@@ -32,18 +32,32 @@ class PublicationChecks(unittest.TestCase):
         path.write_text(path.read_text() + '\n/* changed */\n')
         with self.assertRaisesRegex(ValueError, 'stale stylesheet'):
             check_site(self.root)
-        self.assertEqual(sync(self.root), 8)
+        self.assertEqual(sync(self.root), 6)
         self.assertEqual(check_site(self.root), 8)
         self.assertEqual(sync(self.root), 0)
 
     def test_sync_does_not_partially_write_invalid_site(self):
-        self.replace('ru/index.html', '/assets/site.css', '/assets/missing.css')
+        self.replace('ru/case-studies/agent/index.html', '/assets/site.css', '/assets/missing.css')
         css = self.root / 'assets/site.css'
         css.write_text(css.read_text() + '\n/* changed */\n')
         before = (self.root / 'index.html').read_text()
         with self.assertRaises(ValueError):
             sync(self.root)
         self.assertEqual((self.root / 'index.html').read_text(), before)
+
+    def test_missing_client_bundle_fails(self):
+        import json
+        manifest = json.loads((self.root / 'assets/coreverse/.vite/manifest.json').read_text())
+        (self.root / 'assets/coreverse' / manifest['index.html']['file']).unlink()
+        with self.assertRaisesRegex(ValueError, 'missing asset'):
+            check_site(self.root)
+
+    def test_homepage_has_content_without_javascript(self):
+        from check_site import Page
+        for relative in ('index.html', 'ru/index.html'):
+            p = Page(relative)
+            p.feed((self.root / relative).read_text())
+            self.assertTrue({'agent','airchat','kom17','vahtahoz','viora','sloyra','vedomost','delabs','demos','services','collaboration'} <= set(p.ids))
 
     def test_wrong_translation_target(self):
         self.replace('index.html', 'hreflang="ru" href="https://dobropalm.tech/ru/"',

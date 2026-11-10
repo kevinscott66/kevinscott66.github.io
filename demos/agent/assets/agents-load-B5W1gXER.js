@@ -1,0 +1,1 @@
+const n={agents:[],failed:!1};async function t(a){try{const e=await a();return Array.isArray(e==null?void 0:e.agents)?{agents:e.agents,failed:!1}:{agents:[],failed:!0}}catch{return{agents:[],failed:!0}}}function s(a){return a.failed&&a.agents.length===0?"список не загрузился — обнови страницу":null}export{n as A,s as a,t as l};

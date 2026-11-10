@@ -1,0 +1,16 @@
+WEBVTT
+
+00:00.000 --> 00:02.000
+Actual Agent interface. Sample data; computation runs locally.
+
+00:02.000 --> 00:06.000
+A task is running in a browser Worker.
+
+00:06.000 --> 00:09.000
+Agent roles and controls. Admin rights apply only to this demo.
+
+00:09.000 --> 00:12.000
+The result needs owner approval.
+
+00:12.000 --> 00:16.000
+Approved. The task is complete.

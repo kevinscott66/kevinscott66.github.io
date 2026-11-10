@@ -1,0 +1,23 @@
+{
+  "index.html": {
+    "file": "index-B0mCHZt3.js",
+    "name": "index",
+    "src": "index.html",
+    "isEntry": true,
+    "dynamicImports": [
+      "src/Scene.jsx"
+    ],
+    "css": [
+      "index-JOh4UIy6.css"
+    ]
+  },
+  "src/Scene.jsx": {
+    "file": "Scene-4kjCdZgH.js",
+    "name": "Scene",
+    "src": "src/Scene.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ]
+  }
+}
