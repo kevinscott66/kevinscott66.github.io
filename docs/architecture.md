@@ -159,3 +159,11 @@ Cloudflare rewrites the public email link through its address-obfuscation featur
 ## Responsive portfolio images — 2026-11-10
 
 Display captures and the archived DeLabs video poster use committed WebP derivatives in `assets/media/optimized/`. Their shared source/variant manifest is `frontend/src/optimized-images.json`; regeneration is documented in `frontend/README.md`. The original12capture files remain unchanged and available as full-image links. Quality86 derivatives at original resolution total588884bytes against1841653originalbytes (68.0% fewer bytes); this is an image payload comparison, not a measured page-load-time improvement. Phones may select smaller variants through `srcset`/`sizes`. All dimensions preserve original framing. Six case pages share the same derivatives; validation checks every srcset URL. The owner explicitly requested retaining the old Agent project screenshot while featuring the new demo/video.
+
+## COREVERSE case pages — 2026-11-10
+
+All six EN/RU case pages now share the home visual identity: self-hosted Manrope, graphite surfaces, white display type and project accents (Agent cyan, AirChat violet, KOM17 lime). `assets/site.css` owns the lightweight reading-page layout; the unused legacy landing-page CSS and remote Google Fonts request were removed. No additional WebGL, frameworks or runtime JavaScript are required by the cases.
+
+Headers and language links follow COREVERSE; mobile navigation and the collapsible contents index use native HTML details. Each case has a return-to-chapter link and a next-case link. Homepage case CTAs use relative URLs in the same browser tab, preserving normal back navigation. The article text, source citations, metadata, screenshot originals, responsive WebP variants and public routes remain intact. External product interfaces retain their own actual UI.
+
+Browser verification covers all six cases at320/390/834/1440pixels, mobile menu and contents anchors, home→case→next case→language→home navigation. Existing static publication checks validate the six refreshed CSS hashes and all linked routes/media.

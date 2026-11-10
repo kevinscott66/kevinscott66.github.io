@@ -21,7 +21,8 @@ export function ProjectJourney({ lang, ru }) {
             <p className="contribution">{p[lang][2]}</p>
             <div className="chapter-actions">
               <Out
-                href={`https://dobropalm.tech/${ru ? "ru/" : ""}case-studies/${p.case}/`}
+                href={`/${ru ? "ru/" : ""}case-studies/${p.case}/`}
+                newTab={false}
                 className="button primary"
               >
                 {ru ? "Разобрать кейс" : "Read the case"}

@@ -21,37 +21,31 @@
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/site.css?v=acd042a0b57b">
+<link rel="stylesheet" href="/assets/site.css?v=17b4a4d39838">
 </head>
-<body>
+<body data-project="agent">
 <a class="skip" href="#main">К содержимому</a>
-<header class="nav">
-<div class="wrap">
-<a class="brand" href="/ru/">
-<b>◈</b> dobropalm</a>
-<nav class="navlinks" aria-label="Основная навигация">
-<a href="/ru/#work">Проекты</a>
-<a class="desktop" href="/ru/#demos">Демо</a>
-<a class="desktop" href="/ru/#about">Обо мне</a>
-<a href="/ru/#contact">Контакт</a>
-<a class="language" lang="en" hreflang="en" href="/case-studies/agent/">EN</a>
-</nav>
-</div>
-</header>
+<header class="nav"><div class="wrap">
+<a class="brand" href="/ru/">dobropalm</a><a class="universe" href="/ru/" aria-label="COREVERSE">COREVERSE</a>
+<nav class="navlinks" aria-label="Основная навигация"><a href="/ru/#work">Проекты</a><a href="/ru/#about">Обо мне</a><a href="/ru/#contact">Контакт</a></nav>
+<a class="language" lang="en" hreflang="en" href="/case-studies/agent/" aria-label="Switch to English"><span class="selected">RU</span><span>·</span><span class="">EN</span></a>
+<details class="mobile-menu"><summary aria-label="Меню"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary><nav aria-label="Мобильная навигация"><a href="/ru/#work">Проекты</a><a href="/ru/#about">Обо мне</a><a href="/ru/#contact">Контакт</a></nav></details>
+</div></header>
 <main id="main">
 <div class="wrap">
 <header class="case-hero">
 <p class="crumb">
-<a href="/ru/#work">← Все проекты</a>
+<a href="/ru/#agent">← Все проекты</a>
 </p>
+
+<h1>AI-помощник, который спрашивает перед действием</h1>
+<p class="lead">Одна команда AI-ролей в Telegram, браузере и iPhone. Общая история, голосовое общение и понятные границы: помощник может предложить действие, но решение остаётся за человеком.</p>
 <div class="badges">
 <span class="badge">Активная разработка</span>
 <span class="badge neutral">DOBROPALM Agent</span>
 </div>
-<h1>AI-помощник, который спрашивает перед действием</h1>
-<p class="lead">Одна команда AI-ролей в Telegram, браузере и iPhone. Общая история, голосовое общение и понятные границы: помощник может предложить действие, но решение остаётся за человеком.</p>
 <div class="actions">
-<a class="button primary" href="https://github.com/kevinscott66/ai-agents">Исходники</a>
+<a class="button primary" href="https://github.com/kevinscott66/ai-agents">Исходники<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg></a>
 <a class="button" href="/ru/#demos">Смотреть демо</a>
 </div>
 <div class="case-meta">
@@ -70,7 +64,7 @@
 </div>
 </header>
 <div class="case-layout">
-<aside class="case-nav" aria-label="Содержание кейса">
+<aside class="case-index"><nav class="case-nav" aria-label="Содержание кейса">
 <a href="#problem">Задача и мой вклад</a>
 <a href="#outcome">Что получилось</a>
 <a href="#engineering">Инженерные решения</a>
@@ -78,7 +72,15 @@
 <a href="#tradeoffs">Компромиссы и выводы</a>
 <a href="#operations">Эксплуатация и данные</a>
 <a href="#evidence">Проверяемые источники</a>
-</aside>
+</nav><details class="case-mobile-index"><summary>В этом кейсе</summary><nav aria-label="Содержание кейса">
+<a href="#problem">Задача и мой вклад</a>
+<a href="#outcome">Что получилось</a>
+<a href="#engineering">Инженерные решения</a>
+<a href="#architecture">Архитектура</a>
+<a href="#tradeoffs">Компромиссы и выводы</a>
+<a href="#operations">Эксплуатация и данные</a>
+<a href="#evidence">Проверяемые источники</a>
+</nav></details></aside>
 <article class="case-body">
 <section id="problem">
 <h2>Задача и мой вклад</h2>
@@ -259,6 +261,7 @@
 <a href="https://github.com/kevinscott66/ai-agents/actions/workflows/checks.yml">CI / checks</a> · <a href="https://github.com/kevinscott66/ai-agents/blob/main/LICENSE">MIT licence</a> · <a href="https://github.com/kevinscott66/ai-agents#quick-start">Запуск проекта</a>
 </p>
 </section>
+<nav class="case-next" aria-label="Навигация по проектам"><a href="/ru/#agent">Вернуться к проектам</a><a class="next-case" href="/ru/case-studies/airchat/"><span>Следующий кейс</span><strong>AirChat</strong><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg></a></nav>
 </article>
 </div>
 </div>
@@ -266,12 +269,11 @@
 <section class="contact" id="contact">
 <div class="wrap">
 <div>
-<p class="eyebrow">Есть задача или идея?</p>
 <h2>Давайте обсудим.</h2>
 <p>Проект, партнёрство или сильная команда — открыт к разговору.</p>
 </div>
 <div class="actions">
-<a class="button primary" href="https://t.me/dobropalm">Telegram</a>
+<a class="button primary" href="https://t.me/dobropalm">Telegram<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg></a>
 <a class="button" href="mailto:hello@dobropalm.tech">Email</a>
 </div>
 </div>
