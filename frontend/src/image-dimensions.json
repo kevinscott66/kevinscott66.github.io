@@ -1,24 +1,94 @@
 {
-  "viora-home-demo.png": [390, 844],
-  "vedomost-current-20261109.jpg": [1440, 1075],
-  "agent-dashboard.jpg": [590, 1280],
-  "viora-logo.png": [1254, 1254],
-  "delabs-current-20261109.jpg": [1280, 915],
-  "airchat.webp": [1280, 800],
-  "vedomost.png": [1280, 1231],
-  "airchat-profile.jpg": [590, 1280],
-  "vahtahoz-settings.jpg": [590, 1280],
-  "agent.webp": [1280, 800],
-  "kom17-miniapp-demo.png": [1148, 1824],
-  "vedomost-current.jpg": [1280, 1066],
-  "airchat-contact.jpg": [590, 1280],
-  "delabs-walkthrough.png": [1280, 800],
-  "sloyra-editor.png": [1280, 720],
-  "kom17-daily.jpg": [590, 1280],
-  "delabs.webp": [1280, 800],
-  "vahtahoz-stock.jpg": [590, 1280],
-  "viora-player-demo.png": [390, 844],
-  "agent-iphone.jpg": [590, 1280],
-  "vahtahoz.webp": [1280, 800],
-  "kom17-miniapp-protection-demo.png": [1148, 1824]
+  "viora-home-demo.png": [
+    390,
+    844
+  ],
+  "vedomost-current-20261109.jpg": [
+    1440,
+    1075
+  ],
+  "agent-dashboard.jpg": [
+    590,
+    1280
+  ],
+  "viora-logo.png": [
+    1254,
+    1254
+  ],
+  "delabs-current-20261109.jpg": [
+    1280,
+    915
+  ],
+  "airchat.webp": [
+    1280,
+    800
+  ],
+  "vedomost.png": [
+    1280,
+    1231
+  ],
+  "airchat-profile.jpg": [
+    590,
+    1280
+  ],
+  "vahtahoz-settings.jpg": [
+    590,
+    1280
+  ],
+  "agent.webp": [
+    1280,
+    800
+  ],
+  "kom17-miniapp-demo.png": [
+    1148,
+    1824
+  ],
+  "vedomost-current.jpg": [
+    1280,
+    1066
+  ],
+  "airchat-contact.jpg": [
+    590,
+    1280
+  ],
+  "delabs-walkthrough.png": [
+    1280,
+    800
+  ],
+  "sloyra-editor.png": [
+    1280,
+    720
+  ],
+  "kom17-daily.jpg": [
+    590,
+    1280
+  ],
+  "delabs.webp": [
+    1280,
+    800
+  ],
+  "vahtahoz-stock.jpg": [
+    590,
+    1280
+  ],
+  "viora-player-demo.png": [
+    390,
+    844
+  ],
+  "agent-iphone.jpg": [
+    590,
+    1280
+  ],
+  "vahtahoz.webp": [
+    1280,
+    800
+  ],
+  "kom17-miniapp-protection-demo.png": [
+    1148,
+    1824
+  ],
+  "agent-demo-20261110.webp": [
+    430,
+    932
+  ]
 }

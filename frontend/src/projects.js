@@ -3,7 +3,7 @@ export const mainProjects = [
     id: "agent",
     name: "Agent",
     color: "#35e3ff",
-    image: "agent-dashboard.jpg",
+    image: "agent-demo-20261110.webp",
     ru: [
       "Задачи, согласования, команды.",
       "Помощник для нескольких проектов: разговоры, очередь задач и действия с подтверждением владельца.",

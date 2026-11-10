@@ -1,4 +1,4 @@
-import{r as po,j as bc}from"./index-B3zEkehY.js";/**
+import{r as po,j as bc}from"./index-C3JG3SwW.js";/**
  * @license
  * Copyright 2010-2026 Three.js Authors
  * SPDX-License-Identifier: MIT

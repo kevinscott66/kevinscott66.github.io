@@ -110,7 +110,7 @@ export function App({ initialLang = "en" }) {
           )}
           <section className="hero" id="top">
             <div className="hero-art-fallback" aria-hidden="true">
-              <ImageAsset src="/assets/media/agent-dashboard.jpg" alt="Agent" />
+              <ImageAsset src="/assets/media/agent-demo-20261110.webp" alt="Agent" />
             </div>
             <div className="hero-copy">
               <h1>
