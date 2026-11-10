@@ -1,3 +1,4 @@
+import { ContactAddress } from "./components/ContactAddress.jsx";
 import { SceneBoundary } from "./components/SceneBoundary.jsx";
 import { About } from "./components/About.jsx";
 import { Evidence } from "./components/Evidence.jsx";
@@ -227,10 +228,7 @@ export function App({ initialLang = "en" }) {
             <Out href="https://t.me/dobropalm" className="contact-link">
               Telegram
             </Out>
-            <a className="contact-link" href="mailto:hello@dobropalm.tech">
-              hello@dobropalm.tech
-              <ArrowUpRight />
-            </a>
+            <ContactAddress />
           </div>
         </section>
       </main>
