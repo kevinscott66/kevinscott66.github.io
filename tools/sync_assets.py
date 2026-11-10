@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Refresh CSS version references after editing styles; never changes page content."""
 import re
-from site_common import ROOT, page_paths, stylesheet_url
+from site_common import ROOT, page_paths, stylesheet_url, route
 
 
 def sync(root=ROOT):
     updates = []
     for path in page_paths(root):
+        if route(path, root) in ('/', '/ru/'):
+            continue
         old = path.read_text()
         new, count = re.subn(r'/assets/site\.css(?:\?v=[a-zA-Z0-9]+)?(?=")', stylesheet_url(root), old)
         if count != 1:

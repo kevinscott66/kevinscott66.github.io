@@ -1,6 +1,6 @@
 # Portfolio architecture and editorial rules
 
-The website is a static GitHub Pages tree. There is no application backend or build step. English routes are rooted at `/`; Russian equivalents use `/ru/`. Each of the three cases has its own directory and `index.html`. Shared CSS is in `assets/site.css`; no JavaScript is required for content, navigation or language switching.
+The website is a static GitHub Pages tree. There is no application backend. The COREVERSE homepages have an optional local build that prerenders committed HTML and interactive assets; publishing still serves ready files from Git. English routes are rooted at `/`; Russian equivalents use `/ru/`. Each of the three cases has its own directory and `index.html`. Case-page CSS remains in `assets/site.css`; COREVERSE uses a separate hashed stylesheet. No JavaScript is required for reading content, opening project links or language switching. JavaScript powers filtering, mobile menu and optional 3D.
 
 The `/demos/vedomost/` link is served by a separate Cloudflare Worker route. It has no static app copy in this repository. Its deployment and runtime are owned by [the Vedomost source repository](https://github.com/kevinscott66/vedomost/blob/main/docs/cloud-deployment.md). The offline link checker lists this exact externally hosted path; other internal paths still require a local file.
 
@@ -10,11 +10,11 @@ Use `kevinscott66 <156429557+kevinscott66@users.noreply.github.com>` as the auth
 
 ## Publishing
 
-`main` is served through the existing custom domain. Run `python3 tools/check_site.py`, check both languages at desktop/mobile widths, verify the PDFs visually and confirm media playback before publishing. Check GitHub Actions and the public HTTPS response after deployment. Stylesheet URLs include `?v=` followed by the first 12 characters of the CSS SHA-256; run `python3 tools/sync_assets.py` to update all eight references when CSS changes. The static checker enforces this to avoid new HTML using cached, incompatible image styles.
+`main` is served through the existing custom domain. Run `python3 tools/check_site.py`, check both languages at desktop/mobile widths, verify the PDFs visually and confirm media playback before publishing. Check GitHub Actions and the public HTTPS response after deployment. Stylesheet URLs include `?v=` followed by the first 12 characters of the CSS SHA-256; run `python3 tools/sync_assets.py` to update the six case-page references when CSS changes. The static checker enforces this to avoid new HTML using cached, incompatible image styles.
 
 ## Maintenance tools
 
-`tools/site_common.py` defines the supported languages, cases, routes and stylesheet hash. HTML remains hand-editable and deployable as-is: tools are development checks, not a site build. `sync_assets.py` validates all references before writing and is idempotent. `check_site.py` checks exact sitemap/canonical routes, reciprocal language links, language-specific metadata, per-video caption tracks, intrinsic image dimensions and full-frame portrait classes. `test_site.py` exercises common publication failures in temporary copies. Both check commands run in CI.
+`tools/site_common.py` defines the supported languages, cases, routes and stylesheet hash. Case HTML remains hand-editable. Homepages are generated from `frontend/`; all pages are deployable as-is. Checks validate the committed result, including the COREVERSE asset manifest. `sync_assets.py` validates all references before writing and is idempotent. `check_site.py` checks exact sitemap/canonical routes, reciprocal language links, language-specific metadata, per-video caption tracks, intrinsic image dimensions and full-frame portrait classes. `test_site.py` exercises common publication failures in temporary copies. Both check commands run in CI.
 
 CSS uses readable blocks and explicit `portrait` image classes. Shared full-frame rules override landscape previews for phone screenshots, including in case studies and product cards. Original media and bilingual copy are preserved.
 
@@ -31,7 +31,7 @@ Captured 24 September 2026:
 - AirChat: public web onboarding in a clean browser; no account, messages or seed phrase.
 - DeLabs: public project catalog and activity guides; no account.
 - VahtaHoz: clean public entry screen; no operational records.
-- Agent: actual public-source Preact dashboard, local build of reviewed source, with API fixtures. Every role is paused, autonomy locked, provider actions disconnected; the image and video carry a demo label. Counters are not production metrics.
+- Agent: actual owner-source Preact dashboard. The dated November 10 video and interactive `/demos/agent/` use a local Worker calculation, in-memory tasks and approvals, and labelled demonstration role rows. Remote providers and production actions are disconnected. Counts are local session state, not production metrics.
 - KOM17: authored diagram of the documented post-cutover request path, not a UI screenshot.
 
 Videos are silent MP4 with English/Russian WebVTT explanation tracks and transcript-like descriptions beside the controls. Posters and `preload="none"` avoid fetching video on initial load. Browser captures use WebP; owner screenshots retain original JPEG; Open Graph uses 1200×630 PNG. PDF profiles have selectable text and clickable product links.
@@ -144,3 +144,12 @@ The EN/RU project cards use fresh browser captures, not reconstructed interfaces
 The project images use the scoped `project-ui-preview` CSS class with intrinsic aspect ratio and `object-fit: contain`; fixed-ratio cropping still applies to unrelated cards.
 
 The DeLabs walkthrough remains a recording of the preceding interface. Both languages label it as an archive; its original poster is retained so the poster accurately represents the video. Fresh card images have distinct filenames to avoid serving an older cached image under the same URL.
+
+
+## COREVERSE release — 2026-11-10
+
+The owner explicitly authorized refactoring the selected React/Three COREVERSE prototype and publishing it. This replaces the earlier no-build constraint for this feature; production remains static and needs no Node runtime. Source/build instructions and demo provenance live in [frontend/README.md](../frontend/README.md). Vite's hashed entry/CSS and lazy scene output live under `assets/coreverse/`; `tools/site_common.py` resolves the homepage stylesheet through the build manifest, while the six case pages keep the legacy CSS hash rule.
+
+All eight project anchors, three bilingual case routes, demos, PDFs, canonical/hreflang metadata and CNAME are preserved. Real KOM17 Mini App screenshots use fictional demo data; no private project source is bundled. Scene progress follows actual section geometry and is reversible; reduced motion, Skip experience, keyboard navigation, normal document scrolling and fallback retain readable HTML. Browser checks cover widths320–1440 and portrait/landscape tablet layouts. Physical folding/hinge behavior and device FPS remain untested.
+
+The new Agent film is `assets/media/agent-demo-20261110.mp4`, a430×932 browser capture with its own dated poster/captions. Lower navigation is five equal columns across the usable screen, including safe-area bottom padding. The adapter returns local demo admin permission, removing the irrelevant read-only warning without changing real authorization. Demo execution and owner approval are tested with a real Worker calculation. Real remote model processes are not implied. The DeLabs film remains explicitly archived and uses its matching poster.

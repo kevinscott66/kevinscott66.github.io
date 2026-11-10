@@ -1,0 +1,1 @@
+import{A as u,y as c,n as i}from"./index-DciY3YDn.js";function l(t){const n=u(t);n.current=t,c(()=>{if(!i)return;let e=!1;const a=setInterval(async()=>{var r;if(!(e||document.hidden||/^(INPUT|TEXTAREA|SELECT)$/.test(((r=document.activeElement)==null?void 0:r.tagName)||""))){e=!0;try{await n.current()}finally{e=!1}}},15e3);return()=>clearInterval(a)},[])}export{l as u};

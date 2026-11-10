@@ -1,5 +1,6 @@
 """Shared static-site paths and content-version helpers (standard library only)."""
 from hashlib import sha256
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,3 +25,10 @@ def route(path, root=ROOT):
 def stylesheet_url(root=ROOT):
     version = sha256((root / 'assets/site.css').read_bytes()).hexdigest()[:12]
     return f'/assets/site.css?v={version}'
+
+
+def page_stylesheet(path, root=ROOT):
+    if route(path, root) in ('/', '/ru/'):
+        manifest = json.loads((root / 'assets/coreverse/.vite/manifest.json').read_text())
+        return '/assets/coreverse/' + manifest['index.html']['css'][0]
+    return stylesheet_url(root)

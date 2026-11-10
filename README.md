@@ -66,3 +66,6 @@ Project milestones are not employment dates. Some source repositories are public
 MIT - [LICENSE](LICENSE). Featured projects retain their own licenses. Screenshots document the linked products; third-party marks remain their owners' property.
 
 [Project source review — 13 October 2026](docs/project-review-2026-10-13.md)
+
+
+COREVERSE source and local rebuild: [frontend/README.md](frontend/README.md). Production is a committed static build; the server requires no Node process.

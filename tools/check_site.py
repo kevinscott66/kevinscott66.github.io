@@ -3,8 +3,9 @@
 from html.parser import HTMLParser
 from urllib.parse import urlsplit, unquote
 import sys
+import json
 import xml.etree.ElementTree as ET
-from site_common import ROOT, ORIGIN, page_paths, route, stylesheet_url
+from site_common import ROOT, ORIGIN, page_paths, route, page_stylesheet
 
 
 # Served by an independently deployed Cloudflare Worker, not by this static tree.
@@ -68,6 +69,12 @@ class Page(HTMLParser):
 
 def check_site(root=ROOT):
     root = root.resolve()
+    manifest = json.loads((root / 'assets/coreverse/.vite/manifest.json').read_text())
+    for entry in manifest.values():
+        for asset in [entry['file']] + entry.get('css', []):
+            require((root / 'assets/coreverse' / asset).is_file(), f'missing asset in COREVERSE bundle: {asset}')
+        for dependency in entry.get('dynamicImports', []) + entry.get('imports', []):
+            require(dependency in manifest, f'missing bundle dependency: {dependency}')
     pages = {}
     for path in page_paths(root):
         p = Page(path.relative_to(root))
@@ -83,7 +90,7 @@ def check_site(root=ROOT):
                 f'{path}: incorrect translation links')
         require(p.switch == (english if language == 'ru' else russian), f'{path}: incorrect language switch')
         require(len(p.ids) == len(set(p.ids)), f'{path}: duplicate IDs')
-        require(stylesheet_url(root) in p.links, f'{path}: stale stylesheet version; run python3 tools/sync_assets.py')
+        require(page_stylesheet(path, root) in p.links, f'{path}: stale stylesheet version; run python3 tools/sync_assets.py')
         require(p.meta.get('og:url') == ORIGIN + current, f'{path}: incorrect Open Graph URL')
         require(p.meta.get('og:image') == f'{ORIGIN}/assets/og-{language}.png', f'{path}: incorrect Open Graph image')
         for key in ('description', 'og:title', 'og:description', 'og:image:alt'):
