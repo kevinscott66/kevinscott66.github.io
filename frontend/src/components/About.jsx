@@ -21,22 +21,22 @@ export function About({ lang, ru }) {
         <div>
           <p>
             {ru
-              ? "Я Александр Павлович. Развиваю собственные цифровые продукты: определяю задачи и требования, выбираю интерфейсные и архитектурные решения, проверяю пользовательские сценарии."
-              : "I am Alexander Pavlovich. I develop my own digital products: I define problems and requirements, choose interface and architecture decisions, and validate user workflows."}
+              ? "Я Александр Павлович. С начала 2025 года создаю собственные цифровые проекты: формулирую требования, разбиваю задачи на шаги, выбираю интерфейс и проверяю пользовательские сценарии вместе с ИИ."
+              : "I am Alexander Pavlovich. Since early 2025 I have built personal digital projects: requirements, task breakdown, interface choices and user-scenario checks with AI."}
           </p>
           <p>
             {ru
-              ? "Значительную часть реализации выполняют Codex и Claude Code. Коммерческого IT-опыта пока нет. Открыт к оплачиваемым junior-задачам с техническим ревью, небольшим проектам и партнёрству."
-              : "A substantial part of implementation is created with Codex and Claude Code. I do not yet have commercial IT experience. I am open to paid junior tasks with technical review, small projects and partnerships."}
+              ? "Значительную часть кода создают Codex, Claude Code и другие AI-инструменты. Коммерческого IT-стажа и опыта работы в IT-команде пока нет; стек проекта не означает самостоятельное профессиональное владение им. Ищу оплачиваемые junior-задачи с техническим ревью и обучением."
+              : "AI tools produce a substantial part of the code. I have no commercial IT or IT-team experience yet; project stacks do not imply independent professional mastery. I am seeking paid junior tasks with technical review and learning opportunities."}
           </p>
           <Out
             href={
               ru
-                ? "/assets/alexander-pavlovich-ru.pdf"
-                : "/assets/alexander-pavlovich-en.pdf"
+                ? "/assets/resume-alexander-pavlovich-ru.pdf"
+                : "/assets/resume-alexander-pavlovich-en.pdf"
             }
           >
-            {ru ? "Профиль в PDF" : "Profile PDF"}
+            {ru ? "Резюме в PDF" : "Resume PDF"}
           </Out>
         </div>
       </section>
