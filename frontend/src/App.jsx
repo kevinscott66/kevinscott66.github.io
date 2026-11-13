@@ -196,8 +196,8 @@ export function App({ initialLang = "en" }) {
           </h2>
           <p>
             {ru
-              ? "Требования → сценарии → архитектурные решения → реализация с AI → проверка результата."
-              : "Requirements → workflows → architecture decisions → AI-assisted implementation → validation."}
+              ? "Задача → требования → интерфейс → реализация с ИИ → проверка сценария."
+              : "Problem → requirements → interface → AI-assisted implementation → scenario checks."}
           </p>
           <div id="collaboration">
             <h3>{ru ? "Форматы сотрудничества" : "Ways to collaborate"}</h3>

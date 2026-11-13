@@ -167,3 +167,9 @@ All six EN/RU case pages now share the home visual identity: self-hosted Manrope
 Headers and language links follow COREVERSE; mobile navigation and the collapsible contents index use native HTML details. Each case has a return-to-chapter link and a next-case link. Homepage case CTAs use relative URLs in the same browser tab, preserving normal back navigation. The article text, source citations, metadata, screenshot originals, responsive WebP variants and public routes remain intact. External product interfaces retain their own actual UI.
 
 Browser verification covers all six cases at320/390/834/1440pixels, mobile menu and contents anchors, home→case→next case→language→home navigation. Existing static publication checks validate the six refreshed CSS hashes and all linked routes/media.
+
+## Honest career copy (13 November 2026)
+
+Home project text remains owned by `frontend/src/projects.js`; About and collaboration copy stay in their components. Descriptions distinguish product behaviour, the owner's requirements/interface/scenario work, substantial AI implementation, and material demo limitations. Project stacks are not presented as independent professional skills. Case contribution blocks follow the same rule; architectural diagrams and technical source evidence describe the project, not personal proficiency. No commercial employment, customer outcomes or measured impact are inferred from personal projects or fictional captures.
+
+New bilingual two-page resumes are `assets/resume-alexander-pavlovich-ru.pdf` and `assets/resume-alexander-pavlovich-en.pdf`, linked from About. Prior presentation PDF URLs are retained as historical assets for existing links. Resume authoring sources and personal career facts stay in private Career storage outside this public repository; no private profile is committed. Publication status belongs to CURRENT_STATE, not this editorial policy.
